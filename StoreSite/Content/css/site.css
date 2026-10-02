@@ -1,0 +1,115 @@
+﻿/*--------------CSS CHUNG----------------*/
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+}
+
+a {
+    text-decoration: none;
+}
+/*HEADER*/
+.main-header .navbar-brand {
+    font-size: 2rem;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.main-header .brand-logo {
+    height: 35px;
+    width: auto;
+    object-fit: contain;
+}
+
+.main-header .text-brand {
+    color: blueviolet;
+}
+
+.main-header .nav-link {
+    font-weight: 500;
+    color: darkslategrey !important;
+}
+
+    .main-header .nav-link:hover {
+        color: blueviolet !important;
+    }
+
+.search-form input {
+    min-width: 300px;
+}
+/*FOOTER*/
+.main-footer .footer-link {
+    color: lightgrey !important;
+}
+
+    .main-footer .footer-link:hover {
+        color: white !important;
+    }
+/*TIÊU ĐỀ*/
+.section-title {
+    font-weight: 700;
+    text-transform: uppercase;
+}
+/*THẺ SẢN PHẨM*/
+.product-cart {
+    position: relative;
+    background: white;
+    border: 1px solid whitesmoke;
+    border-radius: 10px;
+    padding: 15px;
+    height: 100%;
+    transition: box-shadow 0.5s;
+}
+
+    .product-cart:hover {
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+.badge-sale {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: blueviolet;
+    color: white;
+    font-size: 0.5rem;
+    padding: 1px 10px;
+    border-radius: 5px;
+}
+
+.product-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    margin: 0 0 10px;
+}
+
+product-brand {
+    font-size: 0.5rem;
+    color: gray;
+    text-transform: uppercase;
+    margin: 0 0 2px;
+}
+
+.product-name {
+    font-weight: 600;
+    margin: 0 0 10px;
+}
+
+.gia-cu {
+    text-decoration: line-through;
+    color: darkgray;
+    font-size: 0.5rem;
+    margin: 0 5px 0 0;
+}
+
+.gia-hien-tai {
+    font-weight: 700;
+    color: crimson;
+}
+
+.product-action {
+    margin: 10px 0 0 0;
+    display: flex;
+    gap: 5px;
+}
