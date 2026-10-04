@@ -55,31 +55,31 @@ namespace StoreSite.Controllers
         // GET: Store
         public ActionResult Index(string TimKiem, string Loai, string sortOrder)
         {
-            var sanpham = GetSanPham().AsQueryable();//Lấy danh sách sản phẩm
+            List<SanPham> sanpham = GetSanPham();//Lấy danh sách sản phẩm
             if (!string.IsNullOrEmpty(TimKiem))//Lọc theo từ khóa tìm kiếm
             {
-                sanpham=sanpham.Where(sp=>sp.Name.ToLower().Contains(TimKiem.ToLower()));
+                sanpham=sanpham.Where(sp=>sp.Name.ToLower().Contains(TimKiem.ToLower())).ToList();
             }
-            if (!string.IsNullOrEmpty(Loai) && Loai != "All")//Lọc loại giày
+            if (!string.IsNullOrEmpty(Loai) && Loai != "All")
             {
-                sanpham = sanpham.Where(sp => sp.LoaiGiay.Equals(Loai,StringComparison.OrdinalIgnoreCase));
+                sanpham = sanpham.Where(sp => sp.LoaiGiay.ToLower() == Loai.ToLower()).ToList();
             }
             switch (sortOrder)//Thuật toán sắp xếp theo giá tiền
             {
                 case "Tang_Dan":
-                    sanpham = sanpham.OrderBy(p => p.GiaTien); // Giá từ thấp đến cao
+                    sanpham = sanpham.OrderBy(p => p.GiaTien).ToList(); // Giá từ thấp đến cao
                     break;
                 case "Giam_Dan":
-                    sanpham = sanpham.OrderByDescending(p => p.GiaTien); // Giá từ cao đến thấp
+                    sanpham = sanpham.OrderByDescending(p => p.GiaTien).ToList(); // Giá từ cao đến thấp
                     break;
                 default:
-                    sanpham = sanpham.OrderBy(p => p.Id); // Mặc định sắp xếp theo ID
+                    sanpham = sanpham.OrderBy(p => p.Id).ToList(); // Mặc định sắp xếp theo ID
                     break;
             }
-            ViewBag.CurrentSearch = TimKiem;
-            ViewBag.CurrentCategory = Loai;
-            ViewBag.CurrentSort = sortOrder;
-
+            ViewBag.TimKiem = TimKiem;
+            ViewBag.Loai = Loai;
+            ViewBag.Sort = sortOrder;
+            
             return View(sanpham.ToList());
         }
     }
