@@ -3,35 +3,74 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Store Site</title>
+    <title>@ViewBag.Title - Meisho Doshoes Store Site</title>
+
     @Styles.Render("~/Content/css")
+    <link href="~/Content/LayoutStyle.css" rel="stylesheet" />
+    
+
+    @RenderSection("styles", required: false)
     @Scripts.Render("~/bundles/modernizr")
+
 </head>
 <body>
-    <nav> hi </nav>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-        <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Store", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!--HEADER-->
+    <header class="main-header">
+        <nav class="site-nav">
+            <a class="site-brand" href="@Url.Action("Index", "Home")">
+                <img src="~/ImageAssets/MeishoLogo.jpg" alt="Logo" class="BrandLogo" />
+                <span>MEISHO DOSHOES <span class="text-brand">STORE SITE</span></span>
+            </a>
 
-    <div class="container body-content">
-        @RenderBody()
+            <ul class="site-menu">
+                <li><a href="@Url.Action("Index", "Home")">Home</a></li>
+                <li><a href="#">Shop</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Liên hệ</a></li>
+            </ul>
+
+            <form class="search-form">
+                <input type="search" placeholder="Tìm Giày..." />
+            </form>
+
+            <ul class="site-menu">
+                <li><a href="#">Giỏ hàng</a></li>
+                <li><a href="#">Đăng nhập</a></li>
+                <li><a href="#">Đăng ký</a></li>
+            </ul>
+        </nav>
         <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
+    </header>
+    <!--NỘI DUNG WEBSITE-->
+    <main>@RenderBody()</main>
+    <!--FOOTER-->
+    <footer class="main-footer bg-dark text-white pt-5 pb-3 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <h5>Meisho Doshoes Store Site</h5>
+                    <p class="small">GIÀY CHÍNH HÃNG</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Về Thành Viên Nhóm</h5>
+                    <ul class="list-unstyled small">
+                        <li><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1" class="footer-link">GIỚI THIỆU</a></li>
+                        <li><a href="https://www.facebook.com/share/g/19ZjhzT21U/?mibextid=wwXIfr" class="footer-link">TUYỂN DỤNG</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Liên hệ nhanh</h5>
+                    <ul class="list-unstyled small">
+                        <li><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1" class="footer-link">FACEBOOK</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary" />
+            <p class="text-center small mb-0">&copy; @DateTime.Now.Year MEISHO DOSHOES STORE SITE</p>
+            <p class="text-center small mb-0">UY TÍN - CHẤT LƯỢNG SỐ 2 VN</p>
+            <p class="text-center small mb-0">(chưa được kiểm chứng)</p>
+        </div>
+    </footer>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

@@ -2,14 +2,174 @@
     ViewBag.Title = "Home Page";
 }
 
-<main>
-    <section>
-        <div>
-            <img src="~/ImageAssets/SneakerBanner.jpg" width="100%" height="auto"/>
+@section Styles {
+    <link href="~/Content/MainPageStyle.css" rel="stylesheet" />
+}
+
+<div class="hp">
+
+    <!-- 1. BANNER -->
+    <section class="hp-hero">
+        <img src="~/ImageAssets/SneakerBanner.jpg" class="ImageBanner" alt="Sneaker Throwback Future" />
+    </section>
+
+    <!-- 2. VỀ CHÚNG TÔI -->
+    <section class="hp-section hp-about">
+        <div class="hp-about__text">
+            <span class="hp-eyebrow">Về chúng tôi</span>
+            <h2>Chúng tôi bán gì?</h2>
+            <p>
+                Meisho Doshoes là nơi chuyên cung cấp giày sneaker nổi tiếng chính hãng, từ mẫu thể thao
+                đến mẫu đi hằng ngày, chuyên cho nam giới lẫn nữ giới.
+            </p>
+            <ul class="hp-checklist">
+                <li>Cam kết 100% hàng chính hãng</li>
+                <li>Giao hàng toàn quốc, kiểm tra hàng trước khi nhận</li>
+                <li>Đổi size miễn phí trong 14 ngày</li>
+            </ul>
+            <a href="#" class="hp-btn">Xem sản phẩm</a>
+        </div>
+        <div class="hp-about__media">
+            <img src="~/ImageAssets/MeishoesDoto.jpg" alt="Giày tại cửa hàng Meisho Doshoes" />
         </div>
     </section>
 
-    <section>
-        <div></div>
+    <!-- 3. DANH MỤC -->
+    <section class="hp-section">
+        <div class="hp-heading">
+            <span class="hp-eyebrow">Danh mục</span>
+            <h2>Mua sắm theo nhu cầu</h2>
+        </div>
+        <div class="hp-grid hp-grid--categories">
+            <a href="#" class="hp-category">
+                <img src="~/ImageAssets/Men/Nike1.jpg" alt="" />
+                <span>Giày Nam</span>
+            </a>
+            <a href="#" class="hp-category">
+                <img src="~/ImageAssets/Women/Nike1.jpg" alt="" />
+                <span>Giày Nữ</span>
+            </a>
+        </div>
     </section>
-</main>
+
+    <!-- 4. SẢN PHẨM NỔI BẬT -->
+    <section class="hp-section">
+        <div class="hp-heading hp-heading--row">
+            <div>
+                <span class="hp-eyebrow">Nổi bật</span>
+                <h2>Sản phẩm bán chạy</h2>
+            </div>
+            <a href="#" class="hp-link">Xem tất cả →</a>
+        </div>
+        <div class="hp-grid hp-grid--products">
+            @for (int i = 1; i <= 4; i++)
+            {
+                <article class="hp-product">
+                    <div class="hp-product__img">
+                        <img src="~/ImageAssets/Product@(i).jpg" alt="Sản phẩm @i" />
+                        <span class="hp-badge">Mới</span>
+                    </div>
+                    <h3>Tên giày @i</h3>
+                    <p class="hp-price">?.???.000₫</p>
+                    <a href="#" class="hp-btn hp-btn--small">Thêm vào giỏ</a>
+                </article>
+            }
+        </div>
+    </section>
+    <!-- Những người nổi tiếng đã nói gì về chúng tôi?-->
+    <section class="hp-section hp-about">
+        <div class="hp-about__media">
+            <img src="~/ImageAssets/PopularIcons/LebronJames.jpg" alt="LebronJames" />
+        </div>
+        <div>
+            <span class="hp-eyebrow">Người nổi tiếng đã nói gì về chúng tôi?</span>
+            <h2>Lebron James</h2>
+            <p>
+                Meisho Doshoes là quả nơi chuyên cung cấp giày tuyệt vời, tôi không
+                thể ăn cơm nếu thiếu giày của họ. (không nói thế)
+            </p>
+        </div>
+    </section>
+    <section class="hp-section hp-about">
+        <div>
+            <span class="hp-eyebrow">Người nổi tiếng đã nói gì về chúng tôi?</span>
+            <h2>Alan Walker</h2>
+            <p>
+                Thật tuyệt vời, tôi đã mua sản phẩm tại Meisho Doshoes và
+                nhờ có nó mà tôi đã có thể đi bộ nhiều hơn. (không nói thế)
+            </p>
+        </div>
+        <div class="hp-about__media">
+            <img src="~/ImageAssets/PopularIcons/AlanWalker.jpg" alt="Alan" />
+        </div>
+    </section>
+    <section class="hp-section hp-about">
+        <div class="hp-about__media">
+            <img src="~/ImageAssets/PopularIcons/CristianoRonaldo.jpg" alt="Ronaldo" />
+        </div>
+        <div>
+            <span class="hp-eyebrow">Người nổi tiếng đã nói gì về chúng tôi?</span>
+            <h2>Cristiano Ronaldo</h2>
+            <p>
+                Thật đáng tiếc vì tôi đã không mua sản phẩm của Meisho Doshoes sớm hơn,
+                sản phẩm thật tuyệt vời tôi đã không vấp cỏ nữa. (không nói thế)
+            </p>
+        </div>
+    </section>
+    <section class="hp-section hp-about">
+        <div class="hp-about__media">
+            <img src="~/ImageAssets/PopularIcons/CristianoRonaldo.jpg" alt="Ronaldo" />
+        </div>
+        <div>
+            <span class="hp-eyebrow">Người nổi tiếng đã nói gì về chúng tôi?</span>
+            <h2>Cristiano Ronaldo</h2>
+            <p>
+                Thật đáng tiếc vì tôi đã không mua sản phẩm của Meisho Doshoes sớm hơn,
+                sản phẩm thật tuyệt vời tôi đã không vấp cỏ nữa. (không nói thế)
+            </p>
+        </div>
+    </section>
+    <!-- 5. VÌ SAO CHỌN CHÚNG TÔI -->
+    <section class="hp-band hp-band--soft">
+        <div class="hp-section">
+            <div class="hp-heading">
+                <span class="hp-eyebrow">Cam kết</span>
+                <h2>Vì sao chọn Meisho Doshoes?</h2>
+            </div>
+            <div class="hp-grid hp-grid--features">
+                <div class="hp-feature">
+                    <div class="hp-feature__icon">✔</div>
+                    <h3>Chính hãng</h3>
+                    <p>Nguồn hàng rõ ràng, có hóa đơn.</p>
+                </div>
+                <div class="hp-feature">
+                    <div class="hp-feature__icon">🚚</div>
+                    <h3>Giao nhanh</h3>
+                    <p>Nhận hàng trong 2-4 ngày.</p>
+                </div>
+                <div class="hp-feature">
+                    <div class="hp-feature__icon">↺</div>
+                    <h3>Đổi trả dễ</h3>
+                    <p>Đổi size trong vòng 7 ngày.</p>
+                </div>
+                <div class="hp-feature">
+                    <div class="hp-feature__icon">☎</div>
+                    <h3>Hỗ trợ 24/7</h3>
+                    <p>Tư vấn chọn size, chọn mẫu.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. CALL TO ACTION -->
+    <section class="hp-cta">
+        <div class="hp-cta__inner">
+            <div>
+                <h2>Sẵn sàng tìm đôi giày của bạn?</h2>
+                <p>Đăng ký thành viên để nhận ưu đãi cho đơn đầu tiên.</p>
+            </div>
+            <a href="@Url.Action("SignUp", "User")" class="hp-btn">Đăng ký ngay</a>
+        </div>
+    </section>
+
+</div>
