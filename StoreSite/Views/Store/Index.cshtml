@@ -1,4 +1,4 @@
-﻿@model IEnumerable<StoreSite.Controllers.SanPham>
+@model IEnumerable<StoreSite.Controllers.SanPham>
 
 @{
     ViewBag.Title = "Cửa Hàng Giày - Meisho Doshoes";
@@ -22,20 +22,20 @@
                     <!--nhập tên giày-->
                     <div class="form-group mb-3">
                         <label><b>Tìm tên giày:</b></label>
-                        <input type="text" name="TimKiem" class="form-control" placeholder="Nhập tên giày..." value="@ViewBag.CurrentSearch" />
+                        <input type="text" name="TimKiem" class="form-control" placeholder="Nhập tên giày..." value="@ViewBag.TimKiem" />
                     </div>
 
                     <!--Chọn loại giày-->
                     <div class="form-group mb-3">
                         <label><b>Loại giày:</b></label>
                         <select name="Loai" class="form-control">
-                            <option value="All" @(ViewBag.CurrentCategory == "All" ? "selected" : "")>All</option>
-                            <option value="Nike" @(ViewBag.CurrentCategory == "Nike" ? "selected" : "")>Nike</option>
-                            <option value="Adidas" @(ViewBag.CurrentCategory == "Adidas" ? "selected" : "")>Adidas</option>
-                            <option value="Puma" @(ViewBag.CurrentCategory == "Puma" ? "selected" : "")>Puma</option>
-                            <option value="Converse" @(ViewBag.CurrentCategory == "Converse" ? "selected" : "")>Converse</option>
-                            <option value="Converse" @(ViewBag.CurrentCategory == "Vans" ? "selected" : "")>Vans</option>
-                            <option value="Converse" @(ViewBag.CurrentCategory == "New Balance" ? "selected" : "")>New Balance</option>
+                            <option value="All" @(ViewBag.Loai == "All" ? "selected" : "")>All</option>
+                            <option value="Nike" @(ViewBag.Loai == "Nike" ? "selected" : "")>Nike</option>
+                            <option value="Adidas" @(ViewBag.Loai == "Adidas" ? "selected" : "")>Adidas</option>
+                            <option value="Puma" @(ViewBag.Loai == "Puma" ? "selected" : "")>Puma</option>
+                            <option value="Converse" @(ViewBag.Loai == "Converse" ? "selected" : "")>Converse</option>
+                            <option value="Converse" @(ViewBag.Loai == "Vans" ? "selected" : "")>Vans</option>
+                            <option value="Converse" @(ViewBag.Loai == "New Balance" ? "selected" : "")>New Balance</option>
                         </select>
                     </div>
 
@@ -43,9 +43,9 @@
                     <div class="form-group mb-3">
                         <label><b>Sắp xếp giá:</b></label>
                         <select name="sortOrder" class="form-control">
-                            <option value="" @(string.IsNullOrEmpty(ViewBag.CurrentSort) ? "selected" : "")>Mặc định</option>
-                            <option value="Tang_Dan" @(ViewBag.CurrentSort == "Tang_Dan" ? "selected" : "")>Giá từ thấp -> cao</option>
-                            <option value="Giam_Dan" @(ViewBag.CurrentSort == "Giam_Dan" ? "selected" : "")>Giá từ cao -> thấp</option>
+                            <option value="" @(string.IsNullOrEmpty(ViewBag.Sort) ? "selected" : "")>Mặc định</option>
+                            <option value="Tang_Dan" @(ViewBag.Sort == "Tang_Dan" ? "selected" : "")>Giá từ thấp -> cao</option>
+                            <option value="Giam_Dan" @(ViewBag.Sort == "Giam_Dan" ? "selected" : "")>Giá từ cao -> thấp</option>
                         </select>
                     </div>
 
