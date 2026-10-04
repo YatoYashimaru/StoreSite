@@ -125,7 +125,7 @@
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: var(--hp-radius);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, .15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, .65);
 }
 
 .hp-checklist {
@@ -254,6 +254,9 @@
     padding: 1.5rem;
     text-align: center;
 }
+    .hp-feature:hover {
+        transform: translateY(-4px);
+    }
 
     .hp-feature p {
         color: var(--hp-muted);
