@@ -38,7 +38,15 @@
                             <option value="Converse" @(ViewBag.Loai == "New Balance" ? "selected" : "")>New Balance</option>
                         </select>
                     </div>
+                    <div class="form-group mb-3">
+                        <label><b>Giới tính:</b></label>
+                        <select name="Gender" class="form-control">
+                            <option value="All" @(ViewBag.Gender == "All" ? "selected" : "")>All</option>
+                            <option value="Nam" @(ViewBag.Gender == "Nam" ? "selected" : "")>Nam</option>
+                            <option value="Nu" @(ViewBag.Gender == "Nữ" ? "selected" : "")>Nữ</option>
 
+                        </select>
+                    </div>
                     <!--Chọn sắp xếp theo giá tiền-->
                     <div class="form-group mb-3">
                         <label><b>Sắp xếp giá:</b></label>
@@ -89,7 +97,9 @@
                                 <img src="@item.ImgURL" class="img-product mt-2" alt="@item.Name" onerror="this.src=''" />
 
                                 <!-- Tên & Loại giày -->
-                                <small class="text-muted d-block mt-2">@item.LoaiGiay</small>
+                                <small class="text-muted d-block mt-2">@item.LoaiGiay - @item.Gender</small>
+                                <hr />
+
                                 <h6 class="font-weight-bold my-1" style="height: 40px; overflow: hidden;">@item.Name</h6>
 
                                 <!-- Giá bán -->
@@ -103,7 +113,7 @@
 
                                 <!-- Đánh giá -->
                                 <div class="small text-warning mb-2">
-                                     @item.rating / 5.0
+                                    @item.rating / 5.0
                                 </div>
 
                                 <!-- Nút thêm vào giỏ -->
