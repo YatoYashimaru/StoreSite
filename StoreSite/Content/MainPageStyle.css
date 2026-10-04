@@ -1,0 +1,301 @@
+﻿/* ========== Biến chung ========== */
+:root {
+    --hp-accent: #00b8c4;
+    --hp-accent-dark: #008c96;
+    --hp-dark: #0b1220;
+    --hp-text: #1f2937;
+    --hp-muted: #6b7280;
+    --hp-soft: #f4f7fa;
+    --hp-radius: 16px;
+    --hp-gap: clamp(1rem, 3vw, 2rem);
+}
+
+.hp, .hp * {
+    box-sizing: border-box;
+}
+
+.hp {
+    color: var(--hp-text);
+}
+
+    .hp img {
+        max-width: 100%;
+        display: block;
+    }
+
+    .hp h2 {
+        font-size: clamp(1.5rem, 4vw, 2.25rem);
+        font-weight: 800;
+        margin: .25rem 0 1rem;
+    }
+
+    .hp h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: .75rem 0 .25rem;
+    }
+
+/* ========== 1. Banner ========== */
+.ImageBanner {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    object-fit: cover;
+}
+
+/* ========== Khung chung ========== */
+.hp-section {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding: clamp(2.5rem, 6vw, 5rem) 1rem;
+}
+
+.hp-band--soft {
+    background: var(--hp-soft);
+}
+
+.hp-heading {
+    margin-bottom: 2rem;
+}
+
+.hp-heading--row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.hp-eyebrow {
+    color: var(--hp-accent-dark);
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-size: .8rem;
+}
+
+.hp-link {
+    color: var(--hp-accent-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .hp-link:hover {
+        text-decoration: underline;
+    }
+
+/* ========== Nút ========== */
+.hp-btn {
+    display: inline-block;
+    background: var(--hp-accent);
+    color: #fff;
+    padding: .8rem 1.6rem;
+    border-radius: 999px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background .2s, transform .2s;
+}
+
+    .hp-btn:hover {
+        background: var(--hp-accent-dark);
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+.hp-btn--small {
+    padding: .5rem 1.1rem;
+    font-size: .9rem;
+}
+
+/* ========== 2. Về chúng tôi ========== */
+.hp-about {
+    display: grid;
+    grid-template-columns: 1fr; /* điện thoại: xếp dọc */
+    gap: var(--hp-gap);
+    align-items: center;
+}
+
+.hp-about__text p {
+    color: var(--hp-muted);
+    line-height: 1.7;
+}
+
+.hp-about__media img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--hp-radius);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, .15);
+}
+
+.hp-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0 1.75rem;
+}
+
+    .hp-checklist li {
+        padding-left: 1.75rem;
+        margin-bottom: .6rem;
+        position: relative;
+    }
+
+        .hp-checklist li::before {
+            content: "✔";
+            position: absolute;
+            left: 0;
+            color: var(--hp-accent);
+            font-weight: 700;
+        }
+
+@media (min-width: 768px) {
+    .hp-about {
+        grid-template-columns: 1fr 1fr;
+    }
+    /* màn hình lớn: 2 cột */
+}
+
+/* ========== Lưới dùng chung ========== */
+.hp-grid {
+    display: grid;
+    gap: var(--hp-gap);
+}
+
+.hp-grid--categories {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.hp-grid--products {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.hp-grid--features {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+/* ========== 3. Danh mục ========== */
+.hp-category {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--hp-radius);
+    aspect-ratio: 3 / 4;
+    background: var(--hp-dark);
+}
+
+    .hp-category img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform .4s;
+    }
+
+    .hp-category:hover img {
+        transform: scale(1.08);
+    }
+
+    .hp-category span {
+        position: absolute;
+        inset: auto 0 0 0;
+        padding: 2rem 1.25rem 1.25rem;
+        color: #fff;
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: linear-gradient(transparent, rgba(0, 0, 0, .75));
+    }
+
+/* ========== 4. Sản phẩm ========== */
+.hp-product {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--hp-radius);
+    padding: 1rem;
+    transition: box-shadow .2s, transform .2s;
+}
+
+    .hp-product:hover {
+        box-shadow: 0 12px 28px rgba(0, 0, 0, .12);
+        transform: translateY(-4px);
+    }
+
+.hp-product__img {
+    position: relative;
+}
+
+    .hp-product__img img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 12px;
+        background: var(--hp-soft);
+    }
+
+.hp-badge {
+    position: absolute;
+    top: .6rem;
+    left: .6rem;
+    background: #ef4444;
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 700;
+    padding: .2rem .6rem;
+    border-radius: 999px;
+}
+
+.hp-price {
+    color: var(--hp-accent-dark);
+    font-weight: 800;
+    margin: 0 0 .75rem;
+}
+
+/* ========== 5. Cam kết ========== */
+.hp-feature {
+    background: #fff;
+    border-radius: var(--hp-radius);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+    .hp-feature p {
+        color: var(--hp-muted);
+        margin: 0;
+        font-size: .95rem;
+    }
+
+.hp-feature__icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto .5rem;
+    display: grid;
+    place-items: center;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    background: rgba(0, 184, 196, .12);
+    color: var(--hp-accent-dark);
+}
+
+/* ========== 6. CTA ========== */
+.hp-cta {
+    background: var(--hp-dark);
+    color: #fff;
+}
+
+.hp-cta__inner {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding: clamp(2rem, 5vw, 3.5rem) 1rem;
+    display: flex;
+    flex-wrap: wrap; /* điện thoại: nút tự xuống dòng */
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.hp-cta h2 {
+    margin: 0 0 .25rem;
+    color: #fff;
+}
+
+.hp-cta p {
+    margin: 0;
+    color: #cbd5e1;
+}
