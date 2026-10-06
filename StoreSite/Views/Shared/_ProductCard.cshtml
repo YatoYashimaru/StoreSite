@@ -1,0 +1,34 @@
+﻿@model StoreSite.Controllers.SanPham
+@{
+    var detailsUrl = Url.Action("Details", "Store", new { id = Model.Id });
+}
+
+<div class="card-product" data-href="@detailsUrl">
+
+    @if (Model.SanPhamMoi)
+    {
+        <span class="badge-new">Mới</span>
+    }
+
+    <div class="img-wrapper">
+        <img src="@Url.Content("~" + Model.ImgURL)" class="img-product" alt="@Model.Name" />
+    </div>
+
+    <small class="brand">@Model.LoaiGiay - @Model.Gender</small>
+
+    <h6 class="product-name">
+        <a href="@detailsUrl">@Model.Name</a>
+    </h6>
+
+    <div class="my-2">
+        <span class="price-sale">@Model.GiaTien.ToString("N0") đ</span>
+        @if (Model.GiaTienGoc.HasValue && Model.GiaTienGoc.Value > Model.GiaTien)
+        {
+            <span class="price-old">@Model.GiaTienGoc.Value.ToString("N0") đ</span>
+        }
+    </div>
+
+    <div class="rating">★ @Model.rating / 5.0</div>
+
+    <a href="@detailsUrl" class="btn-cart">Thêm vào giỏ</a>
+</div>

@@ -1,0 +1,21 @@
+﻿
+@model StoreSite.Models.FeaturedViewModel
+
+<div class="hp-slider">
+    @if (Model.HasPrev)
+    {
+        <button type="button" class="hp-arrow hp-arrow--prev" data-page="@(Model.Page - 1)" aria-label="Trang trước">&#8249;</button>
+    }
+
+    <div class="hp-grid hp-grid--products">
+        @foreach (var sp in Model.Items)
+        {
+            @Html.Partial("_ProductCard", sp)
+        }
+    </div>
+
+    @if (Model.HasNext)
+    {
+        <button type="button" class="hp-arrow hp-arrow--next" data-page="@(Model.Page + 1)" aria-label="Trang sau">&#8250;</button>
+    }
+</div>

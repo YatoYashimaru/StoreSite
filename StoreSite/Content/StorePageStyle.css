@@ -1,9 +1,12 @@
-﻿:root {
+﻿/* =========================================================
+   STORE PAGE: bộ lọc + thẻ sản phẩm
+   ========================================================= */
+:root {
     --hp-accent: #00b8c4;
     --hp-accent-hover: #4CCAD4;
 }
 
-/* Khung chứa bộ lọc bên trái */
+/* ---------- Bộ lọc bên trái ---------- */
 .box-filter {
     background-color: #f8f9fa;
     border: 1px solid #ddd;
@@ -12,7 +15,7 @@
     margin-bottom: 20px;
 }
 
-/* Thẻ sản phẩm: cao bằng nhau, nội dung xếp dọc */
+/* ---------- Thẻ sản phẩm ---------- */
 .card-product {
     position: relative;
     display: flex;
@@ -22,100 +25,148 @@
     border-radius: 8px;
     padding: 12px;
     background-color: #fff;
-    transition: box-shadow 0.3s, transform 0.3s;
+    transition: box-shadow .3s, transform .3s;
 }
 
     .card-product:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
         transform: translateY(-3px);
     }
 
-/* Khung ảnh cố định tỉ lệ, ảnh luôn hiển thị đủ */
+    /* Cả thẻ bấm được (data-href gắn trong _ProductCard) */
+    .card-product[data-href] {
+        cursor: pointer;
+    }
+
+    /* Bỏ style link mặc định trong thẻ (gạch chân, màu xanh) */
+    .card-product a,
+    .card-product a:link,
+    .card-product a:visited,
+    .card-product a:hover,
+    .card-product a:focus,
+    .card-product a:active {
+        text-decoration: none;
+    }
+
+/* ---------- Ảnh ---------- */
 .img-wrapper {
-    width: 100%;
-    aspect-ratio: 1 / 1; /* khung vuông; đổi 4 / 3 nếu muốn ngang hơn */
-    background-color: #f5f5f5;
-    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* khung vuông; đổi 4 / 3 nếu muốn ngang hơn */
     margin-bottom: 10px;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    overflow: hidden;
+
 }
 
 .img-product {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* không bị cắt giày */
-    mix-blend-mode: multiply; /* làm nền trắng của ảnh hòa vào nền khung */
+    object-fit: contain; /* không cắt giày */
+    mix-blend-mode: multiply; /* nền trắng của ảnh hòa vào nền khung */
 }
 
-/* Nhãn "Mới" nằm đè lên góc ảnh */
+/* Nhãn "Mới" đè lên góc ảnh */
 .badge-new {
     position: absolute;
     top: 20px;
     left: 20px;
     z-index: 2;
-    background-color: red;
-    color: white;
     padding: 3px 8px;
-    font-size: 12px;
     border-radius: 3px;
+    background-color: red;
+    color: #fff;
+    font-size: 12px;
     font-weight: bold;
 }
 
-/* Phần thông tin */
+/* ---------- Thông tin ---------- */
 .card-product .brand {
     font-size: 13px;
     color: #6c757d;
 }
 
 .card-product .product-name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* tên dài quá thì cắt "..." */
+    min-height: 2.6em; /* luôn chiếm chỗ 2 dòng */
+    margin: 4px 0 8px;
+    overflow: hidden;
     font-size: 16px;
     font-weight: 600;
     line-height: 1.3;
-    min-height: 2.6em; /* luôn chiếm chỗ 2 dòng */
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* tên dài quá thì cắt "..." */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    margin-bottom: 8px;
 }
 
-/* Giá */
+    .card-product .product-name a,
+    .card-product .product-name a:visited {
+        color: inherit; /* giữ màu chữ thường thay vì xanh link */
+    }
+
+        .card-product .product-name a:hover {
+            color: var(--hp-accent);
+        }
+
+/* ---------- Giá & đánh giá ---------- */
 .price-sale {
     color: #d9534f;
-    font-weight: bold;
     font-size: 17px;
+    font-weight: bold;
+
 }
 
 .price-old {
-    text-decoration: line-through;
+    margin-left: 5px;
     color: #888;
     font-size: 13px;
-    margin-left: 5px;
+    text-decoration: line-through;
 }
 
 .rating {
-    font-size: 13px;
-    color: #f5b301;
     margin-bottom: 10px;
-}
+    color: #f5b301;
+    font-size: 13px;
 
-/* Nút luôn nằm đáy card */
-.btn-cart {
-    margin-top: auto; /* đẩy xuống đáy */
-    background-color: var(--hp-accent);
-    color: white;
-    border: none;
+}
+/* ---------- Nút thêm vào giỏ (dùng được cho cả <button> và <a>) ---------- */
+.btn-cart,
+.card-product a.btn-cart,
+.card-product a.btn-cart:link,
+.card-product a.btn-cart:visited,
+.card-product a.btn-cart:hover,
+.card-product a.btn-cart:focus,
+.card-product a.btn-cart:active {
+    box-sizing: border-box;
+    display: block;
     width: 100%;
     padding: 8px;
+    border: none;
     border-radius: 4px;
+    background-color: var(--hp-accent);
+    color: #fff;
     font-weight: bold;
+    text-align: center;
+    text-decoration: none;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color .2s;
 }
 
-    .btn-cart:hover {
+.btn-cart {
+    margin-top: auto; /* luôn nằm đáy card */
+}
+
+    .btn-cart:hover,
+    .card-product a.btn-cart:hover {
         background-color: var(--hp-accent-hover);
     }
+
+/* Chặn gạch chân trong thẻ sản phẩm, kể cả khi framework đè */
+.card-product a,
+.card-product a:hover,
+.card-product a:focus {
+    text-decoration: none !important;
+
+}

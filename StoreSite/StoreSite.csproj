@@ -124,6 +124,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ProductDetailsViewModel.cs" />
+    <Compile Include="Models\FeaturedViewModel.cs" />
+    <Compile Include="Models\ThemeHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +150,7 @@
     <Content Include="Content\MainPageStyle.css" />
     <Content Include="Content\LayoutStyle.css" />
     <Content Include="Content\MainPageStyle.css" />
+    <Content Include="Content\ProductDetails.css" />
     <Content Include="Content\StorePageStyle.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -180,16 +184,19 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\User\Login.cshtml" />
     <Content Include="Views\User\SignUp.cshtml" />
     <Content Include="Views\Store\Index.cshtml" />
+    <Content Include="Views\Shared\_ProductCard.cshtml" />
+    <Content Include="Views\Shared\_FeaturedProducts.cshtml" />
+    <Content Include="Views\Store\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="ImageAssets\" />
-    <Folder Include="Models\" />
+    <Folder Include="Views\Orders\" />
+    <Folder Include="Views\ThemeHelper\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

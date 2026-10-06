@@ -57,7 +57,7 @@
                         </select>
                     </div>
 
-                    <!--Nút bấm-->
+                    <!--Nút bấm confirm-->
                     <button type="submit" class="btn btn-primary btn-block w-100">Lọc sản phẩm</button>
                     <a href="@Url.Action("Index", "Store")" class="btn btn-outline-secondary btn-block w-100 mt-2">Bỏ lọc</a>
                 }
@@ -85,40 +85,7 @@
                     foreach (var item in Model)
                     {
                         <div class="col-md-4 col-sm-6">
-                            <div class="card-product">
-
-                                <!-- Nhãn sản phẩm mới (Nếu SanPhamMoi == true) -->
-                                @if (item.SanPhamMoi)
-                                {
-                                    <span class="badge-new">Mới</span>
-                                }
-
-                                <!-- Ảnh sản phẩm -->
-                                <img src="@item.ImgURL" class="img-product mt-2" alt="@item.Name" onerror="this.src=''" />
-
-                                <!-- Tên & Loại giày -->
-                                <small class="text-muted d-block mt-2">@item.LoaiGiay - @item.Gender</small>
-                                <hr />
-
-                                <h6 class="font-weight-bold my-1" style="height: 40px; overflow: hidden;">@item.Name</h6>
-
-                                <!-- Giá bán -->
-                                <div class="my-2">
-                                    <span class="price-sale">@item.GiaTien.ToString("N0") đ</span>
-                                    @if (item.GiaTienGoc.HasValue)
-                                    {
-                                        <span class="price-old">@item.GiaTienGoc.Value.ToString("N0") đ</span>
-                                    }
-                                </div>
-
-                                <!-- Đánh giá -->
-                                <div class="small text-warning mb-2">
-                                    @item.rating / 5.0
-                                </div>
-
-                                <!-- Nút thêm vào giỏ -->
-                                <button class="btn-cart">Thêm vào giỏ</button>
-                            </div>
+                            @Html.Partial("_ProductCard", item)
                         </div>
                     }
                 }

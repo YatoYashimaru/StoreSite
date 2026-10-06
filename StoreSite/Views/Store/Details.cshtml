@@ -1,0 +1,148 @@
+﻿
+@{
+    ViewBag.Title = "Details";
+}
+
+@model StoreSite.Models.ProductDetailsViewModel
+@{
+    var p = Model.Product;
+    var t = Model.Theme;
+    ViewBag.Title = p.Name;
+    bool coGiam = p.GiaTienGoc.HasValue && p.GiaTienGoc.Value > p.GiaTien;
+    int phanTram = coGiam ? (int)Math.Round((1 - p.GiaTien / p.GiaTienGoc.Value) * 100) : 0;
+}
+
+@section Styles {
+    <link href="~/Content/StorePageStyle.css" rel="stylesheet" />
+    <link href="~/Content/ProductDetails.css?v=3" rel="stylesheet" />
+
+    @if (t != null)
+    {
+        <style>
+            .pd-page {
+                --hp-accent: @t.Accent;
+                --hp-accent-hover: color-mix(in srgb, @t.Accent 80%, white);
+                --pd-panel: @t.Panel;
+                --pd-text: @t.Text;
+            }
+        </style>
+    }
+
+    @if (t != null && !string.IsNullOrEmpty(t.ImageUrl))
+    {
+        <style>
+            body { background: url('@Url.Content(t.ImageUrl)') center / cover no-repeat fixed; }
+        </style>
+    }
+}
+
+<div class="pd-page @(t != null ? "is-themed" : "")">
+
+    <nav class="pd-breadcrumb">
+        <a href="@Url.Action("Index", "Home")">Trang chủ</a> /
+        <a href="@Url.Action("Index", "Store")">Cửa hàng</a> /
+        <span>@p.Name</span>
+    </nav>
+
+    <div class="pd-layout">
+
+        <!-- Ảnh -->
+        <div class="pd-img-wrap">
+            @if (p.SanPhamMoi)
+            {
+                <span class="badge-new">Mới</span>
+            }
+            <img src="@Url.Content("~" + p.ImgURL)" alt="@p.Name" class="pd-img" />
+        </div>
+
+        <!-- Thông tin -->
+        <div class="pd-info">
+            <small class="text-muted">@p.LoaiGiay - @p.Gender</small>
+            <h1 class="pd-name">@p.Name</h1>
+            <div class="pd-rating">★ @p.rating / 5.0</div>
+
+            <div class="pd-price">
+                <span class="price-sale">@p.GiaTien.ToString("N0") đ</span>
+                @if (coGiam)
+                {
+                    <span class="price-old">@p.GiaTienGoc.Value.ToString("N0") đ</span>
+                    <span class="pd-discount">-@phanTram%</span>
+                }
+            </div>
+
+            <hr class="pd-divider" />
+
+            <div class="pd-label">Chọn size</div>
+            <div id="pd-sizes" class="pd-sizes">
+                @foreach (var size in new[] { 36, 37, 38, 39, 40, 41, 42, 43, 44, 45 })
+                {
+                    <button type="button" class="pd-size" data-size="@size">@size</button>
+                }
+            </div>
+            <div id="pd-size-error" class="text-danger small mt-1" style="display:none;">Vui lòng chọn size.</div>
+
+            <div class="pd-label">Số lượng</div>
+            <div class="pd-qty">
+                <button type="button" id="qty-minus">−</button>
+                <input type="number" id="qty" value="1" min="1" max="10" />
+                <button type="button" id="qty-plus">+</button>
+            </div>
+
+            <button type="button" id="btn-add-cart" class="btn-cart pd-add" data-id="@p.Id">Thêm vào giỏ hàng</button>
+
+            <ul class="pd-policy">
+                <li>Cam kết 100% hàng chính hãng</li>
+                <li>Kiểm tra hàng trước khi nhận</li>
+                <li>Đổi size miễn phí trong 14 ngày</li>
+            </ul>
+
+            @if (!string.IsNullOrWhiteSpace(p.Description))
+            {
+                <section class="pd-desc">
+                    <hr />
+                    <h5 class="pd-section-title">Mô tả sản phẩm</h5>
+                    <div class="pd-desc__body">@p.Description</div>
+                </section>
+            }
+        </div>
+    </div>
+
+    <!-- Sản phẩm liên quan -->
+    @if (Model.Related.Any())
+    {
+        <h4 class="pd-related-title">Sản phẩm liên quan</h4>
+        <div class="pd-related">
+            @foreach (var item in Model.Related)
+            {
+                @Html.Partial("_ProductCard", item)
+            }
+        </div>
+    }
+</div>
+
+<script>
+    (function () {
+        var selected = null;
+        var sizes = document.getElementById("pd-sizes");
+        var err = document.getElementById("pd-size-error");
+        var qty = document.getElementById("qty");
+
+        sizes.addEventListener("click", function (e) {
+            var b = e.target.closest(".pd-size");
+            if (!b) return;
+            Array.prototype.forEach.call(sizes.children, function (c) { c.classList.remove("active"); });
+            b.classList.add("active");
+            selected = b.dataset.size;
+            err.style.display = "none";
+        });
+
+        document.getElementById("qty-minus").onclick = function () { qty.value = Math.max(1, +qty.value - 1); };
+        document.getElementById("qty-plus").onclick = function () { qty.value = Math.min(10, +qty.value + 1); };
+
+        document.getElementById("btn-add-cart").onclick = function () {
+            if (!selected) { err.style.display = "block"; return; }
+            // TODO: gọi action thêm vào giỏ (bước tiếp theo)
+            alert("Đã chọn size " + selected + ", số lượng " + qty.value);
+        };
+    })();
+</script>
