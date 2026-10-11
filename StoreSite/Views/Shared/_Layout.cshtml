@@ -34,8 +34,16 @@
 
             <ul class="site-menu">
                 <li><a href="#">Giỏ hàng</a></li>
-                <li><a href="#">Đăng nhập</a></li>
-                <li><a href="#">Đăng ký</a></li>
+                @if (Session["NguoiDungId"] != null)
+                {
+                    <li><a href="@Url.Action("UserPage", "User")">Xin chào, @Session["HoTen"]</a></li>
+                    <li><a href="@Url.Action("Logout", "User")">Đăng xuất</a></li>
+                }
+                else
+                {
+                    <li><a href="@Url.Action("Login", "User")">Đăng nhập</a></li>
+                    <li><a href="@Url.Action("SignUp", "User")">Đăng ký</a></li>
+                }
             </ul>
         </nav>
         <hr />

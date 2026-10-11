@@ -34,7 +34,7 @@ namespace StoreSite.Controllers
             return View(BuildFeatured(1));
         }
 
-        // AJAX: trả về partial của trang kế/trước
+        //  trả về partial của trang kế/trước
         public ActionResult FeaturedPage(int page = 1)
         {
             return PartialView("_FeaturedProducts", BuildFeatured(page));

@@ -27,6 +27,8 @@ namespace StoreSite.Models
               new ProductTheme { Accent = "#5690BF", Panel = "rgba(233,253,253,.85)" } },
             { "Adidas F50 Messi",
               new ProductTheme { Accent = "#A1EDDE", Panel = "rgba(222, 251, 243, 0.8)" } },
+            { "Nike Mercurial Superfly",
+              new ProductTheme { Accent = "#DE533A", Panel = "rgba(243, 197, 197, 0.8)" } },
         };
 
         public static ProductTheme GetTheme(string imgUrl)

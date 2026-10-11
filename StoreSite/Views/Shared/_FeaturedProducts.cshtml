@@ -1,21 +1,34 @@
-﻿
-@model StoreSite.Models.FeaturedViewModel
+﻿@model StoreSite.Models.FeaturedViewModel
 
-<div class="hp-slider">
+<div class="hp-featured-grid">
+    @if (Model.Items == null || !Model.Items.Any())
+    {
+        <div class="hp-no-items">Không có sản phẩm nổi bật.</div>
+    }
+    else
+    {
+        <div class="hp-grid hp-grid--products">
+            @foreach (var item in Model.Items)
+            {
+                <div class="hp-product">
+                    @Html.Partial("_ProductCard", item)
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<div class="hp-pagination" aria-label="Featured pagination">
     @if (Model.HasPrev)
     {
-        <button type="button" class="hp-arrow hp-arrow--prev" data-page="@(Model.Page - 1)" aria-label="Trang trước">&#8249;</button>
+        <button type="button" class="hp-arrow" data-page="@(Model.Page - 1)">←</button>
     }
-
-    <div class="hp-grid hp-grid--products">
-        @foreach (var sp in Model.Items)
-        {
-            @Html.Partial("_ProductCard", sp)
-        }
-    </div>
-
+    @for (int i = 1; i <= Model.TotalPages; i++)
+    {
+        <button type="button" class="hp-arrow @(i == Model.Page ? "active" : "")" data-page="@i">@i</button>
+    }
     @if (Model.HasNext)
     {
-        <button type="button" class="hp-arrow hp-arrow--next" data-page="@(Model.Page + 1)" aria-label="Trang sau">&#8250;</button>
+        <button type="button" class="hp-arrow" data-page="@(Model.Page + 1)">→</button>
     }
 </div>

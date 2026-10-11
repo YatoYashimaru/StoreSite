@@ -1,7 +1,40 @@
-﻿
-@{
-    ViewBag.Title = "Login";
+﻿@{
+    ViewBag.Title = "Đăng nhập";
+}
+@section styles {
+    <link href="~/Content/UserPageStyle.css" rel="stylesheet" />
 }
 
-<h2>Login</h2>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2>Đăng nhập</h2>
 
+        @if (TempData["ThongBao"] != null)
+        {
+            <div class="auth-thanhcong">@TempData["ThongBao"]</div>
+        }
+
+        @if (ViewBag.Loi != null)
+        {
+            <div class="auth-loi">@ViewBag.Loi</div>
+        }
+
+        <form class="auth-form" action="@Url.Action("Login", "User")" method="post">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" name="Email" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" name="MatKhau" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn-auth-submit">Đăng nhập</button>
+        </form>
+
+        <p class="auth-switch">
+            Chưa có tài khoản? <a href="@Url.Action("SignUp", "User")">Đăng ký</a>
+        </p>
+    </div>
+</div>

@@ -47,7 +47,7 @@ namespace StoreSite.Controllers
                 },
                 new SanPham { Id = 4, Name="Nike Dunk Low", LoaiGiay="Nike", Gender="Nam",
                     GiaTien=2650000, GiaTienGoc=3100000,
-                    ImgURL="/ImageAssets/Men/Nike Dunk Low.jpeg", rating=4.8, SanPhamMoi=true,
+                    ImgURL="/ImageAssets/Men/Nike Dunk Low.jpeg", rating=4.8, SanPhamMoi=false,
                     Description="Nike Dunk Low là một trong những mẫu giày thể thao nổi tiếng của Nike, được ra mắt lần đầu tiên vào năm 1985. "
                 },
                 new SanPham { Id = 5, Name="Puma Palermo Special", LoaiGiay="Puma", Gender="Nam",
@@ -84,6 +84,11 @@ namespace StoreSite.Controllers
                     GiaTien=4500000, GiaTienGoc=5000000,
                     ImgURL="/ImageAssets/Men/Adidas F50 Messi.jpg", rating=5, SanPhamMoi=true,
                     Description="F50 Messi là đôi giày tượng trưng cho hình tượng Argentina bóng đá."
+                },
+                new SanPham { Id = 12, Name="Nike Mercurial Superfly", LoaiGiay="Nike", Gender="Nam",
+                    GiaTien=7500000, GiaTienGoc=8000000,
+                    ImgURL="/ImageAssets/Men/Nike Mercurial Superfly.jpg", rating=5, SanPhamMoi=true,
+                    Description="Nike Mercurial Superfly là chiếc giày vàng mang hình ảnh của cầu thủ Cristiano Ronaldo"
                 },
             };
         }
