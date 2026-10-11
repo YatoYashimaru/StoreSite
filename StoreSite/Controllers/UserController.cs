@@ -17,5 +17,9 @@ namespace StoreSite.Controllers
         {
             return View();
         }
+        public ActionResult UserPage()
+        {
+            return View();
+        }
     }
 }

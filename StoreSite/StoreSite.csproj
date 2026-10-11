@@ -152,6 +152,7 @@
     <Content Include="Content\MainPageStyle.css" />
     <Content Include="Content\ProductDetails.css" />
     <Content Include="Content\StorePageStyle.css" />
+    <Content Include="Content\UserPageStyle.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -191,11 +192,15 @@
     <Content Include="Views\Shared\_ProductCard.cshtml" />
     <Content Include="Views\Shared\_FeaturedProducts.cshtml" />
     <Content Include="Views\Store\Details.cshtml" />
+    <Content Include="Views\Shared\_LayoutUser.cshtml" />
+    <Content Include="Views\User\UserPage.cshtml" />
+    <Content Include="Views\Orders\OdersPage.cshtml" />
+    <Content Include="Views\Orders\PaymentPage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="ImageAssets\" />
-    <Folder Include="Views\Orders\" />
+    <Folder Include="Views\Admin\" />
     <Folder Include="Views\ThemeHelper\" />
   </ItemGroup>
   <ItemGroup>
