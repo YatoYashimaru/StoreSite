@@ -13,8 +13,8 @@
 }
 
 @section Styles {
-    <link href="~/Content/StorePageStyle.css" rel="stylesheet" />
-    <link href="~/Content/ProductDetails.css?v=3" rel="stylesheet" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/StorePageStyle.css")?v=@DateTime.Now.Ticks" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/ProductDetails.css")?v=@DateTime.Now.Ticks" />
 
     @if (t != null)
     {
@@ -31,7 +31,7 @@
     @if (t != null && !string.IsNullOrEmpty(t.ImageUrl))
     {
         <style>
-            body { background: url('@Url.Content(t.ImageUrl)') center / cover no-repeat fixed; }
+            body { background: url('@Url.Content(t.ImageUrl)') center / no-repeat fixed; }
         </style>
     }
 }
@@ -110,7 +110,7 @@
     <!-- Sản phẩm liên quan -->
     @if (Model.Related.Any())
     {
-        <h4 class="pd-related-title">Sản phẩm liên quan</h4>
+        <h4 class="pd-related-title">Sản phẩm mới</h4>
         <div class="pd-related">
             @foreach (var item in Model.Related)
             {

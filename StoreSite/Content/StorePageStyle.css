@@ -14,6 +14,13 @@
     padding: 15px;
     margin-bottom: 20px;
 }
+    .box-filter input,
+    .box-filter select,
+    .box-filter textarea {
+        width: 100%;
+        max-width: 100%;
+    }
+
 
 /* ---------- Thẻ sản phẩm ---------- */
 .card-product {
@@ -23,7 +30,7 @@
     height: 100%; /* các card cùng hàng cao bằng nhau */
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 12px;
+    padding: 8px;
     background-color: #fff;
     transition: box-shadow .3s, transform .3s;
 }
@@ -94,7 +101,7 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2; /* tên dài quá thì cắt "..." */
     min-height: 2.6em; /* luôn chiếm chỗ 2 dòng */
-    margin: 4px 0 8px;
+    margin: 3px 0 3px;
     overflow: hidden;
     font-size: 16px;
     font-weight: 600;
@@ -113,7 +120,7 @@
 /* ---------- Giá & đánh giá ---------- */
 .price-sale {
     color: #d9534f;
-    font-size: 17px;
+    font-size: 18px;
     font-weight: bold;
 
 }

@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section styles {<link href="~/Content/StorePageStyle.css" rel="stylesheet" />}
+@section styles {<link rel="stylesheet" href="@Url.Content("~/Content/StorePageStyle.css")?v=@DateTime.Now.Ticks" />}
 
 <!--GIAO DIỆN CHÍNH-->
 <div class="container my-4">
@@ -84,7 +84,7 @@
                 {
                     foreach (var item in Model)
                     {
-                        <div class="col-md-4 col-sm-6">
+                        <div class="col-md-3 col-sm-6">
                             @Html.Partial("_ProductCard", item)
                         </div>
                     }

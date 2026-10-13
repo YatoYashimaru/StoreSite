@@ -4,16 +4,15 @@
 
 @model StoreSite.Models.FeaturedViewModel
 @section Styles {
-    <link href="~/Content/MainPageStyle.css" rel="stylesheet" />
-    <link href="~/Content/StorePageStyle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/StorePageStyle.css")?v=@DateTime.Now.Ticks" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/MainPageStyle.css")?v=@DateTime.Now.Ticks" />
 }
 
 <div class="hp">
 
     <!-- 1. BANNER -->
     <section class="sectionbardivide"></section>
-    <section class="hp-hero">
-        <img src="~/ImageAssets/SneakerBanner.jpg" class="ImageBanner" alt="Sneaker Throwback Future" />
+    <section class="hp-section ImageBannerContainer" id="ImageBannerID">
     </section>
     <section class="sectionbardivide"></section>
     <!-- 2. VỀ CHÚNG TÔI -->
@@ -37,7 +36,37 @@
         </div>
     </section>
     <section class="sectionbardivide"></section>
-    <!-- 3. DANH MỤC -->
+    <!-- 3.1 DANH MỤC nhãn hàng -->
+    <section class="hp-section">
+        <div class="hp-heading">
+            <span class="hp-eyebrow">Danh mục</span>
+            <h2>Nhãn hàng giày theo sở thích bạn</h2>
+        </div>
+        <div class="hp-grid hp-grid--categories">
+            <a href="@Url.Action("Index", "Store")" class="hp-category">
+                <img src="" alt="" />
+                <span>Adidas</span>
+            </a>
+            <a href="@Url.Action("Index", "Store")" class="hp-category">
+                <img src="" alt="" />
+                <span>Nike</span>
+            </a>
+            <a href="@Url.Action("Index", "Store")" class="hp-category">
+                <img src="" alt="" />
+                <span>Puma</span>
+            </a>
+            <a href="@Url.Action("Index", "Store")" class="hp-category">
+                <img src="" alt="" />
+                <span>New Balance</span>
+            </a>
+            <a href="@Url.Action("Index", "Store")" class="hp-category">
+                <img src="" alt="" />
+                <span>Converse</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 3.2 DANH MỤC -->
     <section class="hp-section">
         <div class="hp-heading">
             <span class="hp-eyebrow">Danh mục</span>
@@ -70,6 +99,7 @@
             @Html.Partial("_FeaturedProducts", Model)
         </div>
     </section>
+
     <section class="sectionbardivide"></section>
 
     <!-- Những người nổi tiếng đã nói gì về chúng tôi?-->
@@ -149,7 +179,7 @@
                 <div class="hp-feature">
                     <div class="hp-feature__icon">↺</div>
                     <h3>Đổi trả dễ</h3>
-                    <p>Đổi size trong vòng 7 ngày.</p>
+                    <p>Đổi size trong vòng 14 ngày.</p>
                 </div>
                 <div class="hp-feature">
                     <div class="hp-feature__icon">☎</div>
@@ -188,4 +218,52 @@ document.addEventListener("click", function (e) {
             container.style.opacity = 1;
         });
 });
+</script>
+<script>
+    let currentimg = 1;
+    const totalImages = 3; // Tổng số lượng ảnh của bạn
+
+    // Mảng chứa đường dẫn ảnh chuẩn từ ASP.NET
+    const bannerUrls = [
+        '@Url.Content("~/ImageAssets/ImgBanner/1.jpg")',
+        '@Url.Content("~/ImageAssets/ImgBanner/2.jpg")',
+        '@Url.Content("~/ImageAssets/ImgBanner/3.jpg")'
+    ];
+
+    let imgContainer = document.getElementById('ImageBannerID');
+
+    // Bước 1: Dùng innerHTML để khởi tạo và nhét TẤT CẢ ảnh vào khung ngay từ đầu
+    function initBanner() {
+        let content = '';
+        for (let i = 0; i < bannerUrls.length; i++) {
+            // Ảnh đầu tiên (index 0 ứng với ảnh 1) sẽ có sẵn class active
+            let activeClass = (i === 0) ? 'active' : '';
+            content += `<img src="${bannerUrls[i]}" class="ImageBanner ${activeClass}" alt="Sneaker Throwback Future">`;
+        }
+        imgContainer.innerHTML = content;
+    }
+
+    // Bước 2: Hàm chuyển ảnh mượt mà
+    fnChangeBanner = function() {
+        let images = imgContainer.getElementsByTagName('img');
+        if (images.length === 0) return;
+
+        // Xóa class active của ảnh hiện tại
+        images[currentimg - 1].classList.remove('active');
+
+        // Tăng biến đếm sang ảnh tiếp theo
+        currentimg++;
+        if (currentimg > totalImages) {
+            currentimg = 1;
+        }
+
+        // Thêm class active cho ảnh mới để nó mờ dần hiện lên nhờ CSS transition
+        images[currentimg - 1].classList.add('active');
+    }
+
+    // Chạy khởi tạo render ảnh lúc vừa tải trang
+    initBanner();
+
+    // Cứ mỗi 3 giây gọi hàm đổi ảnh một lần
+    setInterval(fnChangeBanner, 3000);
 </script>

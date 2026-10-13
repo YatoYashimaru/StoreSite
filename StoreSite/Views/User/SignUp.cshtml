@@ -1,45 +1,77 @@
 ﻿@{
     ViewBag.Title = "Đăng ký";
 }
+
 @section styles {
-    <link href="~/Content/UserPageStyle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/UserPageStyle.css")?v=@DateTime.Now.Ticks" />
 }
 
 <div class="auth-wrapper">
     <div class="auth-card">
-        <h2>Tạo tài khoản mới</h2>
 
-        @if (ViewBag.Loi != null)
-        {
-            <div class="auth-loi">@ViewBag.Loi</div>
-        }
+        <aside class="auth-aside">
+            <a href="@Url.Action("Index", "Home")" class="auth-aside__brand">Meisho Doshoes</a>
 
-        <form class="auth-form" action="@Url.Action("SignUp", "User")" method="post">
-            <div class="form-group">
-                <label>Họ và tên</label>
-                <input type="text" name="HoTen" class="form-control" />
+            <div class="auth-aside__body">
+                <h2>Tham gia Meisho Doshoes</h2>
+                <p>Tạo tài khoản để lưu đơn hàng và nhận ưu đãi cho sản phẩm mới.</p>
+
+                <ul class="auth-perks">
+                    <li>100% giày chính hãng</li>
+                    <li>Kiểm tra hàng trước khi nhận</li>
+                    <li>Đổi size miễn phí trong 14 ngày</li>
+                </ul>
             </div>
+        </aside>
 
-            <div class="form-group">
-                <label>Email</label>
-                <input type="text" name="Email" class="form-control" />
-            </div>
+        <section class="auth-main">
+            <nav class="auth-tabs" aria-label="Đăng nhập hoặc đăng ký">
+                <a href="@Url.Action("Login", "User")">Đăng nhập</a>
+                <a href="@Url.Action("SignUp", "User")" class="is-active" aria-current="page">Đăng ký</a>
+            </nav>
 
-            <div class="form-group">
-                <label>Mật khẩu</label>
-                <input type="password" name="MatKhau" class="form-control" />
-            </div>
+            <h1 class="auth-title">Tạo tài khoản mới</h1>
+            <p class="auth-sub">Chỉ mất chưa đến một phút.</p>
 
-            <div class="form-group">
-                <label>Xác nhận mật khẩu</label>
-                <input type="password" name="XacNhanMatKhau" class="form-control" />
-            </div>
+            @if (ViewBag.Loi != null)
+            {
+                <div class="auth-alert auth-alert--error" role="alert">@ViewBag.Loi</div>
+            }
 
-            <button type="submit" class="btn-auth-submit">Đăng ký</button>
-        </form>
+            <form class="auth-form" action="@Url.Action("SignUp", "User")" method="post">
+                <div class="auth-field">
+                    <label for="HoTen">Họ và tên</label>
+                    <input id="HoTen" name="HoTen" type="text" class="auth-input"
+                           value="@Request.Form["HoTen"]" placeholder="Nguyễn Văn A"
+                           autocomplete="name" required autofocus />
+                </div>
 
-        <p class="auth-switch">
-            Đã có tài khoản? <a href="@Url.Action("Login", "User")">Đăng nhập</a>
-        </p>
+                <div class="auth-field">
+                    <label for="Email">Email</label>
+                    <input id="Email" name="Email" type="email" class="auth-input"
+                           value="@Request.Form["Email"]" placeholder="User@example.com"
+                           autocomplete="email" required />
+                </div>
+
+                <div class="auth-field">
+                    <label for="MatKhau">Mật khẩu</label>
+                    <input id="MatKhau" name="MatKhau" type="password" class="auth-input"
+                           autocomplete="new-password" minlength="6" required />
+                    <p class="auth-hint">Tối thiểu 8 ký tự.</p>
+                </div>
+
+                <div class="auth-field">
+                    <label for="XacNhanMatKhau">Xác nhận mật khẩu</label>
+                    <input id="XacNhanMatKhau" name="XacNhanMatKhau" type="password" class="auth-input"
+                           autocomplete="new-password" required />
+                </div>
+
+                <button type="submit" class="auth-submit">Đăng ký</button>
+            </form>
+
+            <p class="auth-switch">
+                Đã có tài khoản? <a href="@Url.Action("Login", "User")">Đăng nhập</a>
+            </p>
+        </section>
     </div>
 </div>

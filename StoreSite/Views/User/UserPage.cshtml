@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_LayoutUser.cshtml";
 }
 @section Styles {
-    <link href="~/Content/UserPageStyle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/UserPageStyle.css")?v=@DateTime.Now.Ticks" />
 }
 
 <div>

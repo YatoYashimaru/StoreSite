@@ -6,8 +6,8 @@
     <title>@ViewBag.Title - Meisho Doshoes Store Site</title>
 
     @Styles.Render("~/Content/css")
-    <link href="~/Content/LayoutStyle.css" rel="stylesheet" />
-    
+    <link rel="stylesheet" href="@Url.Content("~/Content/LayoutStyle.css")?v=@DateTime.Now.Ticks" />
+
 
     @RenderSection("styles", required: false)
     @Scripts.Render("~/bundles/modernizr")
@@ -29,7 +29,7 @@
             </ul>
 
             <form class="search-form" action="@Url.Action("Index", "Store")" method="get">
-                <input type="text" name="TimKiem" placeholder="Tìm Giày..." value="@ViewBag.TimKiem" />
+                <input type="text" name="TimKiem" placeholder="⌕ Tìm Giày..." value="@ViewBag.TimKiem" />
             </form>
 
             <ul class="site-menu">
@@ -62,7 +62,7 @@
                     <h5>Về Thành Viên Nhóm</h5>
                     <ul class="list-unstyled small">
                         <li><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1" class="footer-link">GIỚI THIỆU</a></li>
-                        <li><a href="https://www.facebook.com/share/g/19ZjhzT21U/?mibextid=wwXIfr" class="footer-link">TUYỂN DỤNG</a></li>
+                        <li><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1" class="footer-link">TUYỂN DỤNG</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3 mb-4">

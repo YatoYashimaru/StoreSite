@@ -42,6 +42,27 @@
     max-height: 80vh;
     object-fit: cover;
 }
+.ImageBannerContainer {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+}
+
+.ImageBanner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+    .ImageBanner.active {
+        opacity: 1; 
+    }
 
 /* ========== Khung chung ========== */
 .hp-section {

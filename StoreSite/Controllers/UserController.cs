@@ -25,9 +25,9 @@ namespace StoreSite.Controllers
                 return View();
             }
 
-            if (MatKhau.Length < 6)
+            if (MatKhau.Length < 8)
             {
-                ViewBag.Loi = "Mật khẩu phải từ 6 ký tự trở lên";
+                ViewBag.Loi = "Mật khẩu phải từ 8 ký tự trở lên";
                 return View();
             }
 

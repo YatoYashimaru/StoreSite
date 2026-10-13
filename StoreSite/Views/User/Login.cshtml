@@ -1,40 +1,68 @@
 ﻿@{
     ViewBag.Title = "Đăng nhập";
 }
+
 @section styles {
-    <link href="~/Content/UserPageStyle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/UserPageStyle.css")?v=@DateTime.Now.Ticks" />
 }
 
 <div class="auth-wrapper">
     <div class="auth-card">
-        <h2>Đăng nhập</h2>
 
-        @if (TempData["ThongBao"] != null)
-        {
-            <div class="auth-thanhcong">@TempData["ThongBao"]</div>
-        }
+        <aside class="auth-aside">
+            <a href="@Url.Action("Index", "Home")" class="auth-aside__brand">Meisho Doshoes</a>
 
-        @if (ViewBag.Loi != null)
-        {
-            <div class="auth-loi">@ViewBag.Loi</div>
-        }
+            <div class="auth-aside__body">
+                <h2>Chào mừng trở lại</h2>
+                <p>Đăng nhập để theo dõi đơn hàng và mua sắm nhanh hơn.</p>
 
-        <form class="auth-form" action="@Url.Action("Login", "User")" method="post">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="text" name="Email" class="form-control" />
+                <ul class="auth-perks">
+                    <li>100% giày chính hãng</li>
+                    <li>Kiểm tra hàng trước khi nhận</li>
+                    <li>Đổi size miễn phí trong 14 ngày</li>
+                </ul>
             </div>
+        </aside>
 
-            <div class="form-group">
-                <label>Mật khẩu</label>
-                <input type="password" name="MatKhau" class="form-control" />
-            </div>
+        <section class="auth-main">
+            <nav class="auth-tabs" aria-label="Đăng nhập hoặc đăng ký">
+                <a href="@Url.Action("Login", "User")" class="is-active" aria-current="page">Đăng nhập</a>
+                <a href="@Url.Action("SignUp", "User")">Đăng ký</a>
+            </nav>
 
-            <button type="submit" class="btn-auth-submit">Đăng nhập</button>
-        </form>
+            <h1 class="auth-title">Đăng nhập</h1>
+            <p class="auth-sub">Nhập email và mật khẩu để tiếp tục.</p>
 
-        <p class="auth-switch">
-            Chưa có tài khoản? <a href="@Url.Action("SignUp", "User")">Đăng ký</a>
-        </p>
+            @if (TempData["ThongBao"] != null)
+            {
+                <div class="auth-alert auth-alert--success" role="status">@TempData["ThongBao"]</div>
+            }
+
+            @if (ViewBag.Loi != null)
+            {
+                <div class="auth-alert auth-alert--error" role="alert">@ViewBag.Loi</div>
+            }
+
+            <form class="auth-form" action="@Url.Action("Login", "User")" method="post">
+                <div class="auth-field">
+                    <label for="Email">Email</label>
+                    <input id="Email" name="Email" type="email" class="auth-input"
+                           value="@Request.Form["Email"]" placeholder="User@example.com"
+                           autocomplete="email" required autofocus />
+                </div>
+
+                <div class="auth-field">
+                    <label for="MatKhau">Mật khẩu</label>
+                    <input id="MatKhau" name="MatKhau" type="password" class="auth-input"
+                           autocomplete="current-password" required />
+                </div>
+
+                <button type="submit" class="auth-submit">Đăng nhập</button>
+            </form>
+
+            <p class="auth-switch">
+                Chưa có tài khoản? <a href="@Url.Action("SignUp", "User")">Đăng ký ngay</a>
+            </p>
+        </section>
     </div>
 </div>
