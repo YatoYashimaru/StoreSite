@@ -6,7 +6,6 @@
 @model StoreSite.Models.ProductDetailsViewModel
 @{
     var p = Model.Product;
-    var t = Model.Theme;
     ViewBag.Title = p.Name;
     bool coGiam = p.GiaTienGoc.HasValue && p.GiaTienGoc.Value > p.GiaTien;
     int phanTram = coGiam ? (int)Math.Round((1 - p.GiaTien / p.GiaTienGoc.Value) * 100) : 0;
@@ -15,28 +14,9 @@
 @section Styles {
     <link rel="stylesheet" href="@Url.Content("~/Content/StorePageStyle.css")?v=@DateTime.Now.Ticks" />
     <link rel="stylesheet" href="@Url.Content("~/Content/ProductDetails.css")?v=@DateTime.Now.Ticks" />
-
-    @if (t != null)
-    {
-        <style>
-            .pd-page {
-                --hp-accent: @t.Accent;
-                --hp-accent-hover: color-mix(in srgb, @t.Accent 80%, white);
-                --pd-panel: @t.Panel;
-                --pd-text: @t.Text;
-            }
-        </style>
-    }
-
-    @if (t != null && !string.IsNullOrEmpty(t.ImageUrl))
-    {
-        <style>
-            body { background: url('@Url.Content(t.ImageUrl)') center / no-repeat fixed; }
-        </style>
-    }
 }
 
-<div class="pd-page @(t != null ? "is-themed" : "")">
+<div class="pd-page">
 
     <nav class="pd-breadcrumb">
         <a href="@Url.Action("Index", "Home")">Trang chủ</a> /

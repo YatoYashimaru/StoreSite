@@ -91,9 +91,64 @@ namespace StoreSite.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        public ActionResult UserPage()
+        // Lấy người dùng đang đăng nhập từ Session, chưa đăng nhập thì trả về null
+        private NguoiDung LayNguoiDungHienTai()
         {
-            return View();
+            var id = Session["NguoiDungId"] as int?;
+            if (id == null) return null;
+            return DanhSachNguoiDung.FirstOrDefault(n => n.Id == id.Value);
+        }
+
+        public ActionResult UserPage(string tab)
+        {
+            var nd = LayNguoiDungHienTai();
+            if (nd == null) return RedirectToAction("Login");
+
+            ViewBag.Tab = (tab == "password" || tab == "orders") ? tab : "profile";
+
+            return View(new UserPageViewModel { HoTen = nd.HoTen, Email = nd.Email });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateProfile(string HoTen)
+        {
+            var nd = LayNguoiDungHienTai();
+            if (nd == null) return RedirectToAction("Login");
+
+            HoTen = (HoTen ?? "").Trim();
+            if (HoTen.Length == 0)
+            {
+                TempData["Loi"] = "Họ và tên không được để trống";
+                return RedirectToAction("UserPage", new { tab = "profile" });
+            }
+
+            nd.HoTen = HoTen;
+            Session["HoTen"] = HoTen;          // để lời chào trên thanh menu đổi theo
+            TempData["ThongBao"] = "Đã cập nhật thông tin";
+            return RedirectToAction("UserPage", new { tab = "profile" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangePassword(string MatKhauCu, string MatKhauMoi, string XacNhanMatKhauMoi)
+        {
+            var nd = LayNguoiDungHienTai();
+            if (nd == null) return RedirectToAction("Login");
+
+            if (nd.MatKhau != MatKhauCu)
+                TempData["Loi"] = "Mật khẩu hiện tại không đúng";
+            else if (string.IsNullOrEmpty(MatKhauMoi) || MatKhauMoi.Length < 6)
+                TempData["Loi"] = "Mật khẩu mới phải từ 6 ký tự trở lên";
+            else if (MatKhauMoi != XacNhanMatKhauMoi)
+                TempData["Loi"] = "Mật khẩu xác nhận không khớp";
+            else
+            {
+                nd.MatKhau = MatKhauMoi;
+                TempData["ThongBao"] = "Đã đổi mật khẩu";
+            }
+
+            return RedirectToAction("UserPage", new { tab = "password" });
         }
         public ActionResult Logout()
         {

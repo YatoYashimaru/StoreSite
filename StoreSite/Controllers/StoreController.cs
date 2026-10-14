@@ -141,7 +141,6 @@ namespace StoreSite.Controllers
             var vm = new ProductDetailsViewModel
             {
                 Product = sp,
-                Theme = ThemeHelper.GetTheme(sp.ImgURL),
                 Related = all.Where(p => p.Id != id && (p.LoaiGiay == sp.LoaiGiay || p.Gender == sp.Gender))
                              .OrderByDescending(p => p.rating)
                              .Take(4)

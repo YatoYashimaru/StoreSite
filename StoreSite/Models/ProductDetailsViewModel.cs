@@ -11,6 +11,5 @@ namespace StoreSite.Models
     {
         public SanPham Product { get; set; }
         public List<SanPham> Related { get; set; }
-        public ProductTheme Theme { get; set; }
     }
 }

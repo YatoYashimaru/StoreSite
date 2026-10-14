@@ -1,11 +1,112 @@
-﻿@{
+﻿@model StoreSite.Models.UserPageViewModel
+@{
     ViewBag.Title = "Trang cá nhân - Meisho Doshoes";
     Layout = "~/Views/Shared/_LayoutUser.cshtml";
+
+    string tab = ViewBag.Tab as string ?? "profile";
+    string ten = (Model.HoTen ?? "").Trim();
+    string chuCai = ten.Length > 0 ? ten.Substring(ten.LastIndexOf(' ') + 1, 1).ToUpper() : "?";
 }
+
 @section Styles {
     <link rel="stylesheet" href="@Url.Content("~/Content/UserPageStyle.css")?v=@DateTime.Now.Ticks" />
 }
 
-<div>
+<div class="account">
 
+    <div class="account-hero">
+        <div class="account-avatar" aria-hidden="true">@chuCai</div>
+        <div class="account-who">
+            <h1 class="account-name">@Model.HoTen</h1>
+            <p class="account-email">@Model.Email</p>
+        </div>
+    </div>
+
+    <div class="account-body">
+
+        <nav class="account-nav" aria-label="Tài khoản">
+            <a href="@Url.Action("UserPage", "User", new { tab = "profile" })" class="@(tab == "profile" ? "is-active" : "")">Thông tin cá nhân</a>
+            <a href="@Url.Action("UserPage", "User", new { tab = "password" })" class="@(tab == "password" ? "is-active" : "")">Đổi mật khẩu</a>
+            <a href="@Url.Action("UserPage", "User", new { tab = "orders" })" class="@(tab == "orders" ? "is-active" : "")">Đơn hàng của tôi</a>
+            <a href="@Url.Action("Logout", "User")" class="account-nav__logout">Đăng xuất</a>
+        </nav>
+
+        <section class="account-panel">
+
+            @if (TempData["ThongBao"] != null)
+            {
+                <div class="auth-alert auth-alert--success" role="status">@TempData["ThongBao"]</div>
+            }
+            @if (TempData["Loi"] != null)
+            {
+                <div class="auth-alert auth-alert--error" role="alert">@TempData["Loi"]</div>
+            }
+
+            @if (tab == "profile")
+            {
+                <h2 class="account-title">Thông tin cá nhân</h2>
+                <p class="account-sub">Cập nhật tên hiển thị của bạn. Email dùng để đăng nhập nên không thể thay đổi.</p>
+
+                using (Html.BeginForm("UpdateProfile", "User", FormMethod.Post, new { @class = "auth-form" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="auth-field">
+                        <label for="HoTen">Họ và tên</label>
+                        <input id="HoTen" name="HoTen" type="text" class="auth-input"
+                               value="@Model.HoTen" maxlength="100" autocomplete="name" required />
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="Email">Email</label>
+                        <input id="Email" type="email" class="auth-input" value="@Model.Email" disabled />
+                    </div>
+
+                    <button type="submit" class="auth-submit">Lưu thay đổi</button>
+                }
+            }
+            else if (tab == "password")
+            {
+                <h2 class="account-title">Đổi mật khẩu</h2>
+                <p class="account-sub">Mật khẩu mới cần tối thiểu 6 ký tự.</p>
+
+                using (Html.BeginForm("ChangePassword", "User", FormMethod.Post, new { @class = "auth-form" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="auth-field">
+                        <label for="MatKhauCu">Mật khẩu hiện tại</label>
+                        <input id="MatKhauCu" name="MatKhauCu" type="password" class="auth-input"
+                               autocomplete="current-password" required />
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="MatKhauMoi">Mật khẩu mới</label>
+                        <input id="MatKhauMoi" name="MatKhauMoi" type="password" class="auth-input"
+                               autocomplete="new-password" minlength="6" required />
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="XacNhanMatKhauMoi">Xác nhận mật khẩu mới</label>
+                        <input id="XacNhanMatKhauMoi" name="XacNhanMatKhauMoi" type="password" class="auth-input"
+                               autocomplete="new-password" required />
+                    </div>
+
+                    <button type="submit" class="auth-submit">Đổi mật khẩu</button>
+                }
+            }
+            else
+            {
+                <h2 class="account-title">Đơn hàng của tôi</h2>
+                <p class="account-sub">Theo dõi các đơn bạn đã đặt.</p>
+
+                @* Khi làm xong phần đặt hàng, thay khối này bằng danh sách đơn *@
+                <div class="account-empty">
+                    <p>Bạn chưa có đơn hàng nào.</p>
+                    <a class="account-btn" href="@Url.Action("Index", "Store")">Mua sắm ngay</a>
+                </div>
+            }
+
+        </section>
+    </div>
 </div>

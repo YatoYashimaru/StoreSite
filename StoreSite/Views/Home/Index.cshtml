@@ -40,7 +40,7 @@
     <section class="hp-section">
         <div class="hp-heading">
             <span class="hp-eyebrow">Danh mục</span>
-            <h2>Nhãn hàng giày theo sở thích bạn</h2>
+            <h2>Các nhãn hàng giày đồng hành cùng chúng tôi</h2>
         </div>
         <div class="hp-grid hp-grid--categories">
             <a href="@Url.Action("Index", "Store")" class="hp-category">
@@ -221,9 +221,7 @@ document.addEventListener("click", function (e) {
 </script>
 <script>
     let currentimg = 1;
-    const totalImages = 3; // Tổng số lượng ảnh của bạn
-
-    // Mảng chứa đường dẫn ảnh chuẩn từ ASP.NET
+    const totalImages = 3;
     const bannerUrls = [
         '@Url.Content("~/ImageAssets/ImgBanner/1.jpg")',
         '@Url.Content("~/ImageAssets/ImgBanner/2.jpg")',
@@ -232,38 +230,29 @@ document.addEventListener("click", function (e) {
 
     let imgContainer = document.getElementById('ImageBannerID');
 
-    // Bước 1: Dùng innerHTML để khởi tạo và nhét TẤT CẢ ảnh vào khung ngay từ đầu
     function initBanner() {
         let content = '';
         for (let i = 0; i < bannerUrls.length; i++) {
-            // Ảnh đầu tiên (index 0 ứng với ảnh 1) sẽ có sẵn class active
             let activeClass = (i === 0) ? 'active' : '';
             content += `<img src="${bannerUrls[i]}" class="ImageBanner ${activeClass}" alt="Sneaker Throwback Future">`;
         }
         imgContainer.innerHTML = content;
     }
 
-    // Bước 2: Hàm chuyển ảnh mượt mà
     fnChangeBanner = function() {
         let images = imgContainer.getElementsByTagName('img');
         if (images.length === 0) return;
 
-        // Xóa class active của ảnh hiện tại
         images[currentimg - 1].classList.remove('active');
 
-        // Tăng biến đếm sang ảnh tiếp theo
         currentimg++;
         if (currentimg > totalImages) {
             currentimg = 1;
         }
 
-        // Thêm class active cho ảnh mới để nó mờ dần hiện lên nhờ CSS transition
         images[currentimg - 1].classList.add('active');
     }
-
-    // Chạy khởi tạo render ảnh lúc vừa tải trang
     initBanner();
 
-    // Cứ mỗi 3 giây gọi hàm đổi ảnh một lần
     setInterval(fnChangeBanner, 3000);
 </script>

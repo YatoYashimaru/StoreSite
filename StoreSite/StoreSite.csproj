@@ -127,7 +127,7 @@
     <Compile Include="Models\NguoiDung.cs" />
     <Compile Include="Models\ProductDetailsViewModel.cs" />
     <Compile Include="Models\FeaturedViewModel.cs" />
-    <Compile Include="Models\ThemeHelper.cs" />
+    <Compile Include="Models\UserPageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -203,6 +203,7 @@
     <Folder Include="ImageAssets\" />
     <Folder Include="Views\Admin\" />
     <Folder Include="Views\ThemeHelper\" />
+    <Folder Include="Views\UserPageViewModel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
