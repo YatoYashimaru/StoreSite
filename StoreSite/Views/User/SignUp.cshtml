@@ -38,36 +38,42 @@
                 <div class="auth-alert auth-alert--error" role="alert">@ViewBag.Loi</div>
             }
 
-            <form class="auth-form" action="@Url.Action("SignUp", "User")" method="post">
-                <div class="auth-field">
-                    <label for="HoTen">Họ và tên</label>
-                    <input id="HoTen" name="HoTen" type="text" class="auth-input"
-                           value="@Request.Form["HoTen"]" placeholder="Nguyễn Văn A"
-                           autocomplete="name" required autofocus />
-                </div>
+        <form class="auth-form" action="@Url.Action("SignUp", "User")" method="post">
+            <div class="auth-field">
+                <label for="HoTen">Họ và tên</label>
+                <input id="HoTen" name="HoTen" type="text" class="auth-input"
+                       value="@Request.Form["HoTen"]" placeholder="Nguyễn Văn A"
+                       autocomplete="name" required autofocus />
+            </div>
 
-                <div class="auth-field">
-                    <label for="Email">Email</label>
-                    <input id="Email" name="Email" type="email" class="auth-input"
-                           value="@Request.Form["Email"]" placeholder="User@example.com"
-                           autocomplete="email" required />
-                </div>
+            <div class="auth-field">
+                <label for="Email">Email</label>
+                <input id="Email" name="Email" type="email" class="auth-input"
+                       value="@Request.Form["Email"]" placeholder="User@example.com"
+                       autocomplete="email" required />
+            </div>
 
-                <div class="auth-field">
-                    <label for="MatKhau">Mật khẩu</label>
-                    <input id="MatKhau" name="MatKhau" type="password" class="auth-input"
-                           autocomplete="new-password" minlength="6" required />
-                    <p class="auth-hint">Tối thiểu 8 ký tự.</p>
-                </div>
+            <div class="auth-field">
+                <label for="MatKhau">Mật khẩu</label>
+                <input id="MatKhau" name="MatKhau" type="password" class="auth-input"
+                       autocomplete="new-password" minlength="6" required />
+                <p class="auth-hint">Tối thiểu 8 ký tự.</p>
+            </div>
 
-                <div class="auth-field">
-                    <label for="XacNhanMatKhau">Xác nhận mật khẩu</label>
-                    <input id="XacNhanMatKhau" name="XacNhanMatKhau" type="password" class="auth-input"
-                           autocomplete="new-password" required />
-                </div>
+            <div class="auth-field">
+                <label for="XacNhanMatKhau">Xác nhận mật khẩu</label>
+                <input id="XacNhanMatKhau" name="XacNhanMatKhau" type="password" class="auth-input"
+                       autocomplete="new-password" required />
+            </div>
 
-                <button type="submit" class="auth-submit">Đăng ký</button>
-            </form>
+            <div class="auth-field">
+                <label for="SDT">Số điện thoại</label>
+                <input id="SDT" name="SDT" type="text" class="auth-input"
+                       autocomplete="name" required />
+            </div>
+
+            <button type="submit" class="auth-submit">Đăng ký</button>
+        </form>
 
             <p class="auth-switch">
                 Đã có tài khoản? <a href="@Url.Action("Login", "User")">Đăng nhập</a>
