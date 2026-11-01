@@ -1,0 +1,76 @@
+@model StoreSite.Models.MegaMenuViewModel
+
+
+<div class="mm-backdrop" id="mm-backdrop"></div>
+
+<div class="mm-panel" id="mm-panel" role="region" aria-label="Danh mục sản phẩm" aria-hidden="true">
+    <div class="mm-inner">
+
+        <div class="mm-cats">
+
+            @if (Model.BrandsNam.Count > 0)
+            {
+                <div>
+                    <h4 class="mm-title"><a href="@Url.Action("Index", "Store", new { Gender = "Nam" })">Giày nam</a></h4>
+                    <ul class="mm-list">
+                        @foreach (var brand in Model.BrandsNam)
+                        {
+                            <li><a href="@Url.Action("Index", "Store", new { Gender = "Nam", Loai = brand })">@brand</a></li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            @if (Model.BrandsNu.Count > 0)
+            {
+                <div>
+                    <h4 class="mm-title"><a href="@Url.Action("Index", "Store", new { Gender = "Nu" })">Giày nữ</a></h4>
+                    <ul class="mm-list">
+                        @foreach (var brand in Model.BrandsNu)
+                        {
+                            <li><a href="@Url.Action("Index", "Store", new { Gender = "Nu", Loai = brand })">@brand</a></li>
+                        }
+                    </ul>
+                </div>
+            }
+            <div>
+                <h4 class="mm-title">Thể Thao</h4>
+                <ul class="mm-list">
+                    <li><a href="@Url.Action("Index", "Store")">Bóng đá</a></li>
+                    <li><a href="@Url.Action("Index", "Store")">Bóng rổ</a></li>
+                    <li><a href="@Url.Action("Index", "Store")">Chạy bộ</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="mm-title">Khám phá</h4>
+                <ul class="mm-list">
+                    <li><a class="mm-all" href="@Url.Action("Index", "Store")">Tất cả sản phẩm</a></li>
+                    <li><a href="@Url.Action("Index", "Store", new { sortOrder = "Tang_Dan" })">Giá thấp đến cao</a></li>
+                    <li><a href="@Url.Action("Index", "Store", new { sortOrder = "Giam_Dan" })">Giá cao đến thấp</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        @if (Model.Featured.Count > 0)
+        {
+            <div class="mm-promos">
+                @foreach (var p in Model.Featured)
+                {
+                    <a class="mm-card" href="@Url.Action("Details", "Store", new { id = p.Id })">
+                        <div class="mm-card__img">
+                            <img src="@Url.Content("~" + p.ImgURL)" alt="@p.Name" loading="lazy" />
+                        </div>
+                        <div class="mm-card__body">
+                            <span class="mm-card__tag">Mới</span>
+                            <span class="mm-card__name">@p.Name</span>
+                            <span class="mm-card__price">@p.GiaTien.ToString("#,##0")</span>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+
+    </div>
+</div>

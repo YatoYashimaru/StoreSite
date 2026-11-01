@@ -124,6 +124,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\MegaMenuViewModel.cs" />
     <Compile Include="Models\NguoiDung.cs" />
     <Compile Include="Models\ProductDetailsViewModel.cs" />
     <Compile Include="Models\FeaturedViewModel.cs" />
@@ -151,6 +152,7 @@
     <Content Include="Content\MainPageStyle.css" />
     <Content Include="Content\LayoutStyle.css" />
     <Content Include="Content\MainPageStyle.css" />
+    <Content Include="Content\MegaMenu.css" />
     <Content Include="Content\ProductDetails.css" />
     <Content Include="Content\StorePageStyle.css" />
     <Content Include="Content\UserPageStyle.css" />
@@ -173,6 +175,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\MegaMenu.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -197,12 +200,12 @@
     <Content Include="Views\User\UserPage.cshtml" />
     <Content Include="Views\Orders\OdersPage.cshtml" />
     <Content Include="Views\Orders\PaymentPage.cshtml" />
+    <Content Include="Views\Shared\_MegaMenu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="ImageAssets\" />
     <Folder Include="Views\Admin\" />
-    <Folder Include="Views\ThemeHelper\" />
     <Folder Include="Views\UserPageViewModel\" />
   </ItemGroup>
   <ItemGroup>

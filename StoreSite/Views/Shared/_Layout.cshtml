@@ -7,24 +7,29 @@
 
     @Styles.Render("~/Content/css")
     <link rel="stylesheet" href="@Url.Content("~/Content/LayoutStyle.css")?v=@DateTime.Now.Ticks" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/MegaMenu.css")?v=@DateTime.Now.Ticks" />
 
 
     @RenderSection("styles", required: false)
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
+
 <body>
     <!--HEADER-->
     <header class="main-header">
         <nav class="site-nav">
             <a class="site-brand" href="@Url.Action("Index", "Home")">
-                <img src="~/ImageAssets/MeishoLogo.jpg" alt="Logo" class="BrandLogo" />
+                <img src="~/ImageAssets/HomePage/MeishoLogo.jpg" alt="Logo" class="BrandLogo" />
                 <span style="color:sandybrown"><span style="color:blueviolet">MEISHO DOSHOES</span> STORE SITE</span>
             </a>
 
             <ul class="site-menu">
                 <li><a href="@Url.Action("Index", "Home")">Home</a></li>
-                <li><a href="@Url.Action("Index", "Store")">Shop</a></li>
+                <li>
+                    <a href="@Url.Action("Index", "Store")" data-mega-trigger
+                       aria-haspopup="true" aria-expanded="false" aria-controls="mm-panel">Shop</a>
+                </li>
                 <li><a href="#">About</a></li>
             </ul>
 
@@ -33,20 +38,21 @@
             </form>
 
             <ul class="site-menu">
-                <li><a href="#">Giỏ hàng</a></li>
+
                 @if (Session["NguoiDungId"] != null)
                 {
+                    <li><a href="@Url.Action("UserPage", "User")">Giỏ hàng</a></li>
                     <li><a href="@Url.Action("UserPage", "User")">Xin chào, @Session["HoTen"]</a></li>
                     <li><a href="@Url.Action("Logout", "User")">Đăng xuất</a></li>
                 }
                 else
                 {
+                    <li><a href="@Url.Action("Login", "User")">Giỏ hàng</a></li>
                     <li><a href="@Url.Action("Login", "User")">Đăng nhập</a></li>
                     <li><a href="@Url.Action("SignUp", "User")">Đăng ký</a></li>
                 }
             </ul>
         </nav>
-        <hr />
     </header>
     <!--NỘI DUNG WEBSITE-->
     <main>@RenderBody()</main>
@@ -85,6 +91,8 @@
             if (card) window.location.href = card.dataset.href;
         });
     </script>
+    @Html.Action("MegaMenu", "Store")
+    <script src="~/Scripts/MegaMenu.js"></script>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
