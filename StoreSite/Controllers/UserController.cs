@@ -27,6 +27,7 @@ namespace StoreSite.Controllers
             {
                 ViewBag.Loi = "Vui lòng nhập đầy đủ thông tin!";
                 return View();
+
             }
 
             // Kiểm tra định dạng email cơ bản
