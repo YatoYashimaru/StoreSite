@@ -42,5 +42,12 @@ namespace StoreSite.Models
         public int SumQuantity() => items.Sum(i => i.Quantity);
         public decimal TotalPrice() => items.Sum(i => i.LineTotal());
         public string PaymentMethodText() => PaymentMethod == "bank" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng";
+        // Mô tả ngắn để hiện trong danh sách đơn: tên sản phẩm đầu tiên (+ "và N sản phẩm khác" nếu còn nữa)
+        public string ShortDescription()
+        {
+            if (items.Count == 0) return "";
+            if (items.Count == 1) return items[0].ProductName;
+            return items[0].ProductName + " và " + (items.Count - 1) + " sản phẩm khác";
+        }
     }
 }

@@ -56,8 +56,8 @@
             <div class="auth-field">
                 <label for="MatKhau">Mật khẩu</label>
                 <input id="MatKhau" name="MatKhau" type="password" class="auth-input"
-                       autocomplete="new-password" minlength="6" required />
-                <p class="auth-hint">Tối thiểu 8 ký tự.</p>
+                       autocomplete="new-password" minlength="@StoreSite.Controllers.UserController.DoDaiMatKhauToiThieu" required />
+                <p class="auth-hint">Tối thiểu @StoreSite.Controllers.UserController.DoDaiMatKhauToiThieu ký tự.</p>
             </div>
 
             <div class="auth-field">

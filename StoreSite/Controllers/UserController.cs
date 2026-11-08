@@ -13,7 +13,9 @@ namespace StoreSite.Controllers
     {
         private static List<NguoiDung> DanhSachNguoiDung = new List<NguoiDung>();
         // GET: User
-        
+
+        public const int DoDaiMatKhauToiThieu = 8; // dùng chung cho đăng ký, đổi mật khẩu và các ô nhập (minlength)
+
         public ActionResult SignUp()
         {
             return View();
@@ -21,7 +23,7 @@ namespace StoreSite.Controllers
         [HttpPost]
         public ActionResult SignUp(string HoTen, string Email, string MatKhau, string XacNhanMatKhau, string SDT)
         {
-            if (string.IsNullOrEmpty(HoTen) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(MatKhau) ||
+            if (string.IsNullOrWhiteSpace(HoTen) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(MatKhau) ||
                 string.IsNullOrWhiteSpace(MatKhau) || string.IsNullOrWhiteSpace(Email) ||
                 string.IsNullOrEmpty(SDT) || string.IsNullOrWhiteSpace(SDT))
             {
@@ -29,6 +31,8 @@ namespace StoreSite.Controllers
                 return View();
 
             }
+
+            HoTen = HoTen.Trim(); // bỏ khoảng trắng thừa ở hai đầu tên
 
             // Kiểm tra định dạng email cơ bản
             string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
@@ -38,10 +42,9 @@ namespace StoreSite.Controllers
                 return View();
             }
 
-            if (MatKhau.Length < 8)
+            if (MatKhau.Length < DoDaiMatKhauToiThieu)
             {
-                ViewBag.Loi = "Mật khẩu phải từ 8 ký tự trở lên";
-                return View();
+                ViewBag.Loi = "Mật khẩu phải từ " + DoDaiMatKhauToiThieu + " ký tự trở lên";
             }
 
             if (MatKhau != XacNhanMatKhau)
@@ -92,6 +95,15 @@ namespace StoreSite.Controllers
         [HttpPost]
         public ActionResult Login(string Email, string MatKhau, string returnUrl)
         {
+            // Gửi thiếu email/mật khẩu (vd bỏ qua form bằng công cụ) thì báo lỗi, không để chương trình bị lỗi
+            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrEmpty(MatKhau))
+            {
+                ViewBag.Loi = "Vui lòng nhập email và mật khẩu";
+                ViewBag.ReturnUrl = returnUrl;
+                return View();
+            }
+            Email = Email.Trim();
+
             NguoiDung nguoiDungTimThay = null;
 
             foreach (NguoiDung nd in DanhSachNguoiDung)
@@ -140,9 +152,14 @@ namespace StoreSite.Controllers
             var nd = LayNguoiDungHienTai();
             if (nd == null) return RedirectToAction("Login");
 
-            ViewBag.Tab = (tab == "password" || tab == "orders") ? tab : "profile";
+            string tabHienTai = (tab == "password" || tab == "orders") ? tab : "profile";
+            ViewBag.Tab = tabHienTai;
 
-            return View(new UserPageViewModel { HoTen = nd.HoTen, Email = nd.Email });
+            var model = new UserPageViewModel { HoTen = nd.HoTen, Email = nd.Email };
+            if (tabHienTai == "orders")
+                model.Orders = OrdersController.LayDonHangCuaNguoiDung(nd.Id);
+
+            return View(model);
         }
 
         [HttpPost]
@@ -174,8 +191,8 @@ namespace StoreSite.Controllers
 
             if (nd.MatKhau != MatKhauCu)
                 TempData["Loi"] = "Mật khẩu hiện tại không đúng";
-            else if (string.IsNullOrEmpty(MatKhauMoi) || MatKhauMoi.Length < 8)
-                TempData["Loi"] = "Mật khẩu mới phải từ 8 ký tự trở lên";
+            else if (string.IsNullOrEmpty(MatKhauMoi) || MatKhauMoi.Length < DoDaiMatKhauToiThieu)
+                TempData["Loi"] = "Mật khẩu mới phải từ " + DoDaiMatKhauToiThieu + " ký tự trở lên";
             else if (MatKhauMoi != XacNhanMatKhauMoi)
                 TempData["Loi"] = "Mật khẩu xác nhận không khớp";
             else

@@ -536,6 +536,79 @@
         box-shadow: 0 8px 18px var(--auth-ring);
     }
 
+/* ---------- Danh sách đơn hàng ---------- */
+.order-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr); /* cho thẻ đơn co lại được, tên dài sẽ bị cắt bằng ... thay vì làm tràn trang */
+    gap: 14px;
+}
+
+.order-card,
+.order-card:visited {
+    display: block;
+    padding: 16px 18px;
+    border: 1px solid var(--auth-line);
+    border-radius: 14px;
+    background: #fff;
+    color: var(--auth-text);
+    text-decoration: none;
+    transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+
+    .order-card:hover {
+        color: var(--auth-text);
+        text-decoration: none;
+        border-color: var(--auth-brand-light);
+        box-shadow: 0 8px 18px var(--auth-ring);
+        transform: translateY(-1px);
+    }
+
+.order-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.order-card__id {
+    font-weight: 800;
+}
+
+.order-card__status {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #fff4e0;
+    color: #b26a00;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.order-card__desc {
+    margin-top: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.order-card__meta {
+    margin-top: 4px;
+    color: var(--auth-muted);
+    font-size: 14px;
+}
+
+.order-card__foot {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--auth-line);
+}
+
+    .order-card__foot b {
+        color: #d9534f;
+    }
+
 /* ---------- Màn hình nhỏ ---------- */
 @media (max-width: 820px) {
     .account-body {

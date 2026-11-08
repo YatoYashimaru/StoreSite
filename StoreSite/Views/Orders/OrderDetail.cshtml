@@ -66,6 +66,7 @@
                 <span>@Model.TotalPrice().ToString("N0") đ</span>
             </div>
             <a href="@Url.Action("Index", "Store")" class="cart-btn cart-checkout">Tiếp tục mua sắm</a>
+            <a href="@Url.Action("UserPage", "User", new { tab = "orders" })" class="cart-continue">← Xem tất cả đơn hàng</a>
         </aside>
 
     </div>

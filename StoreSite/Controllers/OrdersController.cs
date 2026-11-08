@@ -13,6 +13,13 @@ namespace StoreSite.Controllers
         // Danh sách đơn hàng tạm trong bộ nhớ (giống DanhSachNguoiDung bên UserController)
         private static List<Order> DanhSachDonHang = new List<Order>();
 
+        // Cho controller khác (vd UserController) lấy các đơn của một người, đơn mới nhất lên đầu
+        [NonAction]
+        public static List<Order> LayDonHangCuaNguoiDung(int userId)
+        {
+            return DanhSachDonHang.Where(o => o.UserId == userId).OrderByDescending(o => o.Id).ToList();
+        }
+
         // Lấy người dùng đang đăng nhập từ Session, chưa đăng nhập thì trả về null
         private NguoiDung LayNguoiDungHienTai()
         {
@@ -55,6 +62,7 @@ namespace StoreSite.Controllers
 
         // Bấm "Đặt hàng": POST /Orders/PlaceOrder
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult PlaceOrder(string ReceiverName, string Phone, string Address, string Note, string PaymentMethod)
         {
             var nd = LayNguoiDungHienTai();

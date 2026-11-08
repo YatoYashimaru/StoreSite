@@ -25,84 +25,85 @@
         <div class="pay-alert" role="alert">@ViewBag.Loi</div>
     }
 
-    <form action="@Url.Action("PlaceOrder", "Orders")" method="post">
-        <div class="cart-layout">
+<form action="@Url.Action("PlaceOrder", "Orders")" method="post">
+    @Html.AntiForgeryToken()
+    <div class="cart-layout">
 
-            <div>
-                <!-- Thông tin giao hàng -->
-                <section class="pay-box">
-                    <h2 class="pay-box-title">Thông tin giao hàng</h2>
+        <div>
+            <!-- Thông tin giao hàng -->
+            <section class="pay-box">
+                <h2 class="pay-box-title">Thông tin giao hàng</h2>
 
-                    <div class="pay-field">
-                        <label for="ReceiverName">Họ và tên người nhận</label>
-                        <input id="ReceiverName" name="ReceiverName" type="text" class="pay-input"
-                               value="@ViewBag.ReceiverName" maxlength="100" autocomplete="name" required />
-                    </div>
+                <div class="pay-field">
+                    <label for="ReceiverName">Họ và tên người nhận</label>
+                    <input id="ReceiverName" name="ReceiverName" type="text" class="pay-input"
+                           value="@ViewBag.ReceiverName" maxlength="100" autocomplete="name" required />
+                </div>
 
-                    <div class="pay-field">
-                        <label for="Phone">Số điện thoại</label>
-                        <input id="Phone" name="Phone" type="tel" class="pay-input"
-                               value="@ViewBag.Phone" maxlength="15" autocomplete="tel" required />
-                    </div>
+                <div class="pay-field">
+                    <label for="Phone">Số điện thoại</label>
+                    <input id="Phone" name="Phone" type="tel" class="pay-input"
+                           value="@ViewBag.Phone" maxlength="15" autocomplete="tel" required />
+                </div>
 
-                    <div class="pay-field">
-                        <label for="Address">Địa chỉ giao hàng</label>
-                        <input id="Address" name="Address" type="text" class="pay-input"
-                               value="@ViewBag.Address" maxlength="200" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"
-                               autocomplete="street-address" required />
-                    </div>
+                <div class="pay-field">
+                    <label for="Address">Địa chỉ giao hàng</label>
+                    <input id="Address" name="Address" type="text" class="pay-input"
+                           value="@ViewBag.Address" maxlength="200" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"
+                           autocomplete="street-address" required />
+                </div>
 
-                    <div class="pay-field">
-                        <label for="Note">Ghi chú (không bắt buộc)</label>
-                        <textarea id="Note" name="Note" rows="3" class="pay-input" maxlength="300">@ViewBag.Note</textarea>
-                    </div>
-                </section>
+                <div class="pay-field">
+                    <label for="Note">Ghi chú (không bắt buộc)</label>
+                    <textarea id="Note" name="Note" rows="3" class="pay-input" maxlength="300">@ViewBag.Note</textarea>
+                </div>
+            </section>
 
-                <!-- Phương thức thanh toán -->
-                <section class="pay-box">
-                    <h2 class="pay-box-title">Phương thức thanh toán</h2>
-                    <label class="pay-radio">
-                        <input type="radio" name="PaymentMethod" value="cod" @(pm != "bank" ? "checked" : "") />
-                        Thanh toán khi nhận hàng (COD)
-                    </label>
-                    <label class="pay-radio">
-                        <input type="radio" name="PaymentMethod" value="bank" @(pm == "bank" ? "checked" : "") />
-                        Chuyển khoản ngân hàng
-                    </label>
-                </section>
+            <!-- Phương thức thanh toán -->
+            <section class="pay-box">
+                <h2 class="pay-box-title">Phương thức thanh toán</h2>
+                <label class="pay-radio">
+                    <input type="radio" name="PaymentMethod" value="cod" @(pm != "bank" ? "checked" : "") />
+                    Thanh toán khi nhận hàng (COD)
+                </label>
+                <label class="pay-radio">
+                    <input type="radio" name="PaymentMethod" value="bank" @(pm == "bank" ? "checked" : "") />
+                    Chuyển khoản ngân hàng
+                </label>
+            </section>
 
-                <!-- Sản phẩm trong đơn -->
-                <section class="pay-box">
-                    <h2 class="pay-box-title">Sản phẩm (@Model.SumQuantity() đôi)</h2>
-                    @foreach (var line in lines)
-                    {
-                        <div class="pay-line">
-                            <img src="@Url.Content("~" + line.Product.ImgURL)" alt="@line.Product.Name" />
-                            <div>
-                                <div class="cart-name">@line.Product.Name</div>
-                                <div class="cart-meta">Size: @line.Size &times; @line.Quantity</div>
-                            </div>
-                            <div class="cart-line-total">@line.LineTotal().ToString("N0") đ</div>
+            <!-- Sản phẩm trong đơn -->
+            <section class="pay-box">
+                <h2 class="pay-box-title">Sản phẩm (@Model.SumQuantity() đôi)</h2>
+                @foreach (var line in lines)
+                {
+                    <div class="pay-line">
+                        <img src="@Url.Content("~" + line.Product.ImgURL)" alt="@line.Product.Name" />
+                        <div>
+                            <div class="cart-name">@line.Product.Name</div>
+                            <div class="cart-meta">Size: @line.Size &times; @line.Quantity</div>
                         </div>
-                    }
-                </section>
-            </div>
-
-            <!-- Tóm tắt đơn hàng -->
-            <aside class="cart-summary">
-                <h2 class="cart-summary-title">Tóm tắt đơn hàng</h2>
-                <div class="cart-sum-row">
-                    <span>Số lượng</span>
-                    <span><b>@Model.SumQuantity()</b> đôi</span>
-                </div>
-                <div class="cart-sum-row cart-sum-total">
-                    <span>Tổng cộng</span>
-                    <span>@Model.TotalPrice().ToString("N0") đ</span>
-                </div>
-                <button type="submit" class="cart-btn cart-checkout">Đặt hàng</button>
-                <a href="@Url.Action("Index", "Cart")" class="cart-continue">← Quay lại giỏ hàng</a>
-            </aside>
-
+                        <div class="cart-line-total">@line.LineTotal().ToString("N0") đ</div>
+                    </div>
+                }
+            </section>
         </div>
-    </form>
+
+        <!-- Tóm tắt đơn hàng -->
+        <aside class="cart-summary">
+            <h2 class="cart-summary-title">Tóm tắt đơn hàng</h2>
+            <div class="cart-sum-row">
+                <span>Số lượng</span>
+                <span><b>@Model.SumQuantity()</b> đôi</span>
+            </div>
+            <div class="cart-sum-row cart-sum-total">
+                <span>Tổng cộng</span>
+                <span>@Model.TotalPrice().ToString("N0") đ</span>
+            </div>
+            <button type="submit" class="cart-btn cart-checkout">Đặt hàng</button>
+            <a href="@Url.Action("Index", "Cart")" class="cart-continue">← Quay lại giỏ hàng</a>
+        </aside>
+
+    </div>
+</form>
 </div>
