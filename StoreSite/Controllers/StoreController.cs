@@ -7,160 +7,46 @@ using StoreSite.Models;
 
 namespace StoreSite.Controllers
 {
-    public class SanPham
+    public class StoreController : BaseController
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string LoaiGiay { get; set; }
-        public string Gender{ get; set; }
-        public decimal GiaTien { get; set; }
-        public decimal? GiaTienGoc { get; set; }
-        public string ImgURL { get; set; }
-        public string Description { get; set; }
-        public double rating { get; set; }
-        public bool SanPhamMoi { get; set; }
-    }
-    public class StoreController : Controller
-    {
-        [NonAction]
-        public static List<SanPham> GetSanPham()
+        public ActionResult Index(string TimKiem, string Loai, string Gender, string Sport, string sortOrder)
         {
-            return new List<SanPham> /// database tam thoi
-            {
-                // NIKE //
-                new SanPham { Id = 1, Name="Nike Air Max 1", LoaiGiay="Nike", Gender="Nam",
-                    GiaTien=3000000,GiaTienGoc=0,
-                    ImgURL="/ImageAssets/Men/Nike/Giay-Nike-Air-Max-1/1.jpg", rating=4.9, SanPhamMoi=true,
-                    Description="Nike Air Max 1 là một trong những mẫu giày thể thao nổi tiếng của Nike, được ra mắt lần đầu tiên vào năm 1987. " +
-                    "Với thiết kế đột phá và công nghệ Air Max, giày mang đến sự thoải mái và hỗ trợ tối đa cho người sử dụng. Đế giày có lớp đệm Air Max giúp giảm chấn động khi di chuyển, " +
-                    "đồng thời tạo cảm giác nhẹ nhàng và linh hoạt. Phần upper được làm từ chất liệu cao cấp, kết hợp với các chi tiết thiết kế tinh tế, tạo nên vẻ ngoài hiện đại và phong cách. " +
-                    "Nike Air Max 1 không chỉ là một đôi giày thể thao mà còn là biểu tượng thời trang, phù hợp cho cả việc tập luyện và sử dụng hàng ngày."
-                },
-                new SanPham { Id = 4, Name="Nike Dunk Low", LoaiGiay="Nike", Gender="Nam",
-                    GiaTien=2650000, GiaTienGoc=3100000,
-                    ImgURL="/ImageAssets/Men/Nike/Nike Dunk Low/1.jpeg", rating=4.8, SanPhamMoi=false,
-                    Description="Nike Dunk Low là một trong những mẫu giày thể thao nổi tiếng của Nike, được ra mắt lần đầu tiên vào năm 1985. "
-                },
-                new SanPham { Id = 10, Name="Nike Phantom 6 Low Elite", LoaiGiay="Nike", Gender="Nam",
-                    GiaTien=7500000, GiaTienGoc=8000000,
-                    ImgURL="/ImageAssets/Men/Nike/Nike Phantom 6 Erling Haaland/1.jpg", rating=5, SanPhamMoi=true,
-                    Description="Nike Phantom 6 là đôi giày biểu tượng và cũng là hình ảnh của cầu thủ Erling Haaland."
-                },
-                new SanPham { Id = 12, Name="Nike Mercurial Superfly", LoaiGiay="Nike", Gender="Nam",
-                    GiaTien=7500000, GiaTienGoc=8000000,
-                    ImgURL="/ImageAssets/Men/Nike/Nike Mercurial Superfly/1.jpg", rating=5, SanPhamMoi=true,
-                    Description="Nike Mercurial Superfly là chiếc giày vàng mang hình ảnh của cầu thủ Cristiano Ronaldo"
-                },
+            ViewBag.TimKiem = TimKiem; ViewBag.Loai = Loai; ViewBag.Gender = Gender;
+            ViewBag.Sport = Sport; ViewBag.Sort = sortOrder;
 
-                // Adidas //
-                new SanPham { Id = 2, Name="Ultraboost 22", LoaiGiay="Adidas", Gender="Nam",
-                    GiaTien=4500000,GiaTienGoc=5000000,
-                    ImgURL="/ImageAssets/Men/Adidas/adidas_ultraboost_22/1.jpg", rating=5.0, SanPhamMoi=true,
-                    Description="Adidas Ultraboost 22 là phiên bản nâng cấp của dòng giày chạy bộ Ultraboost nổi tiếng, được thiết kế để mang lại hiệu suất tối ưu và sự thoải mái tuyệt đối cho người sử dụng. "
-                },
-                new SanPham { Id = 11, Name="F50 Messi", LoaiGiay="Adidas", Gender="Nam",
-                    GiaTien=4500000, GiaTienGoc=5000000,
-                    ImgURL="/ImageAssets/Men/Adidas/Adidas F50 Messi/1.jpg", rating=5, SanPhamMoi=true,
-                    Description="F50 Messi là đôi giày tượng trưng cho hình tượng Argentina bóng đá."
-                },
-                new SanPham { Id = 9, Name="Adidas Forum Low", LoaiGiay="Adidas", Gender="Nu",
-                    GiaTien=2500000, GiaTienGoc=2900000,
-                    ImgURL="/ImageAssets/Women/Adidas/Adidas Forum Low/1.jpg", rating=4.7, SanPhamMoi=true,
-                    Description="Adidas Forum Low là một mẫu giày thể thao nổi bật của Adidas, được thiết kế với phong cách hiện đại và cá tính. "
-                },
+            // danh sách môn lấy từ database, thêm môn mới thì tự có trong bộ lọc
+            ViewBag.Sports = db.SanPhams.Select(p => p.Sport).Distinct().OrderBy(s => s).ToList();
 
-                // Puma//
-                new SanPham { Id = 3, Name="RS-X", LoaiGiay="Puma", Gender="Nu",
-                    GiaTien=3000000,GiaTienGoc=0,
-                    ImgURL="/ImageAssets/Women/Puma/RS-X/1.jpg", rating=4.7, SanPhamMoi=false,
-                    Description="Puma RS-X là một dòng giày thể thao nổi bật của Puma, được thiết kế với phong cách hiện đại và cá tính. "
-                },                
-                new SanPham { Id = 5, Name="Puma Palermo Special", LoaiGiay="Puma", Gender="Nam",
-                    GiaTien=2100000, GiaTienGoc=2500000,
-                    ImgURL="/ImageAssets/Women/Puma/Puma Palermo Special/1.png", rating=4.6, SanPhamMoi=false,
-                    Description="Puma Palermo Special là một mẫu giày thể thao nổi bật của Puma, được thiết kế với phong cách hiện đại và cá tính. "
-                },
+            IQueryable<SanPham> q = db.SanPhams;
+            if (!string.IsNullOrEmpty(TimKiem)) q = q.Where(p => p.ItemName.Contains(TimKiem)); // sort tên
+            if (!string.IsNullOrEmpty(Loai) && Loai != "All") q = q.Where(p => p.LoaiGiay == Loai); // sort loại giày
+            if (Gender == "Nam" || Gender == "Nu") q = q.Where(p => p.Gender == Gender); // sort gender
+            if (!string.IsNullOrEmpty(Sport) && Sport != "All") q = q.Where(p => p.Sport == Sport); // sort sport
 
-                // Converse //
-                new SanPham { Id = 6, Name="Converse Chuck 70 High", LoaiGiay="Converse", Gender="Nu",
-                    GiaTien=2000000, GiaTienGoc=0,
-                    ImgURL="/ImageAssets/Women/Converse/Converse Chuck 70 High/1.png", rating=4.7, SanPhamMoi=false,
-                    Description="Converse Chuck 70 High là một phiên bản nâng cấp của dòng giày Chuck Taylor All Star nổi tiếng, được ra mắt để kỷ niệm 70 năm thành lập của Converse. "
-                },
-
-                // New Balance //
-                new SanPham { Id = 7, Name="New Balance 530", LoaiGiay="New Balance", Gender="Nu",
-                    GiaTien=2850000, GiaTienGoc=3300000,
-                    ImgURL="/ImageAssets/Women/New Balance/New Balance 530/1.png", rating=4.9, SanPhamMoi=true,
-                    Description="New Balance 530 là một mẫu giày thể thao nổi bật của New Balance, được thiết kế với phong cách hiện đại và cá tính. "
-                },
-
-                // Vans //
-                new SanPham { Id = 8, Name="Vans Old Skool Classic", LoaiGiay="Vans", Gender="Nam",
-                    GiaTien=1850000, GiaTienGoc=0,
-                    ImgURL="/ImageAssets/Men/Vans/Vans Old Skool Classic/1.png", rating=4.5, SanPhamMoi=false,
-                    Description="Vans Old Skool Classic là một trong những mẫu giày thể thao nổi tiếng của Vans, được ra mắt lần đầu tiên vào năm 1977. "
-                },
-                
-                
-            };
-        }
-        // GET: Store
-        public ActionResult Index(string TimKiem, string Loai,string Gender, string sortOrder)
-        {
-            List<SanPham> sanpham = GetSanPham();//Lấy danh sách sản phẩm
-            if (!string.IsNullOrEmpty(TimKiem))//Lọc theo từ khóa tìm kiếm
+            switch (sortOrder)
             {
-                sanpham=sanpham.Where(sp=>sp.Name.ToLower().Contains(TimKiem.ToLower())).ToList();
+                case "Tang_Dan": q = q.OrderBy(p => p.GiaTien); break;
+                case "Giam_Dan": q = q.OrderByDescending(p => p.GiaTien); break;
+                default: q = q.OrderBy(p => p.Id); break;
             }
-            if (!string.IsNullOrEmpty(Loai) && Loai != "All")
-            {
-                sanpham = sanpham.Where(sp => sp.LoaiGiay.ToLower() == Loai.ToLower()).ToList();
-            }
-            if (!string.IsNullOrEmpty(Gender) && Gender == "Nam")
-            {
-                sanpham = sanpham.Where(sp => sp.Gender == "Nam").ToList();
-            }
-            if (!string.IsNullOrEmpty(Gender) && Gender == "Nu")
-            {
-                sanpham = sanpham.Where(sp => sp.Gender == "Nu").ToList();
-            }
-            switch (sortOrder)//Thuật toán sắp xếp theo giá tiền
-            {
-                case "Tang_Dan":
-                    sanpham = sanpham.OrderBy(p => p.GiaTien).ToList(); // Giá từ thấp đến cao
-                    break;
-                case "Giam_Dan":
-                    sanpham = sanpham.OrderByDescending(p => p.GiaTien).ToList(); // Giá từ cao đến thấp
-                    break;
-                default:
-                    sanpham = sanpham.OrderBy(p => p.Id).ToList(); // Mặc định sắp xếp theo ID
-                    break;
-            }
-            ViewBag.TimKiem = TimKiem;
-            ViewBag.Loai = Loai;
-            ViewBag.Gender = Gender;
-            ViewBag.Sort = sortOrder;
-            
-            return View(sanpham.ToList());
+            return View(q.ToList());
         }
 
         public ActionResult Details(int id)
         {
-            var all = GetSanPham();
-            var sp = all.FirstOrDefault(p => p.Id == id);
+            var sp = db.SanPhams.Find(id);
             if (sp == null) return HttpNotFound();
 
-            var vm = new ProductDetailsViewModel
+            return View(new ProductDetailsViewModel
             {
                 Product = sp,
-                Related = all.Where(p => p.Id != id && (p.LoaiGiay == sp.LoaiGiay || p.Gender == sp.Gender))
-                             .OrderByDescending(p => p.rating)
-                             .Take(4)
-                             .ToList()
-            };
-            return View(vm);
+                Related = db.SanPhams
+                            .Where(p => p.Id != id && (p.LoaiGiay == sp.LoaiGiay || p.Gender == sp.Gender))
+                            .OrderByDescending(p => p.rating).ThenBy(p => p.Id)
+                            .Take(4).ToList()
+            });
         }
+        // GET: Store
         [ChildActionOnly]
         public ActionResult MegaMenu()
         {
@@ -168,13 +54,17 @@ namespace StoreSite.Controllers
 
             try
             {
-                var all = GetSanPham();   // hàm lấy danh sách sản phẩm trong controller của bạn
+                var all = db.SanPhams.ToList();   // hàm lấy danh sách sản phẩm trong controller
 
                 vm.BrandsNam = all.Where(p => p.Gender == "Nam" && !string.IsNullOrEmpty(p.LoaiGiay))
                                   .Select(p => p.LoaiGiay).Distinct().OrderBy(b => b).ToList();
 
                 vm.BrandsNu = all.Where(p => p.Gender == "Nu" && !string.IsNullOrEmpty(p.LoaiGiay))
                                  .Select(p => p.LoaiGiay).Distinct().OrderBy(b => b).ToList();
+
+                vm.Sports = all.Select(p => p.Sport)
+                                .Where(s => !string.IsNullOrEmpty(s))
+                                .Distinct().OrderBy(s => s).ToList();
 
                 vm.Featured = all.Where(p => p.SanPhamMoi)
                                  .OrderByDescending(p => p.rating).ThenBy(p => p.Id)

@@ -6,7 +6,7 @@
 @model StoreSite.Models.ProductDetailsViewModel
 @{
     var p = Model.Product;
-    ViewBag.Title = p.Name;
+    ViewBag.Title = p.ItemName;
     bool coGiam = p.GiaTienGoc.HasValue && p.GiaTienGoc.Value > p.GiaTien;
     int phanTram = coGiam ? (int)Math.Round((1 - p.GiaTien / p.GiaTienGoc.Value) * 100) : 0;
 }
@@ -22,14 +22,14 @@
     <nav class="pd-breadcrumb">
         <a href="@Url.Action("Index", "Home")">Trang chủ</a> /
         <a href="@Url.Action("Index", "Store")">Cửa hàng</a> /
-        <span>@p.Name</span>
+        <span>@p.ItemName</span>
     </nav>
 
     <div class="pd-layout">
 
         <!-- Ảnh -->
         @{
-            var images = StoreSite.Models.ProductGallery.GetImages(p.Name, p.ImgURL);
+            var images = StoreSite.Models.ProductGallery.GetImages(p.ItemName, p.ImgURL);
             bool nhieuAnh = images.Count > 1;
             string anhDau = images.Count > 0 ? Url.Content(images[0]) : "";
         }
@@ -56,7 +56,7 @@
                     {
                         <span class="badge-new">Mới</span>
                     }
-                    <img id="pg-main" class="pd-img" src="@anhDau" alt="@p.Name" />
+                    <img id="pg-main" class="pd-img" src="@anhDau" alt="@p.ItemName" />
                 </div>
 
                 @if (nhieuAnh)
@@ -73,8 +73,8 @@
 
         <!-- Thông tin -->
         <div class="pd-info">
-            <small class="text-muted">@p.LoaiGiay - @p.Gender</small>
-            <h1 class="pd-name">@p.Name</h1>
+            <small class="text-muted">@p.LoaiGiay - @p.Gender - @p.Sport</small>
+            <h1 class="pd-name">@p.ItemName</h1>
             <div class="pd-rating">★ @p.rating / 5.0</div>
 
             <div class="pd-price">
@@ -113,12 +113,12 @@
                 <li>Lưu ý: trường hợp mua hơn số lượng lớn hơn 10 chiếc hãy liên hệ riêng</li>
             </ul>
 
-            @if (!string.IsNullOrWhiteSpace(p.Description))
+            @if (!string.IsNullOrWhiteSpace(p.DescriptionTxt))
             {
                 <section class="pd-desc">
                     <hr />
                     <h5 class="pd-section-title">Mô tả sản phẩm</h5>
-                    <div class="pd-desc__body">@p.Description</div>
+                    <div class="pd-desc__body">@p.DescriptionTxt</div>
                 </section>
             }
         </div>

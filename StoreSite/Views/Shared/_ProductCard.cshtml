@@ -1,4 +1,4 @@
-﻿@model StoreSite.Controllers.SanPham
+﻿@model StoreSite.Models.SanPham
 @{
     var detailsUrl = Url.Action("Details", "Store", new { id = Model.Id });
 }
@@ -11,13 +11,13 @@
     }
 
     <div class="img-wrapper">
-        <img src="@Url.Content("~" + Model.ImgURL)" class="img-product" alt="@Model.Name" />
+        <img src="@Url.Content("~" + Model.ImgURL)" class="img-product" alt="@Model.ItemName" />
     </div>
 
-    <small class="brand">@Model.LoaiGiay - @Model.Gender</small>
+    <small class="brand">@Model.LoaiGiay - @Model.Gender - @Model.Sport</small>
 
     <h6 class="product-name">
-        <a href="@detailsUrl">@Model.Name</a>
+        <a href="@detailsUrl">@Model.ItemName</a>
     </h6>
 
     <div class="my-2">

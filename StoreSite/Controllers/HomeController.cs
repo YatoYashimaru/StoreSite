@@ -7,23 +7,21 @@ using StoreSite.Models;
 
 namespace StoreSite.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private const int PageSize = 4;
 
         private FeaturedViewModel BuildFeatured(int page)
         {
-            var all = StoreController.GetSanPham()
-                        .Where(p => p.SanPhamMoi)
-                        .OrderByDescending(p => p.rating)
-                        .ToList();
+            var query = db.SanPhams.Where(p => p.SanPhamMoi)
+                                   .OrderByDescending(p => p.rating).ThenBy(p => p.Id);
 
-            int totalPages = Math.Max(1, (int)Math.Ceiling(all.Count / (double)PageSize));
+            int totalPages = Math.Max(1, (int)Math.Ceiling(query.Count() / (double)PageSize));
             page = Math.Min(Math.Max(page, 1), totalPages);
 
             return new FeaturedViewModel
             {
-                Items = all.Skip((page - 1) * PageSize).Take(PageSize).ToList(),
+                Items = query.Skip((page - 1) * PageSize).Take(PageSize).ToList(),
                 Page = page,
                 TotalPages = totalPages
             };

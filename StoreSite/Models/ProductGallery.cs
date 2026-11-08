@@ -8,20 +8,6 @@ using System.Web.Hosting;
 
 namespace StoreSite.Models
 {
-    /// <summary>
-    /// Tìm danh sách ảnh của một sản phẩm trong ~/ImageAssets.
-    ///
-    /// Cấu trúc thư mục:
-    ///   ImageAssets/Men/Adidas/Adidas F50 Messi/1.jpg, 2.jpg, 3.jpg ...
-    ///   ImageAssets/Women/Nike/Ten San Pham/1.png, 2.png ...
-    ///
-    /// Thư mục sản phẩm được xác định theo thứ tự:
-    ///   1. Chính thư mục chứa ảnh ImgURL (nếu ảnh đó nằm trong thư mục sản phẩm, tên file là số).
-    ///   2. Thư mục có tên trùng với tên file ImgURL hoặc tên sản phẩm
-    ///      (không phân biệt hoa thường, bỏ dấu cách, gạch dưới, gạch ngang).
-    ///   3. Thư mục có tên nằm trong tên sản phẩm (hoặc ngược lại), ưu tiên tên dài nhất.
-    /// Không tìm thấy thì trả về đúng một ảnh là ImgURL, trang chi tiết vẫn hoạt động như cũ.
-    /// </summary>
     public static class ProductGallery
     {
         private const string Root = "~/ImageAssets/";

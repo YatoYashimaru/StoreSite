@@ -75,7 +75,7 @@
 
 .mm-inner {
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
     gap: 40px;
     max-width: 1200px;
     margin: 0 auto;

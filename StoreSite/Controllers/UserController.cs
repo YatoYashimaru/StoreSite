@@ -7,153 +7,115 @@ using StoreSite.Models;
 
 namespace StoreSite.Controllers
 {
-    public class UserController : Controller
+    public class UserController : BaseController
     {
-        private static List<NguoiDung> DanhSachNguoiDung = new List<NguoiDung>();
-        // GET: User
-        
-        public ActionResult SignUp()
-        {
-            return View();
-        }
-        [HttpPost]
-        public ActionResult SignUp(string HoTen, string Email, string MatKhau, string XacNhanMatKhau)
-        {
-            if (string.IsNullOrEmpty(HoTen) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(MatKhau))
-            {
-                ViewBag.Loi = "Vui lòng nhập đầy đủ thông tin";
-                return View();
-            }
-
-            if (MatKhau.Length < 8)
-            {
-                ViewBag.Loi = "Mật khẩu phải từ 8 ký tự trở lên";
-                return View();
-            }
-
-            if (MatKhau != XacNhanMatKhau)
-            {
-                ViewBag.Loi = "Mật khẩu xác nhận không khớp";
-                return View();
-            }
-
-            bool daTonTai = false;
-            foreach (NguoiDung nd in DanhSachNguoiDung)
-            {
-                if (nd.Email.ToLower() == Email.ToLower())
-                {
-                    daTonTai = true;
-                    break;
-                }
-            }
-            if (daTonTai)
-            {
-                ViewBag.Loi = "Email này đã được đăng ký";
-                return View();
-            }
-
-            NguoiDung nguoiDungMoi = new NguoiDung();
-            nguoiDungMoi.Id = DanhSachNguoiDung.Count + 1;
-            nguoiDungMoi.HoTen = HoTen;
-            nguoiDungMoi.Email = Email;
-            nguoiDungMoi.MatKhau = MatKhau;
-            DanhSachNguoiDung.Add(nguoiDungMoi);
-
-            TempData["ThongBao"] = "Đăng ký thành công! Vui lòng đăng nhập.";
-            return RedirectToAction("Login");
-        }
-        public ActionResult Login()
-        {
-            return View();
-        }
-        [HttpPost]
-        public ActionResult Login(string Email, string MatKhau)
-        {
-            NguoiDung nguoiDungTimThay = null;
-
-            foreach (NguoiDung nd in DanhSachNguoiDung)
-            {
-                if (nd.Email.ToLower() == Email.ToLower() && nd.MatKhau == MatKhau)
-                {
-                    nguoiDungTimThay = nd;
-                    break;
-                }
-            }
-
-            if (nguoiDungTimThay == null)
-            {
-                ViewBag.Loi = "Email hoặc mật khẩu không đúng";
-                return View();
-            }
-
-            Session["NguoiDungId"] = nguoiDungTimThay.Id;
-            Session["HoTen"] = nguoiDungTimThay.HoTen;
-
-            return RedirectToAction("Index", "Home");
-        }
-        // Lấy người dùng đang đăng nhập từ Session, chưa đăng nhập thì trả về null
-        private NguoiDung LayNguoiDungHienTai()
+        private StoreSite.Models.User LayNguoiDungHienTai()
         {
             var id = Session["NguoiDungId"] as int?;
-            if (id == null) return null;
-            return DanhSachNguoiDung.FirstOrDefault(n => n.Id == id.Value);
+            return id == null ? null : db.Users.Find(id.Value);
         }
 
-        public ActionResult UserPage(string tab)
+        [HttpGet] public ActionResult Login() { return View(); }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult Login(LoginViewModel model)
         {
-            var nd = LayNguoiDungHienTai();
-            if (nd == null) return RedirectToAction("Login");
+            if (!ModelState.IsValid) return View(model);
 
-            ViewBag.Tab = (tab == "password" || tab == "orders") ? tab : "profile";
+            string email = model.Email.Trim();
+            var user = db.Users.FirstOrDefault(u => u.UserEmail == email);
 
-            return View(new UserPageViewModel { HoTen = nd.HoTen, Email = nd.Email });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult UpdateProfile(string HoTen)
-        {
-            var nd = LayNguoiDungHienTai();
-            if (nd == null) return RedirectToAction("Login");
-
-            HoTen = (HoTen ?? "").Trim();
-            if (HoTen.Length == 0)
+            if (user == null || user.PasswordHash != model.MatKhau)
             {
-                TempData["Loi"] = "Họ và tên không được để trống";
-                return RedirectToAction("UserPage", new { tab = "profile" });
+                ViewBag.Loi = "Email hoặc mật khẩu không đúng";
+                return View(model);
             }
 
-            nd.HoTen = HoTen;
-            Session["HoTen"] = HoTen;          // để lời chào trên thanh menu đổi theo
-            TempData["ThongBao"] = "Đã cập nhật thông tin";
-            return RedirectToAction("UserPage", new { tab = "profile" });
+            Session["NguoiDungId"] = user.UserID;
+            Session["HoTen"] = user.UserName;
+            return RedirectToAction("Index", "Home");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult ChangePassword(string MatKhauCu, string MatKhauMoi, string XacNhanMatKhauMoi)
+        [HttpGet] public ActionResult SignUp() { return View(); }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult SignUp(SignUpViewModel model)
         {
-            var nd = LayNguoiDungHienTai();
-            if (nd == null) return RedirectToAction("Login");
+            string email = (model.Email ?? "").Trim();
+            if (db.Users.Any(u => u.UserEmail == email))
+                ModelState.AddModelError("Email", "Email này đã được đăng ký");
 
-            if (nd.MatKhau != MatKhauCu)
-                TempData["Loi"] = "Mật khẩu hiện tại không đúng";
-            else if (string.IsNullOrEmpty(MatKhauMoi) || MatKhauMoi.Length < 6)
-                TempData["Loi"] = "Mật khẩu mới phải từ 6 ký tự trở lên";
-            else if (MatKhauMoi != XacNhanMatKhauMoi)
-                TempData["Loi"] = "Mật khẩu xác nhận không khớp";
-            else
+            if (!ModelState.IsValid) return View(model);
+
+            db.Users.Add(new StoreSite.Models.User
             {
-                nd.MatKhau = MatKhauMoi;
-                TempData["ThongBao"] = "Đã đổi mật khẩu";
-            }
+                UserName = model.HoTen.Trim(),
+                UserEmail = email,
+                UserPhone = model.SoDienThoai.Trim(),
+                PasswordHash = model.MatKhau,
+                UserRole = false
+            });
+            db.SaveChanges();
 
-            return RedirectToAction("UserPage", new { tab = "password" });
+            TempData["ThongBao"] = "Đăng ký thành công, hãy đăng nhập";
+            return RedirectToAction("Login");
         }
+
         public ActionResult Logout()
         {
             Session.Clear();
             return RedirectToAction("Index", "Home");
+        }
+
+        public ActionResult UserPage(string tab)
+        {
+            var user = LayNguoiDungHienTai();
+            if (user == null) return RedirectToAction("Login");
+
+            ViewBag.Tab = (tab == "password" || tab == "orders") ? tab : "profile";
+            return View(new UserPageViewModel
+            {
+                HoTen = user.UserName,
+                Email = user.UserEmail,
+                Orders = db.Orders.Where(o => o.UserID == user.UserID)
+                                  .OrderByDescending(o => o.OrderDate).ToList()
+            });
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult UpdateProfile(string HoTen)
+        {
+            var user = LayNguoiDungHienTai();
+            if (user == null) return RedirectToAction("Login");
+
+            HoTen = (HoTen ?? "").Trim();
+            if (HoTen.Length == 0) TempData["Loi"] = "Họ và tên không được để trống";
+            else
+            {
+                user.UserName = HoTen;
+                db.SaveChanges();
+                Session["HoTen"] = HoTen;
+                TempData["ThongBao"] = "Đã cập nhật thông tin";
+            }
+            return RedirectToAction("UserPage", new { tab = "profile" });
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult ChangePassword(string MatKhauCu, string MatKhauMoi, string XacNhanMatKhauMoi)
+        {
+            var user = LayNguoiDungHienTai();
+            if (user == null) return RedirectToAction("Login");
+
+            if (user.PasswordHash != MatKhauCu) TempData["Loi"] = "Mật khẩu hiện tại không đúng";
+            else if (string.IsNullOrEmpty(MatKhauMoi) || MatKhauMoi.Length < 8) TempData["Loi"] = "Mật khẩu mới phải từ 8 ký tự trở lên";
+            else if (MatKhauMoi != XacNhanMatKhauMoi) TempData["Loi"] = "Mật khẩu xác nhận không khớp";
+            else
+            {
+                user.PasswordHash = MatKhauMoi;
+                db.SaveChanges();
+                TempData["ThongBao"] = "Đã đổi mật khẩu";
+            }
+            return RedirectToAction("UserPage", new { tab = "password" });
         }
     }
 }

@@ -1,4 +1,4 @@
-@model IEnumerable<StoreSite.Controllers.SanPham>
+@model IEnumerable<StoreSite.Models.SanPham>
 
 @{
     ViewBag.Title = "Cửa Hàng Giày - Meisho Doshoes";
@@ -36,6 +36,15 @@
                             <option value="Converse" @(ViewBag.Loai == "Converse" ? "selected" : "")>Converse</option>
                             <option value="Converse" @(ViewBag.Loai == "Vans" ? "selected" : "")>Vans</option>
                             <option value="Converse" @(ViewBag.Loai == "New Balance" ? "selected" : "")>New Balance</option>
+                        </select>
+
+                        <label for="Sport">Môn thể thao</label>
+                        <select id="Sport" name="Sport">
+                            <option value="All">Tất cả môn</option>
+                            @foreach (var s in (List<string>)ViewBag.Sports)
+                            {
+                                <option value="@s" @((string)ViewBag.Sport == s ? "selected" : "")>@StoreSite.Models.SportNames.Label(s)</option>
+                            }
                         </select>
                     </div>
                     <div class="form-group mb-3">
