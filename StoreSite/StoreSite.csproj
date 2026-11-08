@@ -128,6 +128,7 @@
     <Compile Include="Models\NguoiDung.cs" />
     <Compile Include="Models\ProductDetailsViewModel.cs" />
     <Compile Include="Models\FeaturedViewModel.cs" />
+    <Compile Include="Models\ProductGallery.cs" />
     <Compile Include="Models\UserPageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -154,6 +155,7 @@
     <Content Include="Content\MainPageStyle.css" />
     <Content Include="Content\MegaMenu.css" />
     <Content Include="Content\ProductDetails.css" />
+    <Content Include="Content\ProductGallery.css" />
     <Content Include="Content\StorePageStyle.css" />
     <Content Include="Content\UserPageStyle.css" />
     <Content Include="favicon.ico" />
@@ -177,6 +179,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\MegaMenu.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\ProductGallery.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

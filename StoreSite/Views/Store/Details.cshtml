@@ -14,6 +14,7 @@
 @section Styles {
     <link rel="stylesheet" href="@Url.Content("~/Content/StorePageStyle.css")?v=@DateTime.Now.Ticks" />
     <link rel="stylesheet" href="@Url.Content("~/Content/ProductDetails.css")?v=@DateTime.Now.Ticks" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/ProductGallery.css")?v=@DateTime.Now.Ticks" />
 }
 
 <div class="pd-page">
@@ -27,13 +28,48 @@
     <div class="pd-layout">
 
         <!-- Ảnh -->
-        <div class="pd-img-wrap">
-            @if (p.SanPhamMoi)
+        @{
+            var images = StoreSite.Models.ProductGallery.GetImages(p.Name, p.ImgURL);
+            bool nhieuAnh = images.Count > 1;
+            string anhDau = images.Count > 0 ? Url.Content(images[0]) : "";
+        }
+        <div class="pg @(nhieuAnh ? "" : "pg--single")" id="pg">
+            @if (nhieuAnh)
             {
-                <span class="badge-new">Mới</span>
+                <div class="pg-thumbs-col">
+                    <div class="pg-thumbs" id="pg-thumbs" role="group" aria-label="Ảnh sản phẩm">
+                        @for (int i = 0; i < images.Count; i++)
+                        {
+                            var src = Url.Content(images[i]);
+                            <button type="button" class="pg-thumb @(i == 0 ? "is-active" : "")"
+                                    data-src="@src" aria-label="Xem ảnh @(i + 1)" aria-current="@(i == 0 ? "true" : "false")">
+                                <img src="@src" alt="" loading="lazy" />
+                            </button>
+                        }
+                    </div>
+                </div>
             }
-            <img src="@Url.Content("~" + p.ImgURL)" alt="@p.Name" class="pd-img" />
+
+            <div class="pg-stage">
+                <div class="pd-img-wrap">
+                    @if (p.SanPhamMoi)
+                    {
+                        <span class="badge-new">Mới</span>
+                    }
+                    <img id="pg-main" class="pd-img" src="@anhDau" alt="@p.Name" />
+                </div>
+
+                @if (nhieuAnh)
+                {
+                    <span class="pg-counter" id="pg-counter">1 / @images.Count</span>
+                    <div class="pg-nav">
+                        <button type="button" class="pg-arrow" id="pg-prev" aria-label="Ảnh trước">&#8249;</button>
+                        <button type="button" class="pg-arrow" id="pg-next" aria-label="Ảnh sau">&#8250;</button>
+                    </div>
+                }
+            </div>
         </div>
+
 
         <!-- Thông tin -->
         <div class="pd-info">
@@ -74,6 +110,7 @@
                 <li>Cam kết 100% hàng chính hãng</li>
                 <li>Kiểm tra hàng trước khi nhận</li>
                 <li>Đổi size miễn phí trong 14 ngày</li>
+                <li>Lưu ý: trường hợp mua hơn số lượng lớn hơn 10 chiếc hãy liên hệ riêng</li>
             </ul>
 
             @if (!string.IsNullOrWhiteSpace(p.Description))
@@ -126,3 +163,4 @@
         };
     })();
 </script>
+<script src="~/Scripts/ProductGallery.js"></script>

@@ -1,0 +1,192 @@
+/* =========================================================
+   BỘ ẢNH SẢN PHẨM (trang chi tiết)
+   Cột ảnh nhỏ bên trái + ảnh lớn bên phải; màn nhỏ thì ảnh nhỏ nằm dưới.
+   Class bắt đầu bằng "pg-" để không đụng CSS cũ.
+   ========================================================= */
+
+.pg {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+}
+
+.pg--single {
+    grid-template-columns: minmax(0, 1fr);   /* chỉ có 1 ảnh thì không có cột ảnh nhỏ */
+}
+
+/* ---------- Ảnh lớn ---------- */
+.pg-stage {
+    position: relative;
+    grid-column: 2;
+    min-width: 0;
+}
+
+.pg--single .pg-stage {
+    grid-column: 1;
+}
+
+/* dùng lại khung .pd-img-wrap cũ (nền, bo góc, tỉ lệ vuông) */
+.pg-stage .pd-img-wrap {
+    width: 100%;
+    touch-action: pan-y;               /* cho phép vuốt ngang để đổi ảnh, vuốt dọc vẫn cuộn trang */
+    user-select: none;
+}
+
+.pg-stage .pd-img {
+    transition: opacity .18s ease;
+    -webkit-user-drag: none;
+}
+
+.pg-stage .pd-img.is-fading {
+    opacity: 0;
+}
+
+/* ---------- Nút trước / sau ---------- */
+.pg-nav {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    z-index: 3;
+    display: flex;
+    gap: 8px;
+}
+
+.pg-arrow {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: #111;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, .22);
+    transition: background-color .15s, transform .15s;
+}
+
+.pg-arrow:hover {
+    background: #e9e9e9;
+}
+
+.pg-arrow:active {
+    transform: scale(.94);
+}
+
+.pg-arrow:focus-visible,
+.pg-thumb:focus-visible {
+    outline: 2px solid var(--hp-accent, #00b8c4);
+    outline-offset: 2px;
+}
+
+.pg-counter {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    z-index: 3;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(17, 17, 17, .6);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ---------- Cột ảnh nhỏ ---------- */
+.pg-thumbs-col {
+    grid-column: 1;
+    grid-row: 1;
+    position: relative;                /* để cột cuộn bên trong, không kéo dài hơn ảnh lớn */
+    align-self: stretch;
+    min-height: 0;
+}
+
+.pg-thumbs {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    padding: 2px;
+    scrollbar-width: none;             /* ẩn thanh cuộn, vẫn cuộn được bằng chuột/ngón tay */
+}
+
+.pg-thumbs::-webkit-scrollbar {
+    display: none;
+}
+
+.pg-thumb {
+    flex: 0 0 auto;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: #f5f7f8;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: .75;
+    transition: opacity .15s, border-color .15s;
+}
+
+.pg-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+}
+
+.pg-thumb:hover {
+    opacity: 1;
+}
+
+.pg-thumb.is-active {
+    opacity: 1;
+    border-color: var(--hp-accent, #111);
+}
+
+/* ---------- Màn nhỏ: ảnh nhỏ nằm ngang bên dưới ---------- */
+@media (max-width: 768px) {
+    .pg {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .pg-stage {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .pg-thumbs-col {
+        grid-column: 1;
+        grid-row: 2;
+        align-self: auto;
+    }
+
+    .pg-thumbs {
+        position: static;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 2px 2px 4px;
+        scroll-snap-type: x proximity;
+    }
+
+    .pg-thumb {
+        width: 64px;
+        scroll-snap-align: start;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pg-stage .pd-img,
+    .pg-thumb,
+    .pg-arrow {
+        transition: none;
+    }
+}
