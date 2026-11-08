@@ -1,8 +1,10 @@
 ﻿@model StoreSite.Models.Order
 @{
     Layout = "~/Views/Shared/_LayoutUser.cshtml";
-    ViewBag.Title = "Đơn hàng #" + Model.Id;
-    var items = Model.TakeItems();
+    ViewBag.Title = "Đơn hàng #" + Model.OrderID;
+    var details = Model.OrderDetails.OrderBy(d => d.ID).ToList();
+    int tongSL = details.Sum(d => d.Quantity);
+    bool xong = Model.PaymentStatus == "Complete";
 }
 
 @section Styles {
@@ -13,7 +15,7 @@
 <div class="cart-page">
     <nav class="cart-breadcrumb">
         <a href="@Url.Action("Index", "Home")">Trang chủ</a> /
-        <span>Đơn hàng #@Model.Id</span>
+        <span>Đơn hàng #@Model.OrderID</span>
     </nav>
 
     @if (TempData["ThongBao"] != null)
@@ -21,53 +23,45 @@
         <div class="pay-alert pay-alert--success" role="status">@TempData["ThongBao"]</div>
     }
 
-    <h1 class="cart-title">Đơn hàng #@Model.Id <span class="order-status">@Model.Status</span></h1>
-    <p class="order-date">Đặt lúc @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+    <h1 class="cart-title">
+        Đơn hàng #@Model.OrderID
+        <span class="order-status @(xong ? "is-done" : "")">@(xong ? "Hoàn tất" : "Chờ xử lý")</span>
+    </h1>
+    <p class="order-date">Đặt lúc @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
 
     <div class="cart-layout">
-
         <div>
-            <!-- Thông tin giao hàng -->
             <section class="pay-box">
                 <h2 class="pay-box-title">Thông tin giao hàng</h2>
                 <div class="pay-info-row"><span>Người nhận</span><b>@Model.ReceiverName</b></div>
-                <div class="pay-info-row"><span>Số điện thoại</span><b>@Model.Phone</b></div>
-                <div class="pay-info-row"><span>Địa chỉ</span><b>@Model.Address</b></div>
+                <div class="pay-info-row"><span>Số điện thoại</span><b>@Model.ReceiverPhone</b></div>
+                <div class="pay-info-row"><span>Địa chỉ</span><b>@Model.AddressDelivery</b></div>
                 <div class="pay-info-row"><span>Ghi chú</span><b>@(string.IsNullOrEmpty(Model.Note) ? "Không có" : Model.Note)</b></div>
-                <div class="pay-info-row"><span>Thanh toán</span><b>@Model.PaymentMethodText()</b></div>
+                <div class="pay-info-row"><span>Thanh toán</span><b>@(Model.PaymentMethod == "bank" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng (COD)")</b></div>
             </section>
 
-            <!-- Sản phẩm trong đơn -->
             <section class="pay-box">
-                <h2 class="pay-box-title">Sản phẩm (@Model.SumQuantity() đôi)</h2>
-                @foreach (var item in items)
+                <h2 class="pay-box-title">Sản phẩm (@tongSL đôi)</h2>
+                @foreach (var d in details)
                 {
                     <div class="pay-line">
-                        <img src="@Url.Content("~" + item.ImgURL)" alt="@item.ProductName" />
+                        <img src="@Url.Content("~" + d.SanPham.ImgURL)" alt="@d.SanPham.ItemName" />
                         <div>
-                            <div class="cart-name">@item.ProductName</div>
-                            <div class="cart-meta">Size: @item.Size &times; @item.Quantity</div>
+                            <div class="cart-name">@d.SanPham.ItemName</div>
+                            <div class="cart-meta">Size: @d.SneakerSize &times; @d.Quantity</div>
                         </div>
-                        <div class="cart-line-total">@item.LineTotal().ToString("N0") đ</div>
+                        <div class="cart-line-total">@((d.UnitPrice * d.Quantity).ToString("N0")) đ</div>
                     </div>
                 }
             </section>
         </div>
 
-        <!-- Tóm tắt -->
         <aside class="cart-summary">
             <h2 class="cart-summary-title">Tóm tắt đơn hàng</h2>
-            <div class="cart-sum-row">
-                <span>Số lượng</span>
-                <span><b>@Model.SumQuantity()</b> đôi</span>
-            </div>
-            <div class="cart-sum-row cart-sum-total">
-                <span>Tổng cộng</span>
-                <span>@Model.TotalPrice().ToString("N0") đ</span>
-            </div>
+            <div class="cart-sum-row"><span>Số lượng</span><span><b>@tongSL</b> đôi</span></div>
+            <div class="cart-sum-row cart-sum-total"><span>Tổng cộng</span><span>@Model.TotalAmount.ToString("N0") đ</span></div>
             <a href="@Url.Action("Index", "Store")" class="cart-btn cart-checkout">Tiếp tục mua sắm</a>
             <a href="@Url.Action("UserPage", "User", new { tab = "orders" })" class="cart-continue">← Xem tất cả đơn hàng</a>
         </aside>
-
     </div>
 </div>

@@ -16,5 +16,10 @@ namespace StoreSite.Controllers
             if (disposing) db.Dispose();
             base.Dispose(disposing);
         }
+        protected StoreSite.Models.User CurrentUser()
+        {
+            var id = Session["NguoiDungId"] as int?;
+            return id == null ? null : db.Users.Find(id.Value);
+        }
     }
 }

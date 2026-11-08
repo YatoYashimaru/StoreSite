@@ -137,3 +137,7 @@ button.cart-btn {
     margin: -12px 0 24px;
     color: #777;
 }
+.order-status.is-done {
+    background: #e6f7ee;
+    color: #1b6e3c;
+}

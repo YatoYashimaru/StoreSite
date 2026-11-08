@@ -10,6 +10,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="@Url.Content("~/Content/UserPageStyle.css")?v=@DateTime.Now.Ticks" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/CartPage.css")?v=@DateTime.Now.Ticks" />
 }
 
 <div class="account">
@@ -68,7 +69,7 @@
             else if (tab == "password")
             {
                 <h2 class="account-title">Đổi mật khẩu</h2>
-                <p class="account-sub">Mật khẩu mới cần tối thiểu @StoreSite.Controllers.UserController.DoDaiMatKhauToiThieu ký tự.</p>
+                <p class="account-sub">Mật khẩu mới cần tối thiểu 8 ký tự.</p>
 
                 using (Html.BeginForm("ChangePassword", "User", FormMethod.Post, new { @class = "auth-form" }))
                 {
@@ -83,7 +84,7 @@
                     <div class="auth-field">
                         <label for="MatKhauMoi">Mật khẩu mới</label>
                         <input id="MatKhauMoi" name="MatKhauMoi" type="password" class="auth-input"
-                               autocomplete="new-password" minlength="@StoreSite.Controllers.UserController.DoDaiMatKhauToiThieu" required />
+                               autocomplete="new-password" minlength="8" required />
                     </div>
 
                     <div class="auth-field">
@@ -100,32 +101,23 @@
                 <h2 class="account-title">Đơn hàng của tôi</h2>
                 <p class="account-sub">Theo dõi các đơn bạn đã đặt.</p>
 
-                if (Model.Orders.Count == 0)
+                if (Model.Orders == null || Model.Orders.Count == 0)
                 {
-                    <div class="account-empty">
-                        <p>Bạn chưa có đơn hàng nào.</p>
-                        <a class="account-btn" href="@Url.Action("Index", "Store")">Mua sắm ngay</a>
-                    </div>
+                    <p>Bạn chưa có đơn hàng nào.</p>
                 }
                 else
                 {
-                    <div class="order-list">
-                        @foreach (var o in Model.Orders)
-                        {
-                            <a class="order-card" href="@Url.Action("OrderDetail", "Orders", new { id = o.Id })">
-                                <div class="order-card__head">
-                                    <span class="order-card__id">Đơn hàng #@o.Id</span>
-                                    <span class="order-card__status">@o.Status</span>
-                                </div>
-                                <div class="order-card__desc">@o.ShortDescription()</div>
-                                <div class="order-card__meta">@o.CreatedAt.ToString("dd/MM/yyyy HH:mm") &middot; @o.SumQuantity() đôi</div>
-                                <div class="order-card__foot">
-                                    <span>Tổng tiền</span>
-                                    <b>@o.TotalPrice().ToString("N0") đ</b>
-                                </div>
-                            </a>
-                        }
-                    </div>
+                    foreach (var o in Model.Orders)
+                    {
+                        <a class="pay-line" href="@Url.Action("OrderDetail", "Orders", new { id = o.OrderID })">
+                            <span></span>
+                            <div>
+                                <div class="cart-name">Đơn #@o.OrderID</div>
+                                <div class="cart-meta">@o.OrderDate.ToString("dd/MM/yyyy HH:mm") · @(o.PaymentStatus == "Complete" ? "Hoàn tất" : "Chờ xử lý")</div>
+                            </div>
+                            <div class="cart-line-total">@o.TotalAmount.ToString("N0") đ</div>
+                        </a>
+                    }
                 }
             }
 

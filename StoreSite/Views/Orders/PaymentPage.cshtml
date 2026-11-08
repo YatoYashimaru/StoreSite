@@ -78,9 +78,9 @@
                 @foreach (var line in lines)
                 {
                     <div class="pay-line">
-                        <img src="@Url.Content("~" + line.Product.ImgURL)" alt="@line.Product.Name" />
+                        <img src="@Url.Content("~" + line.Product.ImgURL)" alt="@line.Product.ItemName" />
                         <div>
-                            <div class="cart-name">@line.Product.Name</div>
+                            <div class="cart-name">@line.Product.ItemName</div>
                             <div class="cart-meta">Size: @line.Size &times; @line.Quantity</div>
                         </div>
                         <div class="cart-line-total">@line.LineTotal().ToString("N0") đ</div>

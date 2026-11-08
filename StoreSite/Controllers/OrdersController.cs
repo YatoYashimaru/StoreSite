@@ -1,119 +1,155 @@
-﻿using StoreSite.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Mvc;
+using StoreSite.Models;
 
 namespace StoreSite.Controllers
 {
-    public class OrdersController : Controller
+    public class OrdersController : BaseController
     {
-        // Danh sách đơn hàng tạm trong bộ nhớ (giống DanhSachNguoiDung bên UserController)
-        private static List<Order> DanhSachDonHang = new List<Order>();
-
-        // Cho controller khác (vd UserController) lấy các đơn của một người, đơn mới nhất lên đầu
-        [NonAction]
-        public static List<Order> LayDonHangCuaNguoiDung(int userId)
+        // PHẢI cùng khóa Session với CartController (tìm chữ Session[" trong CartController.cs)
+        private Cart GetCart()
         {
-            return DanhSachDonHang.Where(o => o.UserId == userId).OrderByDescending(o => o.Id).ToList();
+            var cart = Session["Cart"] as Cart;
+            if (cart == null) { cart = new Cart(); Session["Cart"] = cart; }
+            return cart;
         }
 
-        // Lấy người dùng đang đăng nhập từ Session, chưa đăng nhập thì trả về null
-        private NguoiDung LayNguoiDungHienTai()
+        private CartViewModel BuildViewModel(Cart cart)
         {
-            var id = Session["NguoiDungId"] as int?;
-            if (id == null) return null;
-            return UserController.TimTheoId(id.Value);
+            var ids = cart.TakeList().Select(i => i.ProductId).Distinct().ToList();
+            var products = db.SanPhams.Where(p => ids.Contains(p.Id)).ToList();
+            return new CartViewModel(cart, products);
         }
 
-        // Chưa đăng nhập: chuyển sang trang đăng nhập, đăng nhập xong sẽ quay lại returnUrl
-        private ActionResult ChuyenSangDangNhap(string thongBao, string returnUrl)
+        // /Orders/OdersPage -> danh sách đơn nằm ở tab "Đơn hàng của tôi" trong trang cá nhân
+        public ActionResult OdersPage()
         {
-            TempData["ThongBao"] = thongBao;
-            return RedirectToAction("Login", "User", new { returnUrl = returnUrl });
+            return RedirectToAction("UserPage", "User", new { tab = "orders" });
         }
 
-        // Hiện trang thanh toán với các ô đã điền sẵn (dùng cho lần mở đầu tiên và cả khi nhập sai)
-        private ActionResult ShowPaymentPage(Cart cart, string receiverName, string phone, string address, string note, string paymentMethod)
-        {
-            ViewBag.ReceiverName = receiverName;
-            ViewBag.Phone = phone;
-            ViewBag.Address = address;
-            ViewBag.Note = note;
-            ViewBag.PaymentMethod = paymentMethod;
-            return View("PaymentPage", new CartViewModel(cart, StoreController.GetSanPham()));
-        }
-
-        // Trang thanh toán: GET /Orders/PaymentPage
+        // ---------------- Thanh toán ----------------
+        [HttpGet]
         public ActionResult PaymentPage()
         {
-            var nd = LayNguoiDungHienTai();
-            if (nd == null)
-                return ChuyenSangDangNhap("Vui lòng đăng nhập để thanh toán.", Url.Action("PaymentPage", "Orders"));
+            var user = CurrentUser();
+            if (user == null)
+            {
+                TempData["ThongBao"] = "Vui lòng đăng nhập để thanh toán";
+                return RedirectToAction("Login", "User");
+            }
 
-            var cart = Session["Cart"] as Cart;
-            if (cart == null || cart.SumQuantity() == 0)
-                return RedirectToAction("Index", "Cart");
+            var vm = BuildViewModel(GetCart());
+            if (vm.TakeLines().Count == 0) return RedirectToAction("Index", "Cart");
 
-            return ShowPaymentPage(cart, nd.HoTen, nd.SDT, "", "", "cod");
+            ViewBag.ReceiverName = user.UserName;      // điền sẵn từ tài khoản
+            ViewBag.Phone = user.UserPhone;
+            ViewBag.Address = user.UserAddress;
+            ViewBag.PaymentMethod = "cod";
+            return View(vm);
         }
 
-        // Bấm "Đặt hàng": POST /Orders/PlaceOrder
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        // ---------------- Đặt hàng: lưu vào Order + OrderDetail ----------------
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult PlaceOrder(string ReceiverName, string Phone, string Address, string Note, string PaymentMethod)
         {
-            var nd = LayNguoiDungHienTai();
-            if (nd == null)
-                return ChuyenSangDangNhap("Vui lòng đăng nhập để thanh toán.", Url.Action("PaymentPage", "Orders"));
+            var user = CurrentUser();
+            if (user == null) return RedirectToAction("Login", "User");
 
-            var cart = Session["Cart"] as Cart;
-            if (cart == null || cart.SumQuantity() == 0)
-                return RedirectToAction("Index", "Cart");
+            var cart = GetCart();
+            var vm = BuildViewModel(cart);
+            var lines = vm.TakeLines();
+            if (lines.Count == 0) return RedirectToAction("Index", "Cart");
 
             ReceiverName = (ReceiverName ?? "").Trim();
             Phone = (Phone ?? "").Trim();
             Address = (Address ?? "").Trim();
             Note = (Note ?? "").Trim();
+            if (PaymentMethod != "bank") PaymentMethod = "cod";
 
             string loi = null;
-            if (ReceiverName.Length == 0 || Phone.Length == 0 || Address.Length == 0)
-                loi = "Vui lòng nhập đầy đủ họ tên, số điện thoại và địa chỉ giao hàng";
-            else if (!Regex.IsMatch(Phone, @"^\d{10,15}$"))
-                loi = "Số điện thoại không hợp lệ!";
-            else if (PaymentMethod != "cod" && PaymentMethod != "bank")
-                loi = "Vui lòng chọn phương thức thanh toán";
+            if (ReceiverName.Length == 0) loi = "Vui lòng nhập họ tên người nhận";
+            else if (!Regex.IsMatch(Phone, @"^0\d{9}$")) loi = "Số điện thoại gồm 10 số, bắt đầu bằng 0";
+            else if (Address.Length < 10) loi = "Vui lòng nhập địa chỉ giao hàng đầy đủ";
 
             if (loi != null)
             {
                 ViewBag.Loi = loi;
-                return ShowPaymentPage(cart, ReceiverName, Phone, Address, Note, PaymentMethod);
+                ViewBag.ReceiverName = ReceiverName; ViewBag.Phone = Phone;
+                ViewBag.Address = Address; ViewBag.Note = Note; ViewBag.PaymentMethod = PaymentMethod;
+                return View("PaymentPage", vm);
             }
 
-            var donHang = new Order(DanhSachDonHang.Count + 1, nd.Id, ReceiverName, Phone, Address, Note, PaymentMethod,
-                                    new CartViewModel(cart, StoreController.GetSanPham()));
-            DanhSachDonHang.Add(donHang);
-            cart.Clear();
+            // Giá lấy từ database tại thời điểm đặt, không tin dữ liệu từ trình duyệt
+            var order = new StoreSite.Models.Order
+            {
+                UserID = user.UserID,
+                OrderDate = DateTime.Now,
+                TotalAmount = vm.TotalPrice(),
+                PaymentStatus = "Pending",
+                AddressDelivery = Address,
+                ReceiverName = ReceiverName,
+                ReceiverPhone = Phone,
+                Note = Note.Length == 0 ? null : Note,
+                PaymentMethod = PaymentMethod
+            };
 
-            // Chuyển hướng (không return View) để bấm F5 không gửi lại form và tạo thêm đơn
-            TempData["ThongBao"] = "Đặt hàng thành công! Cảm ơn bạn đã mua sắm.";
-            return RedirectToAction("OrderDetail", new { id = donHang.Id });
+            foreach (var line in lines)
+            {
+                order.OrderDetails.Add(new StoreSite.Models.OrderDetail
+                {
+                    ProductID = line.Product.Id,
+                    SneakerSize = line.Size,
+                    Quantity = line.Quantity,
+                    UnitPrice = line.Product.GiaTien
+                });
+            }
+
+            try
+            {
+                db.Orders.Add(order);
+                db.SaveChanges();            // đơn + các dòng chi tiết lưu cùng lúc, lỗi thì không lưu gì cả
+            }
+            catch (DbEntityValidationException ex)
+            {
+                ViewBag.Loi = "Dữ liệu không hợp lệ: " + string.Join(" | ",
+                    ex.EntityValidationErrors.SelectMany(e => e.ValidationErrors)
+                      .Select(e => e.PropertyName + ": " + e.ErrorMessage));
+            }
+            catch (DbUpdateException ex)
+            {
+                ViewBag.Loi = "Không đặt được hàng: " + ex.GetBaseException().Message;
+            }
+
+            if (ViewBag.Loi != null)
+            {
+                ViewBag.ReceiverName = ReceiverName; ViewBag.Phone = Phone;
+                ViewBag.Address = Address; ViewBag.Note = Note; ViewBag.PaymentMethod = PaymentMethod;
+                return View("PaymentPage", vm);
+            }
+
+            cart.Clear();
+            Session["Cart"] = cart;
+            TempData["ThongBao"] = "Đặt hàng thành công! Cảm ơn bạn.";
+            return RedirectToAction("OrderDetail", new { id = order.OrderID });
         }
 
-        // Chi tiết một đơn hàng: GET /Orders/OrderDetail/1
-        public ActionResult OrderDetail(int? id)
+        // ---------------- Chi tiết đơn (chỉ chủ đơn hoặc admin xem được) ----------------
+        public ActionResult OrderDetail(int id)
         {
-            var nd = LayNguoiDungHienTai();
-            if (nd == null)
-                return ChuyenSangDangNhap("Vui lòng đăng nhập để xem đơn hàng.", Url.Action("OrderDetail", "Orders", new { id = id }));
+            var user = CurrentUser();
+            if (user == null) return RedirectToAction("Login", "User");
 
-            // Chỉ tìm trong đơn của chính người này: sửa số id trên thanh địa chỉ cũng không xem được đơn người khác
-            var donHang = DanhSachDonHang.FirstOrDefault(o => o.Id == id && o.UserId == nd.Id);
-            if (donHang == null) return HttpNotFound();
+            var order = db.Orders
+                          .Include(o => o.OrderDetails.Select(d => d.SanPham))
+                          .FirstOrDefault(o => o.OrderID == id && (o.UserID == user.UserID || user.UserRole));
+            if (order == null) return HttpNotFound();
 
-            return View(donHang);
+            return View(order);
         }
     }
 }

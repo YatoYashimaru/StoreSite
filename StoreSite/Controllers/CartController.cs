@@ -7,8 +7,9 @@ using System.Web.Mvc;
 
 namespace StoreSite.Controllers
 {
-    public class CartController : Controller
+    public class CartController : BaseController
     {
+        
         private Cart TakeCart()
         {
             var cart = Session["Cart"] as Cart;
@@ -22,10 +23,11 @@ namespace StoreSite.Controllers
 
         private static string Money(decimal amount) => amount.ToString("N0") + " đ"; // Định dạng tiền kiểu VND
         // Trang giỏ hàng: GET /Cart
-        public ActionResult Index()
+        private CartViewModel BuildViewModel(Cart cart)
         {
-            var cart = TakeCart();
-            return View(new CartViewModel(cart, StoreController.GetSanPham()));
+            var ids = cart.TakeList().Select(i => i.ProductId).Distinct().ToList();
+            var products = db.SanPhams.Where(p => ids.Contains(p.Id)).ToList();
+            return new CartViewModel(cart, products);
         }
 
         // Hiển thị số đôi giày trong giỏ trên header. ChildActionOnly: chỉ gọi được từ trong view, không gõ URL vào được
@@ -34,12 +36,17 @@ namespace StoreSite.Controllers
         {
             return PartialView("_CartBadge", TakeCart().SumQuantity());
         }
+        public ActionResult Index()
+        {
+            var cart = Session["Cart"] as Cart ?? new Cart();
+            return View(BuildViewModel(cart)); 
+        }
 
         [HttpPost]
         public ActionResult AddItem(int productId, int size, int quantity)
         {
-            bool existItem = StoreController.GetSanPham().Any(p => p.Id == productId);
-            if (!existItem) return Json(new { ok = false, message = "Sản phẩm không tồn tại." });
+            //bool existItem = .Any(p => p.Id == productId);    // đang sửa
+            //if (!existItem) return Json(new { ok = false, message = "Sản phẩm không tồn tại." });
             var cart = TakeCart();
             if (!cart.AddItem(productId, size, quantity))
                 return Json(new { ok = false, message = "Size không hợp lệ hoặc số lượng không hợp lệ." });
@@ -53,7 +60,7 @@ namespace StoreSite.Controllers
             if (!cart.UpdateQuantity(productId, size, quantity))
                 return Json(new { ok = false, message = "Không cập nhật được sản phẩm này." });
 
-            var vm = new CartViewModel(cart, StoreController.GetSanPham());
+            var vm = BuildViewModel(cart);
             var line = vm.FindLine(productId, size);
             return Json(new
             {
@@ -72,7 +79,7 @@ namespace StoreSite.Controllers
             if (!cart.RemoveItem(productId, size))
                 return Json(new { ok = false, message = "Sản phẩm không có trong giỏ hàng." });
 
-            var vm = new CartViewModel(cart, StoreController.GetSanPham());
+            var vm = BuildViewModel(cart);
             return Json(new
             {
                 ok = true,
