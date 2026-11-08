@@ -118,17 +118,24 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\StoreController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Cart.cs" />
+    <Compile Include="Models\CartLine.cs" />
+    <Compile Include="Models\CartViewModel.cs" />
     <Compile Include="Models\MegaMenuViewModel.cs" />
     <Compile Include="Models\NguoiDung.cs" />
+    <Compile Include="Models\Order.cs" />
+    <Compile Include="Models\OrderItem.cs" />
     <Compile Include="Models\ProductDetailsViewModel.cs" />
     <Compile Include="Models\FeaturedViewModel.cs" />
-    <Compile Include="Models\ProductGallery.cs" />
+    <Compile Include="Models\CartItem.cs" />
     <Compile Include="Models\UserPageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -149,11 +156,13 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\CartPage.css" />
     <Content Include="Content\LayoutStyle.css" />
     <Content Include="Content\MainPageStyle.css" />
     <Content Include="Content\LayoutStyle.css" />
     <Content Include="Content\MainPageStyle.css" />
     <Content Include="Content\MegaMenu.css" />
+    <Content Include="Content\PaymentPage.css" />
     <Content Include="Content\ProductDetails.css" />
     <Content Include="Content\ProductGallery.css" />
     <Content Include="Content\StorePageStyle.css" />
@@ -201,9 +210,11 @@
     <Content Include="Views\Store\Details.cshtml" />
     <Content Include="Views\Shared\_LayoutUser.cshtml" />
     <Content Include="Views\User\UserPage.cshtml" />
-    <Content Include="Views\Orders\OdersPage.cshtml" />
     <Content Include="Views\Orders\PaymentPage.cshtml" />
     <Content Include="Views\Shared\_MegaMenu.cshtml" />
+    <Content Include="Views\Cart\Index.cshtml" />
+    <Content Include="Views\Cart\_CartBadge.cshtml" />
+    <Content Include="Views\Orders\OrderDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

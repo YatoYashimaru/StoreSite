@@ -1,0 +1,139 @@
+﻿/* ===== Trang thanh toán (dùng lại các class .cart-* của CartPage.css) ===== */
+.pay-box {
+    margin-bottom: 24px;
+    padding: 20px;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+}
+
+.pay-box-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 12px;
+}
+
+/* Dòng thông tin người nhận: nhãn bên trái, giá trị bên phải */
+.pay-info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+    .pay-info-row:last-child {
+        border-bottom: none;
+    }
+
+    .pay-info-row span {
+        color: #777;
+    }
+
+/* Dòng sản phẩm: ảnh | tên + size | thành tiền */
+.pay-line {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+    .pay-line:last-child {
+        border-bottom: none;
+    }
+
+    .pay-line img {
+        width: 64px;
+        height: 64px;
+        padding: 4px;
+        object-fit: contain;
+        background: #f5f7f8;
+        border-radius: 10px;
+    }
+
+/* Dòng thông tin có giá trị dài (vd địa chỉ): canh phải, cho phép xuống dòng, nhãn bên trái không bị bóp */
+.pay-info-row b {
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.pay-info-row span {
+    flex-shrink: 0;
+}
+
+/* Form giao hàng */
+.pay-field {
+    margin-bottom: 14px;
+}
+
+    .pay-field label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: .9rem;
+        color: #555;
+    }
+
+.pay-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+    .pay-input:focus {
+        outline: none;
+        border-color: var(--hp-accent, #00b8c4);
+    }
+
+textarea.pay-input {
+    resize: vertical;
+}
+
+.pay-radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    cursor: pointer;
+}
+
+/* Thông báo lỗi / thành công */
+.pay-alert {
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: #fdecea;
+    color: #b71c1c;
+}
+
+.pay-alert--success {
+    background: #e6f7ee;
+    color: #1b6e3c;
+}
+
+/* Nút gửi form (thẻ button) cho rộng bằng nút dạng link */
+button.cart-btn {
+    width: 100%;
+    font-size: 1rem;
+}
+
+/* Chi tiết đơn hàng */
+.order-status {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: #fff4e0;
+    color: #b26a00;
+    font-size: .9rem;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.order-date {
+    margin: -12px 0 24px;
+    color: #777;
+}

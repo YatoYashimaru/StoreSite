@@ -1,0 +1,142 @@
+﻿@model StoreSite.Models.CartViewModel
+@{
+    ViewBag.Title = "Giỏ hàng";
+    var lines = Model.TakeLines();
+}
+@section Styles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/CartPage.css")?v=@DateTime.Now.Ticks" />
+}
+<div class="cart-page">
+    <nav class="cart-breadcrumb">
+        <a href="@Url.Action("Index", "Home")">Trang chủ</a> /
+        <span>Giỏ hàng</span>
+    </nav>
+    <h1 class="cart-title">Giỏ hàng</h1>
+    @if (lines.Count == 0) // Kiểm tra nếu giỏ hàng trống
+    {
+        <div class="cart-empty">
+            <p>Giỏ hàng của bạn đang trống</p>
+            <a href="@Url.Action("Index", "Store")" class="cart-btn">Tiếp tục mua sắm</a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-layout">
+            <!--Danh sách sản phẩm-->
+            <div class="cart-list" id="cart-list">
+                @foreach (var line in lines)
+                {
+                    <div class="cart-row" data-id="@line.Product.Id" data-size="@line.Size">
+                        <a href="@Url.Action("Details", "Store", new { id = line.Product.Id })" class="cart-img">
+                            <img src="@Url.Content("~" + line.Product.ImgURL)" alt="@line.Product.Name" />
+                        </a>
+                        <div class="cart-info">
+                            <a href="@Url.Action("Details", "Store", new { id = line.Product.Id })" class="cart-name">@line.Product.Name</a>
+                            <div class="cart-meta">Size: @line.Size</div>
+                            <div class="cart-unit">@line.Product.GiaTien.ToString("N0") đ</div>
+                        </div>
+                        <div class="cart-qty">
+                            <button type="button" class="qty-minus">-</button>
+                            <input type="number" class="qty-input" value="@line.Quantity" min="1" max="@StoreSite.Models.CartItem.MaxQuantity" />
+                            <button type="button" class="qty-plus">+</button>
+                        </div>
+                        <div class="cart-line-total">@line.LineTotal().ToString("N0") đ</div>
+                        <button type="button" class="cart-remove">Xóa khỏi giỏ hàng</button>
+                    </div>
+                }
+            </div>
+            <!--Tóm tắt đơn hàng-->
+            <aside class="cart-summary">
+                <h2 class="cart-summary-title">Tóm tắt</h2>
+                <div class="cart-sum-row">
+                    <span>Số lượng</span>
+                    <span><b id="cart-count">@Model.SumQuantity()</b> đôi</span>
+                </div>
+                <div class="cart-sum-row cart-sum-total">
+                    <span>Tạm tính</span>
+                    <span id="cart-total">@Model.TotalPrice().ToString("N0") đ</span>
+                </div>
+                <a href="@Url.Action("PaymentPage", "Orders")" class="cart-btn cart-checkout">Thanh toán</a>
+                <a href="@Url.Action("Index", "Store")" class="cart-continue">Tiếp tục mua sắm</a>
+            </aside>
+        </div>
+    }
+</div>
+@section Scripts {
+    <script>
+        (function () {
+        "use strict";
+        var maxQty = @StoreSite.Models.CartItem.MaxQuantity; //Số lượng tối đa cho mỗi sản phẩm lấy từ CartItem.MaxQuantity
+        var list = $("#cart-list"); //Danh sách sản phẩm trong giỏ hàng
+        // Cập nhật 2 con số ở khung tóm tắt sau mỗi lần server cập nhật giỏ hàng:
+        function showTotals(kq) {
+            $("#cart-count").text(kq.sumQuantity);
+            $("#cart-total").text(kq.totalPrice);
+            updateCartBadge(kq.sumQuantity); // Cập nhật số đôi giày trên header
+        }
+        // Hiển thị thông báo lỗi và reload trang:
+        function fail(message) {
+            alert(message || "Đã xảy ra lỗi! Vui lòng thử lại.");
+            location.reload();
+        }
+        function updateRow(row, newQty) {
+            newQty = Math.min(maxQty, Math.max(1, parseInt(newQty, 10) || 1));
+            row.find("button, input").prop("disabled", true); //Vô hiệu hóa các nút và input trong hàng trong khi chờ server phản hồi
+            // Gửi request cập nhật số lượng lên server:
+            $.post('@Url.Action("UpdateItem", "Cart")', {
+                productId: row.data("id"),
+                size: row.data("size"),
+                quantity: newQty
+            })
+                .done(function (kq) {
+                    if (!kq.ok) { fail(kq.message); return; } //Nếu server trả về lỗi thì hiển thị thông báo và reload trang
+                    row.find(".qty-input").val(kq.quantity); //Cập nhật lại số lượng hiển thị
+                    row.find(".cart-line-total").text(kq.lineTotal); //Cập nhật lại tổng tiền của hàng
+                    showTotals(kq); //Cập nhật lại tổng số lượng và tổng tiền ở khung tóm tắt
+                })
+                .fail(function () { fail(); }) //Nếu request thất bại thì hiển thị thông báo và reload trang
+                .always(function () { row.find("button, input").prop("disabled", false); }); //Bật lại các nút và input
+        }
+        // Cài đặt nút giảm số lượng:
+        list.on("click", ".qty-minus", function () {
+            var row = $(this).closest(".cart-row");
+            var q = (parseInt(row.find(".qty-input").val(), 10) || 1) - 1;
+            if (q < 1) return; //Không cho giảm dưới 1
+            updateRow(row, q);
+        });
+        // Cài đặt nút tăng số lượng:
+        list.on("click", ".qty-plus", function () {
+            var row = $(this).closest(".cart-row");
+            var q = (parseInt(row.find(".qty-input").val(), 10) || 1) + 1;
+            if (q > maxQty) return; //Không cho tăng quá maxQty
+            updateRow(row, q);
+        });
+        // Cài đặt input số lượng (trực tiếp tại ô rồi Enter hoặc bấm ra bên ngoài):
+        list.on("change", ".qty-input", function () {
+            updateRow($(this).closest(".cart-row"), $(this).val());
+        });
+        // Cài đặt nút xóa sản phẩm:
+        list.on("click", ".cart-remove", function () {
+            var row = $(this).closest(".cart-row");
+            if (!confirm("Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?")) return;
+            row.find("button, input").prop("disabled", true);
+            // Gửi request xóa sản phẩm lên server:
+            $.post('@Url.Action("RemoveItem", "Cart")', {
+                productId: row.data("id"),
+                size: row.data("size")
+            })
+                .done(function (kq) {
+                    if (!kq.ok) { fail(kq.message); return; } //Nếu server trả về lỗi thì hiển thị thông báo và reload trang
+                    row.remove(); //Xóa hàng khỏi DOM
+                    if (list.children(".cart-row").length === 0) {
+                        location.reload(); return; //Nếu không còn hàng nào thì reload trang để hiển thị thông báo giỏ hàng trống
+                    }
+                    showTotals(kq); //Cập nhật lại tổng số lượng và tổng tiền ở khung tóm tắt
+                })
+                .fail(function () {
+                    fail(); //Nếu request thất bại thì hiển thị thông báo và reload trang
+                });
+        });
+        })();
+    </script>
+}

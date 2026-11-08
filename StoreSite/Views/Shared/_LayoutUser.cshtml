@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Meisho Doshoes Store Site</title>
+    <link rel="icon" href="~/ImageAssets/HomePage/MeishoLogo.jpg" type="image/png">
 
     @Styles.Render("~/Content/css")
     <link rel="stylesheet" href="@Url.Content("~/Content/LayoutStyle.css")?v=@DateTime.Now.Ticks" />
@@ -18,8 +19,7 @@
     <header class="main-header">
         <nav class="site-nav">
             <a class="site-brand" href="@Url.Action("Index", "Home")">
-                <img src="~/ImageAssets/MeishoLogo.jpg" alt="Logo" class="BrandLogo" />
-                <span style="color:sandybrown"><span style="color:blueviolet">MEISHO DOSHOES</span> STORE SITE</span>
+                <img src="~/ImageAssets/HomePage/MeishoLogo.jpg" alt="Logo" class="BrandLogo" />
             </a>
 
             <ul class="site-menu">
@@ -33,7 +33,7 @@
             </form>
 
             <ul class="site-menu">
-                <li><a href="#">Giỏ hàng</a></li>
+                <li><a href="@Url.Action("Index", "Cart")">Giỏ hàng @Html.Action("Badge", "Cart")</a></li>
                 @if (Session["NguoiDungId"] != null)
                 {
                     <li><a href="@Url.Action("UserPage", "User")">Xin chào, @Session["HoTen"]</a></li>

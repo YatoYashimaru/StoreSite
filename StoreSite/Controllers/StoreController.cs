@@ -145,8 +145,9 @@ namespace StoreSite.Controllers
             return View(sanpham.ToList());
         }
 
-        public ActionResult Details(int id)
+        public ActionResult Details(int? id)
         {
+            if (id == null) return RedirectToAction("Index");
             var all = GetSanPham();
             var sp = all.FirstOrDefault(p => p.Id == id);
             if (sp == null) return HttpNotFound();
