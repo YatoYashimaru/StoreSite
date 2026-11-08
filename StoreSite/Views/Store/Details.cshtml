@@ -100,11 +100,12 @@
             <div class="pd-label">Số lượng</div>
             <div class="pd-qty">
                 <button type="button" id="qty-minus">−</button>
-                <input type="number" id="qty" value="1" min="1" max="10" />
+                <input type="number" id="qty" value="1" min="1" max="@StoreSite.Models.CartItem.MaxQuantity" />
                 <button type="button" id="qty-plus">+</button>
             </div>
 
             <button type="button" id="btn-add-cart" class="btn-cart pd-add" data-id="@p.Id">Thêm vào giỏ hàng</button>
+            <div id="pd-cart-msg" class="small mt-2" aria-live="polite"></div>
 
             <ul class="pd-policy">
                 <li>Cam kết 100% hàng chính hãng</li>
@@ -127,7 +128,7 @@
     <!-- Sản phẩm liên quan -->
     @if (Model.Related.Any())
     {
-        <h4 class="pd-related-title">Sản phẩm mới</h4>
+        <h4 class="pd-related-title">Sản phẩm liên quan</h4>
         <div class="pd-related">
             @foreach (var item in Model.Related)
             {
@@ -137,30 +138,62 @@
     }
 </div>
 
-<script>
-    (function () {
-        var selected = null;
-        var sizes = document.getElementById("pd-sizes");
-        var err = document.getElementById("pd-size-error");
-        var qty = document.getElementById("qty");
-
-        sizes.addEventListener("click", function (e) {
-            var b = e.target.closest(".pd-size");
-            if (!b) return;
-            Array.prototype.forEach.call(sizes.children, function (c) { c.classList.remove("active"); });
-            b.classList.add("active");
-            selected = b.dataset.size;
-            err.style.display = "none";
-        });
-
-        document.getElementById("qty-minus").onclick = function () { qty.value = Math.max(1, +qty.value - 1); };
-        document.getElementById("qty-plus").onclick = function () { qty.value = Math.min(10, +qty.value + 1); };
-
-        document.getElementById("btn-add-cart").onclick = function () {
-            if (!selected) { err.style.display = "block"; return; }
-            // TODO: gọi action thêm vào giỏ (bước tiếp theo)
-            alert("Đã chọn size " + selected + ", số lượng " + qty.value);
-        };
-    })();
-</script>
-<script src="~/Scripts/ProductGallery.js"></script>
+@section Scripts {
+    <script>
+        (function () {
+            "use strict"; // Gõ sai tên biến sẽ báo lỗi ngay thay vì âm thầm tạo biến mới
+            var maxQty = @StoreSite.Models.CartItem.MaxQuantity; // lấy từ CartItem.MaxQuantity trên server
+            var selected = null; // Lưu size được chọn
+            var sizes = document.getElementById("pd-sizes"); // Lấy container chứa các nút size
+            var err = document.getElementById("pd-size-error"); // Lấy thông báo lỗi
+            var qty = document.getElementById("qty"); // Lấy input số lượng
+            var msg = document.getElementById("pd-cart-msg"); // Lấy thông báo giỏ hàng
+            sizes.addEventListener("click", function (e) { // Lắng nghe sự kiện click trên container
+                var b = e.target.closest(".pd-size"); // Lấy nút size được click
+                if (!b) return; // Nếu không phải nút size thì thoát
+                Array.prototype.forEach.call(sizes.children, function (c) {
+                    c.classList.remove("active"); // Xóa class active của tất cả nút
+                });
+                b.classList.add("active"); // Thêm class active cho nút được click
+                selected = b.dataset.size; // Lưu size được chọn
+                err.style.display = "none"; // Ẩn thông báo lỗi
+            });
+            document.getElementById("qty-minus").onclick = function () {
+                qty.value = Math.max(1, +qty.value - 1); // Giảm số lượng nhưng không nhỏ hơn 1
+            };
+            document.getElementById("qty-plus").onclick = function () {
+                qty.value = Math.min(maxQty, +qty.value + 1); // Tăng số lượng nhưng không lớn hơn 10
+            };
+            $("#btn-add-cart").on("click", function () {
+                if (!selected) { err.style.display = "block"; return; } // Nếu chưa chọn size thì hiện thông báo lỗi
+                var quantity = Math.min(maxQty, Math.max(1, parseInt(qty.value, 10) || 1)); // Lấy số lượng và giới hạn từ 1 đến 10
+                qty.value = quantity; // Cập nhật lại giá trị input
+                var btn = $(this); // Lấy nút thêm vào giỏ hàng
+                btn.prop("disabled", true); // Tránh click nhiều lần
+                $.post('@Url.Action("AddItem", "Cart")', {
+                    productId: btn.data("id"),
+                    size: selected,
+                    quantity: quantity
+                })
+                .done(function (kq) { // Xử lý kết quả trả về
+                    if (kq.ok) {
+                        msg.className = "small mt-2 text-success"; // Thành công thì hiện chữ xanh
+                        msg.textContent = "Đã thêm vào giỏ hàng. Giỏ hiện tại đang có " + kq.sumQuantity + " đôi.";
+                        updateCartBadge(kq.sumQuantity); // Cập nhật số đôi giày trên header
+                    }
+                    else {
+                        msg.className = "small mt-2 text-danger"; // Có lỗi thì hiện chữ đỏ
+                        msg.textContent = kq.message || "Xảy ra lỗi. Vui lòng thử lại.";
+                    }
+                })
+                .fail(function () { // Nếu request thất bại
+                    msg.className = "small mt-2 text-danger";
+                    msg.textContent = "Xảy ra lỗi. Vui lòng thử lại.";
+                })
+                .always(function () { // Luôn luôn thực hiện
+                    btn.prop("disabled", false); // Bỏ disable nút
+                });
+            }); // đóng hàm click của nút thêm vào giỏ
+        })();
+    </script>
+}

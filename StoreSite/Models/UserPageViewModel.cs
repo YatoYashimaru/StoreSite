@@ -1,4 +1,6 @@
-﻿namespace StoreSite.Models
+﻿using System.Collections.Generic;
+
+namespace StoreSite.Models
 {
     public class UserPageViewModel
     {

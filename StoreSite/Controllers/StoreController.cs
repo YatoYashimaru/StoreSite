@@ -32,7 +32,7 @@ namespace StoreSite.Controllers
             return View(q.ToList());
         }
 
-        public ActionResult Details(int id)
+        public ActionResult Details(int? id)
         {
             var sp = db.SanPhams.Find(id);
             if (sp == null) return HttpNotFound();

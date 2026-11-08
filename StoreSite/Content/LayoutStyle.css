@@ -228,3 +228,21 @@
         display: none;
     }
 }
+/* Số đôi giày trong giỏ hàng (header) */
+.cart-badge {
+    display: inline-block;
+    min-width: 20px;
+    margin-left: 4px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: #d9534f;
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+}
+
+    .cart-badge.is-empty {
+        display: none;
+    }

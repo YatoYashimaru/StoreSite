@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Meisho Doshoes Store Site</title>
+    <link rel="icon" href="~/ImageAssets/HomePage/MeishoLogo.jpg" type="image/png">
 
     @Styles.Render("~/Content/css")
     <link rel="stylesheet" href="@Url.Content("~/Content/LayoutStyle.css")?v=@DateTime.Now.Ticks" />
@@ -21,7 +22,6 @@
         <nav class="site-nav">
             <a class="site-brand" href="@Url.Action("Index", "Home")">
                 <img src="~/ImageAssets/HomePage/MeishoLogo.jpg" alt="Logo" class="BrandLogo" />
-                <span style="color:sandybrown"><span style="color:blueviolet">MEISHO DOSHOES</span> STORE SITE</span>
             </a>
 
             <ul class="site-menu">
@@ -38,7 +38,7 @@
             </form>
 
             <ul class="site-menu">
-
+                <li><a href="@Url.Action("Index", "Cart")">Giỏ hàng @Html.Action("Badge", "Cart")</a></li>
                 @if (Session["NguoiDungId"] != null)
                 {
                     <li><a href="@Url.Action("UserPage", "User")">Giỏ hàng</a></li>
@@ -90,6 +90,13 @@
             var card = e.target.closest(".card-product[data-href]");
             if (card) window.location.href = card.dataset.href;
         });
+        // Cập nhật số đôi giày ở header. Trang Details và trang giỏ hàng gọi hàm này sau khi server trả về số mới
+        window.updateCartBadge = function (n) {
+            var badge = document.getElementById("cart-badge");
+            if (!badge) return;
+            badge.textContent = n;
+            badge.classList.toggle("is-empty", n <= 0);
+        };
     </script>
     @Html.Action("MegaMenu", "Store")
     <script src="~/Scripts/MegaMenu.js"></script>
