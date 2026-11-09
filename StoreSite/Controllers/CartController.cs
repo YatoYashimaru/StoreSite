@@ -45,8 +45,8 @@ namespace StoreSite.Controllers
         [HttpPost]
         public ActionResult AddItem(int productId, int size, int quantity)
         {
-            //bool existItem = .Any(p => p.Id == productId);    // đang sửa
-            //if (!existItem) return Json(new { ok = false, message = "Sản phẩm không tồn tại." });
+            bool existItem = db.SanPhams.Any(p => p.Id == productId);
+            if (!existItem) return Json(new { ok = false, message = "Sản phẩm không tồn tại." });
             var cart = TakeCart();
             if (!cart.AddItem(productId, size, quantity))
                 return Json(new { ok = false, message = "Size không hợp lệ hoặc số lượng không hợp lệ." });

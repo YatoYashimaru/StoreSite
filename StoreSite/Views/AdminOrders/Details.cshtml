@@ -1,0 +1,125 @@
+@model StoreSite.Models.AdminOrderDetailViewModel
+@using System.Globalization
+@{
+    ViewBag.Title = "Đơn hàng #" + Model.OrderID;
+    var vn = new CultureInfo("vi-VN");
+    bool done = Model.PaymentStatus == "Complete";
+    string pm = Model.PaymentMethod;
+}
+
+<div class="ad-head">
+    <div>
+        <h1 class="ad-title">Đơn hàng #@Model.OrderID</h1>
+        <p class="ad-sub">
+            Đặt lúc @(Model.OrderDate.HasValue ? Model.OrderDate.Value.ToString("dd/MM/yyyy HH:mm") : "-")
+            ·
+            @if (done)
+            {
+                <span class="ad-status ad-status--complete">Đã thanh toán</span>
+            }
+            else
+            {
+                <span class="ad-status ad-status--pending">Chờ thanh toán</span>
+            }
+        </p>
+    </div>
+    <a class="ad-btn ad-btn--ghost" href="@Url.Action("Index", "AdminOrders")">← Về danh sách</a>
+</div>
+
+<div class="ad-detail">
+
+    <section class="ad-card ad-detail__main">
+        <h2 class="ad-h2">Sản phẩm trong đơn</h2>
+        <table class="ad-table">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Sản phẩm</th>
+                    <th>Size</th>
+                    <th class="ad-num">Đơn giá</th>
+                    <th class="ad-num">SL</th>
+                    <th class="ad-num">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var l in Model.Lines)
+                {
+                    <tr>
+                        <td data-label="Ảnh" class="ad-thumb-cell">
+                            @if (!string.IsNullOrEmpty(l.ImgURL))
+                            {
+                                <img class="ad-thumb" src="@Url.Content("~" + l.ImgURL)" alt="" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span class="ad-thumb ad-thumb--none">?</span>
+                            }
+                        </td>
+                        <td data-label="Sản phẩm" class="ad-name">@l.ProductName</td>
+                        <td data-label="Size">@l.Size</td>
+                        <td data-label="Đơn giá" class="ad-num">@l.UnitPrice.ToString("#,##0", vn)đ</td>
+                        <td data-label="SL" class="ad-num">@l.Quantity</td>
+                        <td data-label="Thành tiền" class="ad-num"><strong>@l.LineTotal.ToString("#,##0", vn)đ</strong></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="ad-total">
+            <span>Tổng cộng</span>
+            <strong>@((Model.TotalAmount ?? 0m).ToString("#,##0", vn))đ</strong>
+        </div>
+    </section>
+
+    <aside class="ad-detail__side">
+
+        <section class="ad-card ad-box">
+            <h2 class="ad-h2">Trạng thái</h2>
+            <form method="post" action="@Url.Action("SetStatus", "AdminOrders")">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.OrderID" />
+                @if (done)
+                {
+                    <input type="hidden" name="status" value="Pending" />
+                    <button type="submit" class="ad-btn ad-btn--block">Chuyển về "Chờ thanh toán"</button>
+                }
+                else
+                {
+                    <input type="hidden" name="status" value="Complete" />
+                    <button type="submit" class="ad-btn ad-btn--primary ad-btn--block">Đánh dấu "Đã thanh toán"</button>
+                }
+            </form>
+        </section>
+
+        <section class="ad-card ad-box">
+            <h2 class="ad-h2">Người nhận</h2>
+            <dl class="ad-dl">
+                <dt>Họ tên</dt><dd>@(Model.ReceiverName ?? "-")</dd>
+                <dt>Điện thoại</dt><dd>@(string.IsNullOrWhiteSpace(Model.ReceiverPhone) ? "-" : Model.ReceiverPhone)</dd>
+                <dt>Địa chỉ</dt><dd>@(string.IsNullOrWhiteSpace(Model.AddressDelivery) ? "-" : Model.AddressDelivery)</dd>
+                @if (!string.IsNullOrWhiteSpace(pm))
+                {
+                    <dt>Thanh toán</dt><dd>@pm</dd>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Note))
+                {
+                    <dt>Ghi chú</dt><dd>@Model.Note</dd>
+                }
+            </dl>
+        </section>
+
+        <section class="ad-card ad-box">
+            <h2 class="ad-h2">Tài khoản đặt</h2>
+            <dl class="ad-dl">
+                <dt>Tên</dt><dd>@(Model.AccountName ?? "(đã xóa tài khoản)")</dd>
+                <dt>Email</dt><dd>@(Model.AccountEmail ?? "-")</dd>
+            </dl>
+        </section>
+
+        <form method="post" action="@Url.Action("Delete", "AdminOrders")"
+              data-confirm="Xóa đơn #@Model.OrderID? Hành động này không hoàn tác được.">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.OrderID" />
+            <button type="submit" class="ad-btn ad-btn--danger ad-btn--block">Xóa đơn hàng</button>
+        </form>
+    </aside>
+</div>

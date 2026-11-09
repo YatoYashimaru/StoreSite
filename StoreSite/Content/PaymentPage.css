@@ -141,3 +141,48 @@ button.cart-btn {
     background: #e6f7ee;
     color: #1b6e3c;
 }
+/* ===== QR chuyển khoản ===== */
+.pay-qr[hidden] {
+    display: none;
+}
+
+.pay-qr__body {
+    display: grid;
+    grid-template-columns: 415px minmax(0, 1fr);
+    gap: 24px;
+    align-items: center;
+}
+
+.pay-qr__img {
+    display: block;
+    width: 100%;
+    max-width: 415px;
+    height: auto;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+}
+
+.pay-qr__info p {
+    margin: 0 0 8px;
+}
+
+.pay-qr__amount {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.pay-qr__hint {
+    color: #666;
+    font-size: .9rem;
+    line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+    .pay-qr__body {
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+        text-align: center;
+    }
+}

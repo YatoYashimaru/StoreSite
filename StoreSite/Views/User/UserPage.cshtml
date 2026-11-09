@@ -29,6 +29,10 @@
             <a href="@Url.Action("UserPage", "User", new { tab = "profile" })" class="@(tab == "profile" ? "is-active" : "")">Thông tin cá nhân</a>
             <a href="@Url.Action("UserPage", "User", new { tab = "password" })" class="@(tab == "password" ? "is-active" : "")">Đổi mật khẩu</a>
             <a href="@Url.Action("UserPage", "User", new { tab = "orders" })" class="@(tab == "orders" ? "is-active" : "")">Đơn hàng của tôi</a>
+            @if (Session["IsAdmin"] as bool? == true)
+            {
+                <a class="account-nav-link" href="@Url.Action("Index", "Admin")">Bảng admin</a>
+            }
             <a href="@Url.Action("Logout", "User")" class="account-nav__logout">Đăng xuất</a>
         </nav>
 

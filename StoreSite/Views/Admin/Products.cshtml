@@ -1,0 +1,153 @@
+@model StoreSite.Models.AdminProductListViewModel
+@using System.Globalization
+@{
+    ViewBag.Title = "Sản phẩm";
+    var vn = new CultureInfo("vi-VN");
+}
+
+<div class="ad-head">
+    <div>
+        <h1 class="ad-title">Sản phẩm</h1>
+        <p class="ad-sub">@Model.Total sản phẩm@(Model.HasFilter ? " phù hợp bộ lọc" : "")</p>
+    </div>
+    <a class="ad-btn ad-btn--primary" href="@Url.Action("ProductCreate", "Admin")">+ Thêm sản phẩm</a>
+</div>
+
+<form class="ad-filter" method="get" action="@Url.Action("Products", "Admin")">
+    <input type="search" name="search" value="@Model.Search" placeholder="Tìm theo tên..." class="ad-input" />
+
+    <select name="loai" class="ad-input" aria-label="Hãng">
+        <option value="">Tất cả hãng</option>
+        @foreach (var b in Model.Brands)
+        {
+            <option value="@b" @(Model.Loai == b ? "selected" : "")>@b</option>
+        }
+    </select>
+
+    <select name="sport" class="ad-input" aria-label="Môn thể thao">
+        <option value="">Tất cả môn</option>
+        @foreach (var s in Model.Sports)
+        {
+            <option value="@s" @(Model.Sport == s ? "selected" : "")>@StoreSite.Models.SportNames.Label(s)</option>
+        }
+    </select>
+
+    <select name="gender" class="ad-input" aria-label="Giới tính">
+        <option value="">Nam và nữ</option>
+        <option value="Nam" @(Model.Gender == "Nam" ? "selected" : "")>Nam</option>
+        <option value="Nu" @(Model.Gender == "Nu" ? "selected" : "")>Nữ</option>
+    </select>
+
+    <button type="submit" class="ad-btn">Lọc</button>
+    @if (Model.HasFilter)
+    {
+        <a class="ad-btn ad-btn--ghost" href="@Url.Action("Products", "Admin")">Xóa lọc</a>
+    }
+</form>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="ad-empty">
+        Không có sản phẩm nào@(Model.HasFilter ? " khớp bộ lọc" : "").
+        <a href="@Url.Action("ProductCreate", "Admin")">Thêm sản phẩm mới</a>
+    </div>
+}
+else
+{
+    <div class="ad-card">
+        <table class="ad-table">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Hãng</th>
+                    <th>Môn</th>
+                    <th>Giới tính</th>
+                    <th class="ad-num">Giá bán</th>
+                    <th>Đánh giá</th>
+                    <th>Mới</th>
+                    <th class="ad-actions-col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Items)
+                {
+                    <tr>
+                        <td data-label="Ảnh" class="ad-thumb-cell">
+                            @if (!string.IsNullOrEmpty(p.ImgURL))
+                            {
+                                <img class="ad-thumb" src="@Url.Content("~" + p.ImgURL)" alt="" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span class="ad-thumb ad-thumb--none">?</span>
+                            }
+                        </td>
+                        <td data-label="Tên" class="ad-name">
+                            <a href="@Url.Action("ProductEdit", "Admin", new { id = p.Id })">@p.ItemName</a>
+                            <small>#@p.Id</small>
+                        </td>
+                        <td data-label="Hãng">@p.LoaiGiay</td>
+                        <td data-label="Môn">@StoreSite.Models.SportNames.Label(p.Sport)</td>
+                        <td data-label="Giới tính">@(p.Gender == "Nam" ? "Nam" : "Nữ")</td>
+                        <td data-label="Giá bán" class="ad-num">
+                            @p.GiaTien.ToString("#,##0", vn)đ
+                            @if (p.GiaTienGoc.HasValue && p.GiaTienGoc.Value > p.GiaTien)
+                            {
+                                <small class="ad-old">@p.GiaTienGoc.Value.ToString("#,##0", vn)đ</small>
+                            }
+                        </td>
+                        <td data-label="Đánh giá">★ @p.rating.ToString("0.0", CultureInfo.InvariantCulture)</td>
+                        <td data-label="Mới">
+                            @if (p.SanPhamMoi)
+                            {
+                                <span class="ad-badge">Mới</span>
+                            }
+                            else
+                            {
+                                <span class="ad-muted">-</span>
+                            }
+                        </td>
+                        <td class="ad-actions-cell">
+                            <div class="ad-actions">
+                                <a class="ad-btn ad-btn--small" href="@Url.Action("ProductEdit", "Admin", new { id = p.Id })">Sửa</a>
+
+                                <form method="post" action="@Url.Action("ProductDelete", "Admin")"
+                                      data-confirm="Xóa sản phẩm “@p.ItemName”? Hành động này không hoàn tác được.">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@p.Id" />
+                                    <button type="submit" class="ad-btn ad-btn--small ad-btn--danger">Xóa</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    if (Model.TotalPages > 1)
+    {
+        <nav class="ad-pager" aria-label="Phân trang">
+            @if (Model.Page > 1)
+            {
+                <a class="ad-btn ad-btn--small" href="@Url.Action("Products", "Admin", new { search = Model.Search, loai = Model.Loai, sport = Model.Sport, gender = Model.Gender, page = Model.Page - 1 })">‹ Trước</a>
+            }
+            else
+            {
+                <span class="ad-btn ad-btn--small is-disabled">‹ Trước</span>
+            }
+
+            <span class="ad-pager__info">Trang @Model.Page / @Model.TotalPages</span>
+
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a class="ad-btn ad-btn--small" href="@Url.Action("Products", "Admin", new { search = Model.Search, loai = Model.Loai, sport = Model.Sport, gender = Model.Gender, page = Model.Page + 1 })">Sau ›</a>
+            }
+            else
+            {
+                <span class="ad-btn ad-btn--small is-disabled">Sau ›</span>
+            }
+        </nav>
+    }
+}

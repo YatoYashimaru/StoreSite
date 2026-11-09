@@ -1,0 +1,154 @@
+@model StoreSite.Models.ProductFormViewModel
+@{
+    bool them = Model.Id == 0;
+    ViewBag.Title = them ? "Thêm sản phẩm" : "Sửa sản phẩm";
+    string action = them ? "ProductCreate" : "ProductEdit";
+}
+
+<div class="ad-head">
+    <div>
+        <h1 class="ad-title">@(them ? "Thêm sản phẩm" : "Sửa sản phẩm")</h1>
+        @if (!them)
+        {
+            <p class="ad-sub">Mã sản phẩm #@Model.Id</p>
+        }
+    </div>
+    <a class="ad-btn ad-btn--ghost" href="@Url.Action("Products", "Admin")">← Về danh sách</a>
+</div>
+
+@using (Html.BeginForm(action, "Admin", FormMethod.Post, new { @class = "ad-card ad-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+    @Html.ValidationSummary(true, "", new { @class = "ad-alert ad-alert--err" })
+
+    <div class="ad-grid">
+
+        <div class="ad-field ad-field--full">
+            @Html.LabelFor(m => m.ItemName)
+            @Html.TextBoxFor(m => m.ItemName, new { @class = "ad-input", maxlength = 200, autofocus = "autofocus" })
+            @Html.ValidationMessageFor(m => m.ItemName, "", new { @class = "ad-error" })
+        </div>
+
+        <div class="ad-field">
+            @Html.LabelFor(m => m.LoaiGiay)
+            @Html.TextBoxFor(m => m.LoaiGiay, new { @class = "ad-input", maxlength = 80, list = "dl-brands", autocomplete = "off" })
+            <datalist id="dl-brands">
+                @foreach (var b in (System.Collections.Generic.List<string>)ViewBag.Brands)
+                {
+                    <option value="@b"></option>
+                }
+            </datalist>
+            @Html.ValidationMessageFor(m => m.LoaiGiay, "", new { @class = "ad-error" })
+        </div>
+
+        <div class="ad-field">
+            @Html.LabelFor(m => m.Sport)
+            @Html.TextBoxFor(m => m.Sport, new { @class = "ad-input", maxlength = 80, list = "dl-sports", autocomplete = "off" })
+            <datalist id="dl-sports">
+                @foreach (var s in (System.Collections.Generic.List<string>)ViewBag.Sports)
+                {
+                    <option value="@s"></option>
+                }
+            </datalist>
+            @Html.ValidationMessageFor(m => m.Sport, "", new { @class = "ad-error" })
+        </div>
+
+        <div class="ad-field">
+            @Html.LabelFor(m => m.Gender)
+            @Html.DropDownListFor(m => m.Gender, new[]
+            {
+                new SelectListItem { Text = "Nam", Value = "Nam" },
+                new SelectListItem { Text = "Nữ", Value = "Nu" }
+            }, new { @class = "ad-input" })
+            @Html.ValidationMessageFor(m => m.Gender, "", new { @class = "ad-error" })
+        </div>
+
+        <div class="ad-field">
+            @Html.LabelFor(m => m.RatingText)
+            @Html.TextBoxFor(m => m.RatingText, new { @class = "ad-input", inputmode = "decimal", autocomplete = "off", placeholder = "4.5" })
+            @Html.ValidationMessageFor(m => m.RatingText, "", new { @class = "ad-error" })
+        </div>
+
+        <div class="ad-field">
+            @Html.LabelFor(m => m.GiaTien)
+            @Html.TextBoxFor(m => m.GiaTien, new { @class = "ad-input", type = "number", min = 0, step = 1000, inputmode = "numeric" })
+            @Html.ValidationMessageFor(m => m.GiaTien, "", new { @class = "ad-error" })
+        </div>
+
+        <div class="ad-field">
+            @Html.LabelFor(m => m.GiaTienGoc)
+            @Html.TextBoxFor(m => m.GiaTienGoc, new { @class = "ad-input", type = "number", min = 0, step = 1000, inputmode = "numeric" })
+            @Html.ValidationMessageFor(m => m.GiaTienGoc, "", new { @class = "ad-error" })
+        </div>
+
+        <div class="ad-field ad-field--full">
+            @Html.LabelFor(m => m.ImgURL)
+            <div class="ad-img-row">
+                <div class="ad-img-col">
+                    @Html.TextBoxFor(m => m.ImgURL, new
+                    {
+                        @class = "ad-input",
+                        maxlength = 300,
+                        placeholder = "/ImageAssets/Men/Nike/Ten San Pham/1.jpg",
+                        autocomplete = "off"
+                    })
+                    <p class="ad-hint">
+                        Ảnh nằm trong <code>ImageAssets/Men|Women/Hãng/Tên sản phẩm/</code>, đặt tên 1, 2, 3...
+                        Trang chi tiết tự hiện cả bộ ảnh trong thư mục đó.
+                    </p>
+                    @Html.ValidationMessageFor(m => m.ImgURL, "", new { @class = "ad-error" })
+                </div>
+                <div class="ad-preview" id="ad-preview" aria-label="Xem trước ảnh"><span>Xem trước</span></div>
+            </div>
+        </div>
+
+        <div class="ad-field ad-field--full">
+            @Html.LabelFor(m => m.DescriptionTxt)
+            @Html.TextAreaFor(m => m.DescriptionTxt, 6, 60, new { @class = "ad-input ad-textarea" })
+            @Html.ValidationMessageFor(m => m.DescriptionTxt, "", new { @class = "ad-error" })
+        </div>
+
+        <div class="ad-field ad-field--full">
+            <label class="ad-check">
+                @Html.CheckBoxFor(m => m.SanPhamMoi)
+                <span>@Html.DisplayNameFor(m => m.SanPhamMoi)</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="ad-form__actions">
+        <button type="submit" class="ad-btn ad-btn--primary">@(them ? "Thêm sản phẩm" : "Lưu thay đổi")</button>
+        <a class="ad-btn ad-btn--ghost" href="@Url.Action("Products", "Admin")">Hủy</a>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Xem trước ảnh đại diện khi gõ / đổi đường dẫn
+        (function () {
+            var input = document.getElementById('ImgURL');
+            var box = document.getElementById('ad-preview');
+            if (!input || !box) return;
+
+            var root = '@Url.Content("~/")'.replace(/\/$/, '');
+            var timer;
+
+            function render() {
+                var v = (input.value || '').trim().replace(/\\/g, '/');
+                if (v.charAt(0) === '~') v = v.substring(1);
+                if (!v) { box.innerHTML = '<span>Xem trước</span>'; return; }
+                if (v.charAt(0) !== '/') v = '/' + v;
+
+                var img = new Image();
+                img.alt = '';
+                img.onload = function () { box.innerHTML = ''; box.appendChild(img); };
+                img.onerror = function () { box.innerHTML = '<span>Không tìm thấy ảnh</span>'; };
+                img.src = encodeURI(root + v);
+            }
+
+            input.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(render, 300); });
+            render();
+        })();
+    </script>
+}
