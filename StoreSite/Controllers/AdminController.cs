@@ -1,12 +1,10 @@
-﻿using StoreSite.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Globalization;
+using System.Linq;
+using System.Web.Mvc;
+using StoreSite.Models;
 
 namespace StoreSite.Controllers
 {
@@ -20,7 +18,9 @@ namespace StoreSite.Controllers
             return RedirectToAction("Products");
         }
 
+        // =====================================================================
         //  DANH SÁCH SẢN PHẨM
+        // =====================================================================
         public ActionResult Products(string search, string loai, string sport, string gender, int page = 1)
         {
             IQueryable<SanPham> query = db.SanPhams;
@@ -57,7 +57,9 @@ namespace StoreSite.Controllers
             return View(vm);
         }
 
+        // =====================================================================
         //  THÊM
+        // =====================================================================
         [HttpGet]
         public ActionResult ProductCreate()
         {
@@ -92,7 +94,9 @@ namespace StoreSite.Controllers
             return View("ProductForm", m);
         }
 
+        // =====================================================================
         //  SỬA
+        // =====================================================================
         [HttpGet]
         public ActionResult ProductEdit(int id)
         {
@@ -144,7 +148,9 @@ namespace StoreSite.Controllers
             return View("ProductForm", m);
         }
 
+        // =====================================================================
         //  XÓA (chỉ nhận POST, có kiểm tra token)
+        // =====================================================================
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult ProductDelete(int id)
         {

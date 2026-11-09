@@ -71,6 +71,22 @@
                     Chuyển khoản ngân hàng
                 </label>
             </section>
+            <!-- Mã QR chuyển khoản: chỉ hiện khi chọn "Chuyển khoản ngân hàng" -->
+            <section class="pay-box pay-qr" id="pay-qr" @(pm == "bank" ? "" : "hidden")>
+                <h2 class="pay-box-title">Quét mã để chuyển khoản</h2>
+                <div class="pay-qr__body">
+                    <img class="pay-qr__img" src="@Url.Content("~/ImageAssets/QRpay/QR.png")" alt="Mã QR chuyển khoản" />
+                    <div class="pay-qr__info">
+                        <p>Số tiền cần chuyển</p>
+                        <p class="pay-qr__amount">@Model.TotalPrice().ToString("N0") đ</p>
+                        <p class="pay-qr__hint">
+                            Mở app ngân hàng, chọn quét QR và chuyển đúng số tiền.
+                            Sau khi chuyển xong, bấm <b>Đặt hàng</b>. Đơn sẽ ở trạng thái "Chờ thanh toán"
+                            cho đến khi cửa hàng xác nhận đã nhận tiền.
+                        </p>
+                    </div>
+                </div>
+            </section>
 
             <!-- Sản phẩm trong đơn -->
             <section class="pay-box">
@@ -105,5 +121,18 @@
         </aside>
 
     </div>
+    <script>
+    (function () {
+        var box = document.getElementById('pay-qr');
+        if (!box) return;
+        var radios = document.querySelectorAll('input[name="PaymentMethod"]');
+        function sync() {
+            var bank = document.querySelector('input[name="PaymentMethod"][value="bank"]');
+            box.hidden = !(bank && bank.checked);
+        }
+        for (var i = 0; i < radios.length; i++) radios[i].addEventListener('change', sync);
+        sync();
+    })();
+    </script>
 </form>
 </div>

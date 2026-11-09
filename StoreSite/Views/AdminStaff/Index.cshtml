@@ -1,0 +1,75 @@
+@model System.Collections.Generic.List<StoreSite.Models.User>
+@{
+    int me = ViewBag.Me;
+    var candidates = (System.Collections.Generic.List<string>)ViewBag.Candidates;
+}
+
+<div class="ad-head">
+    <div>
+        <h1 class="ad-title">Nhân viên</h1>
+        <p class="ad-sub">@Model.Count tài khoản có quyền quản trị</p>
+    </div>
+</div>
+
+<form class="ad-card ad-box ad-grant" method="post" action="@Url.Action("Grant", "AdminStaff")">
+    @Html.AntiForgeryToken()
+    <h2 class="ad-h2">Cấp quyền admin cho một tài khoản</h2>
+    <div class="ad-grant__row">
+        <input type="email" name="email" class="ad-input" list="dl-users" required
+               placeholder="Email của tài khoản đã đăng ký" autocomplete="off" />
+        <datalist id="dl-users">
+            @foreach (var e in candidates)
+            {
+                <option value="@e"></option>
+            }
+        </datalist>
+        <button type="submit" class="ad-btn ad-btn--primary">Cấp quyền</button>
+    </div>
+    <p class="ad-hint">Người đó cần đăng ký tài khoản trước. Quyền có hiệu lực ngay ở lần vào trang quản trị tiếp theo.</p>
+</form>
+
+<div class="ad-card">
+    <table class="ad-table">
+        <thead>
+            <tr>
+                <th>Tên</th>
+                <th>Email</th>
+                <th>Điện thoại</th>
+                <th class="ad-actions-col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td data-label="Tên" class="ad-name">
+                        @u.UserName
+                        @if (u.UserID == me)
+                        {
+                            <small>Bạn</small>
+                        }
+                    </td>
+                    <td data-label="Email">@u.UserEmail</td>
+                    <td data-label="Điện thoại">@(string.IsNullOrWhiteSpace(u.UserPhone) ? "-" : u.UserPhone)</td>
+                    <td class="ad-actions-cell">
+                        <div class="ad-actions">
+                            @if (u.UserID == me)
+                            {
+                                <span class="ad-muted">Đang đăng nhập</span>
+                            }
+                            else
+                            {
+                                <form method="post" action="@Url.Action("Revoke", "AdminStaff")"
+                                      data-confirm="Thu hồi quyền admin của “@u.UserName”?">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@u.UserID" />
+                                    <button type="submit" class="ad-btn ad-btn--small ad-btn--danger">Thu hồi quyền</button>
+                                </form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

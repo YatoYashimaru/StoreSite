@@ -1,6 +1,11 @@
-﻿@{
+@{
     string act = ((ViewContext.RouteData.Values["action"] as string) ?? "").ToLowerInvariant();
-    bool dangSanPham = act == "products" || act.StartsWith("product");
+    string ctl = ((ViewContext.RouteData.Values["controller"] as string) ?? "").ToLowerInvariant();
+    bool dangDonHang = ctl == "adminorders";
+    bool dangNhan = ctl == "admincatalog" && act == "brands";
+    bool dangMon = ctl == "admincatalog" && act == "sports";
+    bool dangNhanVien = ctl == "adminstaff";
+    bool dangSanPham = ctl == "admin";
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -8,7 +13,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewBag.Title - Quản trị Meisho Doshoes</title>
-    <link href="~/Content/AdminStyle.css?v=1" rel="stylesheet" />
+    <link href="~/Content/AdminStyle.css?v=3" rel="stylesheet" />
 </head>
 <body class="ad-body">
 
@@ -20,8 +25,17 @@
                 <a href="@Url.Action("Products", "Admin")" class="@(dangSanPham ? "is-active" : "")"
                    @(dangSanPham ? "aria-current=page" : "")>Sản phẩm</a>
 
-                @* Các mục sau làm tiếp ở bước sau: đổi <span> thành <a href="..."> là dùng được *@
-                <span class="ad-nav__soon" title="Sắp có">Đơn hàng</span>
+                <a href="@Url.Action("Index", "AdminOrders")" class="@(dangDonHang ? "is-active" : "")"
+                   @(dangDonHang ? "aria-current=page" : "")>Đơn hàng</a>
+
+                <a href="@Url.Action("Brands", "AdminCatalog")" class="@(dangNhan ? "is-active" : "")"
+                   @(dangNhan ? "aria-current=page" : "")>Nhãn hàng</a>
+                <a href="@Url.Action("Sports", "AdminCatalog")" class="@(dangMon ? "is-active" : "")"
+                   @(dangMon ? "aria-current=page" : "")>Bộ môn</a>
+                <a href="@Url.Action("Index", "AdminStaff")" class="@(dangNhanVien ? "is-active" : "")"
+                   @(dangNhanVien ? "aria-current=page" : "")>Nhân viên</a>
+
+                @* Mục sau làm ở bước sau: đổi <span> thành <a href="..."> là dùng được *@
                 <span class="ad-nav__soon" title="Sắp có">Người dùng</span>
             </nav>
 
@@ -46,11 +60,13 @@
         @RenderBody()
     </main>
 
-    <script>// Mọi form có data-confirm sẽ hỏi lại trước khi gửi (dùng cho nút Xóa)
+    <script>
+        // Mọi form có data-confirm sẽ hỏi lại trước khi gửi (dùng cho nút Xóa)
         document.addEventListener('submit', function (e) {
             var msg = e.target.getAttribute('data-confirm');
             if (msg && !window.confirm(msg)) e.preventDefault();
-        });</script>
+        });
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

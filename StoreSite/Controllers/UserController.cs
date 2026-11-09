@@ -35,6 +35,9 @@ namespace StoreSite.Controllers
 
             Session["NguoiDungId"] = user.UserID;
             Session["HoTen"] = user.UserName;
+            Session["NguoiDungId"] = user.UserID;
+            Session["HoTen"] = user.UserName;
+            Session["IsAdmin"] = user.UserRole;
             return RedirectToAction("Index", "Home");
         }
 
@@ -55,7 +58,7 @@ namespace StoreSite.Controllers
                 UserEmail = email,
                 UserPhone = model.SoDienThoai.Trim(),
                 PasswordHash = model.MatKhau,
-                UserRole = false
+                UserRole = StoreSite.Models.AdminEmails.IsAdmin(email)
             });
             db.SaveChanges();
 

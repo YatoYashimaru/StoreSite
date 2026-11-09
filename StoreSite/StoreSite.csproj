@@ -128,7 +128,10 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminBaseController.cs" />
+    <Compile Include="Controllers\AdminCatalogController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\AdminOrdersController.cs" />
+    <Compile Include="Controllers\AdminStaffController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -138,6 +141,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AdminCatalogViewModels.cs" />
+    <Compile Include="Models\AdminEmails.cs" />
+    <Compile Include="Models\AdminOrderViewModels.cs" />
     <Compile Include="Models\AdminViewModels.cs" />
     <Compile Include="Models\AuthViewModels.cs" />
     <Compile Include="Models\Cart.cs" />
@@ -373,6 +379,13 @@
     <Content Include="Views\Admin\_ViewStart.cshtml" />
     <Content Include="Views\Admin\ProductForm.cshtml" />
     <Content Include="Views\Admin\Products.cshtml" />
+    <Content Include="Views\AdminOrders\Details.cshtml" />
+    <Content Include="Views\AdminOrders\Index.cshtml" />
+    <Content Include="Views\AdminOrders\_ViewStart.cshtml" />
+    <Content Include="Views\AdminCatalog\Catalog.cshtml" />
+    <Content Include="Views\AdminCatalog\_ViewStart.cshtml" />
+    <Content Include="Views\AdminStaff\Index.cshtml" />
+    <Content Include="Views\AdminStaff\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,4 +1,4 @@
-﻿@model StoreSite.Models.ProductFormViewModel
+@model StoreSite.Models.ProductFormViewModel
 @{
     bool them = Model.Id == 0;
     ViewBag.Title = them ? "Thêm sản phẩm" : "Sửa sản phẩm";
@@ -57,7 +57,7 @@
         <div class="ad-field">
             @Html.LabelFor(m => m.Gender)
             @Html.DropDownListFor(m => m.Gender, new[]
-                 {
+            {
                 new SelectListItem { Text = "Nam", Value = "Nam" },
                 new SelectListItem { Text = "Nữ", Value = "Nu" }
             }, new { @class = "ad-input" })

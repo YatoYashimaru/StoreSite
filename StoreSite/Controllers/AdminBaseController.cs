@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 
 namespace StoreSite.Controllers
 {
+    /// <summary>
+    /// Mọi controller của khu quản trị kế thừa class này.
+    /// Chỉ tài khoản có Users.UserRole = 1 (admin) mới vào được; kiểm tra lại trong database mỗi lần,
+    /// không tin vào Session, nên đổi quyền trong SQL có hiệu lực ngay.
+    /// </summary>
     public abstract class AdminBaseController : BaseController
     {
         protected override void OnActionExecuting(ActionExecutingContext filterContext)

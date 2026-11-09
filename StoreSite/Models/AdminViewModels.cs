@@ -1,13 +1,9 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.ComponentModel.DataAnnotations;
-
 
 namespace StoreSite.Models
 {
-    /// Dữ liệu cho trang danh sách sản phẩm của admin.
+    /// <summary>Dữ liệu cho trang danh sách sản phẩm của admin.</summary>
     public class AdminProductListViewModel
     {
         public List<SanPham> Items { get; set; } = new List<SanPham>();
@@ -35,8 +31,10 @@ namespace StoreSite.Models
         }
     }
 
+    /// <summary>
     /// Form thêm / sửa sản phẩm. Dùng ViewModel riêng thay vì sửa class SanPham do Entity Framework sinh ra
     /// (file đó bị ghi đè mỗi khi cập nhật model).
+    /// </summary>
     public class ProductFormViewModel
     {
         public int Id { get; set; }

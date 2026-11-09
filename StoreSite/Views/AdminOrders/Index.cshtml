@@ -1,0 +1,119 @@
+@model StoreSite.Models.AdminOrderListViewModel
+@using System.Globalization
+@{
+    ViewBag.Title = "Đơn hàng";
+    var vn = new CultureInfo("vi-VN");
+}
+
+<div class="ad-head">
+    <div>
+        <h1 class="ad-title">Đơn hàng</h1>
+        <p class="ad-sub">@Model.Total đơn@(string.IsNullOrEmpty(Model.Status) && string.IsNullOrEmpty(Model.Search) ? "" : " phù hợp bộ lọc")</p>
+    </div>
+</div>
+
+<div class="ad-stats">
+    <div class="ad-stat"><span>Tất cả</span><strong>@Model.CountAll</strong></div>
+    <div class="ad-stat"><span>Chờ thanh toán</span><strong>@Model.CountPending</strong></div>
+    <div class="ad-stat"><span>Đã thanh toán</span><strong>@Model.CountComplete</strong></div>
+    <div class="ad-stat"><span>Doanh thu (đã thanh toán)</span><strong>@Model.Revenue.ToString("#,##0", vn)đ</strong></div>
+</div>
+
+<div class="ad-tabs" role="tablist">
+    <a class="@(string.IsNullOrEmpty(Model.Status) ? "is-active" : "")" href="@Url.Action("Index", "AdminOrders", new { search = Model.Search })">Tất cả</a>
+    <a class="@(Model.Status == "Pending" ? "is-active" : "")" href="@Url.Action("Index", "AdminOrders", new { status = "Pending", search = Model.Search })">Chờ thanh toán</a>
+    <a class="@(Model.Status == "Complete" ? "is-active" : "")" href="@Url.Action("Index", "AdminOrders", new { status = "Complete", search = Model.Search })">Đã thanh toán</a>
+</div>
+
+<form class="ad-filter ad-filter--orders" method="get" action="@Url.Action("Index", "AdminOrders")">
+    <input type="hidden" name="status" value="@Model.Status" />
+    <input type="search" name="search" value="@Model.Search" placeholder="Mã đơn, tên hoặc email khách..." class="ad-input" />
+    <button type="submit" class="ad-btn">Tìm</button>
+    @if (!string.IsNullOrEmpty(Model.Search))
+    {
+        <a class="ad-btn ad-btn--ghost" href="@Url.Action("Index", "AdminOrders", new { status = Model.Status })">Xóa tìm</a>
+    }
+</form>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="ad-empty">Không có đơn hàng nào.</div>
+}
+else
+{
+    <div class="ad-card">
+        <table class="ad-table">
+            <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Ngày đặt</th>
+                    <th>Khách hàng</th>
+                    <th class="ad-num">Số món</th>
+                    <th class="ad-num">Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th class="ad-actions-col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var o in Model.Items)
+                {
+                    <tr>
+                        <td data-label="Mã đơn" class="ad-name">
+                            <a href="@Url.Action("Details", "AdminOrders", new { id = o.OrderID })">#@o.OrderID</a>
+                        </td>
+                        <td data-label="Ngày đặt">@(o.OrderDate.HasValue ? o.OrderDate.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>
+                        <td data-label="Khách hàng">
+                            @(o.CustomerName ?? "(đã xóa tài khoản)")
+                            @if (!string.IsNullOrEmpty(o.CustomerEmail))
+                            {
+                                <small class="ad-old" style="text-decoration:none">@o.CustomerEmail</small>
+                            }
+                        </td>
+                        <td data-label="Số món" class="ad-num">@o.ItemCount</td>
+                        <td data-label="Tổng tiền" class="ad-num">@((o.TotalAmount ?? 0m).ToString("#,##0", vn))đ</td>
+                        <td data-label="Trạng thái">
+                            @if (o.PaymentStatus == "Complete")
+                            {
+                                <span class="ad-status ad-status--complete">Đã thanh toán</span>
+                            }
+                            else
+                            {
+                                <span class="ad-status ad-status--pending">Chờ thanh toán</span>
+                            }
+                        </td>
+                        <td class="ad-actions-cell">
+                            <div class="ad-actions">
+                                <a class="ad-btn ad-btn--small" href="@Url.Action("Details", "AdminOrders", new { id = o.OrderID })">Xem</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    if (Model.TotalPages > 1)
+    {
+        <nav class="ad-pager" aria-label="Phân trang">
+            @if (Model.Page > 1)
+            {
+                <a class="ad-btn ad-btn--small" href="@Url.Action("Index", "AdminOrders", new { status = Model.Status, search = Model.Search, page = Model.Page - 1 })">‹ Trước</a>
+            }
+            else
+            {
+                <span class="ad-btn ad-btn--small is-disabled">‹ Trước</span>
+            }
+
+            <span class="ad-pager__info">Trang @Model.Page / @Model.TotalPages</span>
+
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a class="ad-btn ad-btn--small" href="@Url.Action("Index", "AdminOrders", new { status = Model.Status, search = Model.Search, page = Model.Page + 1 })">Sau ›</a>
+            }
+            else
+            {
+                <span class="ad-btn ad-btn--small is-disabled">Sau ›</span>
+            }
+        </nav>
+    }
+}

@@ -1,23 +1,19 @@
-﻿/* 
+/* =========================================================
    ADMIN: giao diện quản trị (class bắt đầu bằng "ad-")
    Chạy độc lập, không dùng Bootstrap và không đụng CSS của web bán hàng.
-   Đã đồng bộ màu sắc và style với MainPageStyle.
-*/
+   ========================================================= */
 
 :root {
-    /* Đồng bộ với MainPageStyle */
-    --ad-accent: #00b8c4;
-    --ad-accent-dark: #008c96;
-    --ad-accent-soft: rgba(0, 184, 196, .12);
-    --ad-text: #1f2937;
+    --ad-accent: #1d7f9c;
+    --ad-accent-dark: #166580;
+    --ad-accent-soft: #e4f4f8;
+    --ad-text: #1f2430;
     --ad-muted: #6b7280;
-    --ad-border: #e5e7eb;
-    --ad-bg: #f4f7fa;
+    --ad-border: #dfe5e8;
+    --ad-bg: #f3f6f8;
     --ad-card: #fff;
-    --ad-danger: #ef4444; /* đỏ của badge/error trong main page */
+    --ad-danger: #b3261e;
     --ad-ok: #1e7e34;
-    --ad-dark: #0b1220;
-    --ad-radius: 16px; /* 16px như main page */
 }
 
 .ad-body,
@@ -34,20 +30,19 @@
     line-height: 1.45;
 }
 
-    .ad-body a {
-        color: var(--ad-accent);
-        text-decoration: none;
-    }
+.ad-body a {
+    color: var(--ad-accent);
+    text-decoration: none;
+}
 
 /* ---------- Thanh trên cùng + nav ---------- */
 .ad-top {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: var(--ad-dark); /* Đồng bộ header tối với banner dark */
+    background: #0f2d38;
     color: #fff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
-    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
 }
 
 .ad-top__inner {
@@ -69,43 +64,43 @@
     letter-spacing: .02em;
 }
 
-    .ad-brand span {
-        color: var(--ad-accent);
-        font-weight: 600;
-    }
+.ad-brand span {
+    color: #7fd3e8;
+    font-weight: 600;
+}
 
 .ad-nav {
     display: flex;
     flex: 1 1 auto;
     gap: 4px;
     min-width: 0;
-    overflow-x: auto;
+    overflow-x: auto;                 /* màn nhỏ: cuộn ngang thay vì xuống dòng */
     scrollbar-width: none;
 }
 
-    .ad-nav::-webkit-scrollbar {
-        display: none;
-    }
+.ad-nav::-webkit-scrollbar {
+    display: none;
+}
 
-    .ad-nav a,
-    .ad-body .ad-nav a,
-    .ad-nav__soon {
-        flex: 0 0 auto;
-        padding: 17px 14px 15px;
-        border-bottom: 3px solid transparent;
-        color: #cbd5e1;
-        font-weight: 600;
-        white-space: nowrap;
-    }
+.ad-nav a,
+.ad-body .ad-nav a,
+.ad-nav__soon {
+    flex: 0 0 auto;
+    padding: 17px 14px 15px;
+    border-bottom: 3px solid transparent;
+    color: #c5dbe3;
+    font-weight: 600;
+    white-space: nowrap;
+}
 
-        .ad-body .ad-nav a:hover {
-            color: #fff;
-        }
+.ad-body .ad-nav a:hover {
+    color: #fff;
+}
 
-        .ad-body .ad-nav a.is-active {
-            color: #fff;
-            border-bottom-color: var(--ad-accent);
-        }
+.ad-body .ad-nav a.is-active {
+    color: #fff;
+    border-bottom-color: #7fd3e8;
+}
 
 .ad-nav__soon {
     opacity: .45;
@@ -121,13 +116,13 @@
 }
 
 .ad-body .ad-top .ad-link {
-    color: #cbd5e1;
+    color: #c5dbe3;
 }
 
-    .ad-body .ad-top .ad-link:hover {
-        color: #fff;
-        text-decoration: underline;
-    }
+.ad-body .ad-top .ad-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
 
 .ad-who {
     padding: 3px 10px;
@@ -159,7 +154,7 @@
 
 .ad-title {
     margin: 0;
-    font-size: clamp(1.5rem, 4vw, 2.25rem); /* Đồng bộ thẻ H2 của trang chủ */
+    font-size: 26px;
     font-weight: 800;
 }
 
@@ -172,9 +167,8 @@
 .ad-card {
     background: var(--ad-card);
     border: 1px solid var(--ad-border);
-    border-radius: var(--ad-radius); /* Đồng bộ 16px */
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, .03); /* Viền đổ bóng nhẹ giống sản phẩm */
 }
 
 /* ---------- Thông báo ---------- */
@@ -183,7 +177,7 @@
     margin: 0 0 16px;
     padding: 12px 16px;
     border: 1px solid;
-    border-radius: 8px; /* Giữ 8px cho alert để không quá to */
+    border-radius: 8px;
     font-size: 14px;
 }
 
@@ -200,17 +194,17 @@
     color: var(--ad-danger);
 }
 
-    .ad-body .validation-summary-errors ul {
-        margin: 0;
-        padding-left: 18px;
-    }
+.ad-body .validation-summary-errors ul {
+    margin: 0;
+    padding-left: 18px;
+}
 
 .ad-empty {
     padding: 40px 20px;
     text-align: center;
     background: var(--ad-card);
     border: 1px dashed var(--ad-border);
-    border-radius: var(--ad-radius);
+    border-radius: 12px;
     color: var(--ad-muted);
 }
 
@@ -221,26 +215,25 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: .8rem 1.6rem; /* Đồng bộ padding nút hp-btn */
+    padding: 9px 16px;
     border: 1px solid var(--ad-border);
-    border-radius: 999px; /* Tròn trịa như hp-btn */
+    border-radius: 8px;
     background: #fff;
     color: var(--ad-text);
     font: inherit;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.2;
     text-decoration: none;
     cursor: pointer;
-    transition: background-color .2s, transform .2s, border-color .2s, color .2s;
+    transition: background-color .15s, border-color .15s, color .15s;
 }
 
-    .ad-btn:hover,
-    .ad-body a.ad-btn:hover {
-        background: var(--ad-accent-soft);
-        border-color: var(--ad-accent);
-        color: var(--ad-accent-dark);
-        transform: translateY(-2px);
-    }
+.ad-btn:hover,
+.ad-body a.ad-btn:hover {
+    background: var(--ad-accent-soft);
+    border-color: var(--ad-accent);
+    color: var(--ad-accent-dark);
+}
 
 .ad-btn--primary,
 .ad-body a.ad-btn--primary {
@@ -249,12 +242,12 @@
     color: #fff;
 }
 
-    .ad-btn--primary:hover,
-    .ad-body a.ad-btn--primary:hover {
-        background: var(--ad-accent-dark);
-        border-color: var(--ad-accent-dark);
-        color: #fff;
-    }
+.ad-btn--primary:hover,
+.ad-body a.ad-btn--primary:hover {
+    background: var(--ad-accent-dark);
+    border-color: var(--ad-accent-dark);
+    color: #fff;
+}
 
 .ad-btn--ghost {
     background: transparent;
@@ -265,22 +258,21 @@
     border-color: #f0c4c0;
 }
 
-    .ad-btn--danger:hover {
-        background: var(--ad-danger);
-        border-color: var(--ad-danger);
-        color: #fff;
-    }
+.ad-btn--danger:hover {
+    background: var(--ad-danger);
+    border-color: var(--ad-danger);
+    color: #fff;
+}
 
 .ad-btn--small,
 .ad-body a.ad-btn--small {
-    padding: .5rem 1.1rem;
-    font-size: .9rem;
+    padding: 6px 12px;
+    font-size: 13px;
 }
 
 .ad-btn.is-disabled {
     opacity: .45;
     pointer-events: none;
-    transform: none !important;
 }
 
 .ad-btn:focus-visible,
@@ -294,20 +286,20 @@
 .ad-input {
     display: block;
     width: 100%;
-    max-width: none;
+    max-width: none;                  /* đè rule max-width: 280px của Site.css */
     padding: 9px 12px;
     border: 1px solid var(--ad-border);
-    border-radius: 8px; /* Input thường bo nhỏ hơn card */
+    border-radius: 8px;
     background: #fff;
     color: var(--ad-text);
     font: inherit;
 }
 
-    .ad-input:focus {
-        border-color: var(--ad-accent);
-        box-shadow: 0 0 0 3px rgba(0, 184, 196, .18);
-        outline: none;
-    }
+.ad-input:focus {
+    border-color: var(--ad-accent);
+    box-shadow: 0 0 0 3px rgba(29, 127, 156, .18);
+    outline: none;
+}
 
 .ad-textarea {
     resize: vertical;
@@ -342,31 +334,31 @@
     border-collapse: collapse;
 }
 
-    .ad-table th,
-    .ad-table td {
-        padding: 12px 14px;
-        text-align: left;
-        vertical-align: middle;
-        border-bottom: 1px solid var(--ad-border);
-    }
+.ad-table th,
+.ad-table td {
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--ad-border);
+}
 
-    .ad-table thead th {
-        background: var(--ad-bg); /* dùng màu nền soft */
-        color: var(--ad-accent-dark);
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: .05em;
-        text-transform: uppercase;
-        white-space: nowrap;
-    }
+.ad-table thead th {
+    background: #f8fafb;
+    color: var(--ad-muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
 
-    .ad-table tbody tr:last-child td {
-        border-bottom: 0;
-    }
+.ad-table tbody tr:last-child td {
+    border-bottom: 0;
+}
 
-    .ad-table tbody tr:hover {
-        background: #fafcfd;
-    }
+.ad-table tbody tr:hover {
+    background: #fafcfd;
+}
 
 .ad-num {
     text-align: right !important;
@@ -379,9 +371,9 @@
     justify-content: center;
     width: 56px;
     height: 56px;
-    border-radius: 12px; /* đồng bộ style bo viền ảnh 12px */
-    background: var(--ad-bg);
-    object-fit: cover;
+    border-radius: 8px;
+    background: #f1f4f5;
+    object-fit: contain;
 }
 
 .ad-thumb--none {
@@ -395,9 +387,9 @@
     font-weight: 700;
 }
 
-    .ad-name a:hover {
-        color: var(--ad-accent-dark); /* Đồng bộ hiệu ứng hover link hp-link */
-    }
+.ad-name a:hover {
+    color: var(--ad-accent);
+}
 
 .ad-name small,
 .ad-old {
@@ -414,7 +406,7 @@
     display: inline-block;
     padding: 2px 9px;
     border-radius: 999px;
-    background: var(--ad-danger); /* Đồng bộ hp-badge */
+    background: var(--ad-accent);
     color: #fff;
     font-size: 11px;
     font-weight: 700;
@@ -433,9 +425,9 @@
     white-space: nowrap;
 }
 
-    .ad-actions form {
-        margin: 0;
-    }
+.ad-actions form {
+    margin: 0;
+}
 
 .ad-actions-col {
     width: 1%;
@@ -485,11 +477,11 @@
     font-weight: 600;
 }
 
-    .ad-check input {
-        width: 18px;
-        height: 18px;
-        accent-color: var(--ad-accent);
-    }
+.ad-check input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--ad-accent);
+}
 
 .ad-img-row {
     display: grid;
@@ -504,12 +496,12 @@
     font-size: 12.5px;
 }
 
-    .ad-hint code {
-        padding: 1px 5px;
-        border-radius: 4px;
-        background: #eef2f4;
-        font-size: 12px;
-    }
+.ad-hint code {
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: #eef2f4;
+    font-size: 12px;
+}
 
 .ad-preview {
     display: flex;
@@ -518,20 +510,20 @@
     width: 140px;
     aspect-ratio: 1 / 1;
     border: 1px dashed var(--ad-border);
-    border-radius: 12px;
-    background: var(--ad-bg);
+    border-radius: 10px;
+    background: #f8fafb;
     color: var(--ad-muted);
     font-size: 12px;
     text-align: center;
     overflow: hidden;
 }
 
-    .ad-preview img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    }
+.ad-preview img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
 
 .ad-form__actions {
     display: flex;
@@ -548,9 +540,9 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-        .ad-filter input[type="search"] {
-            grid-column: 1 / -1;
-        }
+    .ad-filter input[type="search"] {
+        grid-column: 1 / -1;
+    }
 
     .ad-who {
         display: none;
@@ -578,10 +570,10 @@
         border-top: 1px solid rgba(255, 255, 255, .1);
     }
 
-        .ad-nav a,
-        .ad-nav__soon {
-            padding: 12px 12px 10px;
-        }
+    .ad-nav a,
+    .ad-nav__soon {
+        padding: 12px 12px 10px;
+    }
 
     .ad-main {
         padding: 18px 14px 48px;
@@ -632,7 +624,6 @@
         border: 0;
         border-radius: 0;
         overflow: visible;
-        box-shadow: none;
     }
 
     .ad-table tr {
@@ -641,7 +632,7 @@
         padding: 12px 14px 4px;
         background: var(--ad-card);
         border: 1px solid var(--ad-border);
-        border-radius: var(--ad-radius); /* Đồng bộ radius 16px */
+        border-radius: 12px;
     }
 
     .ad-table td {
@@ -654,42 +645,42 @@
         text-align: right !important;
     }
 
-        .ad-table td::before {
-            content: attr(data-label);
-            flex: 0 0 auto;
-            color: var(--ad-muted);
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: .04em;
-            text-transform: uppercase;
-            text-align: left;
-        }
+    .ad-table td::before {
+        content: attr(data-label);
+        flex: 0 0 auto;
+        color: var(--ad-muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        text-align: left;
+    }
 
-        .ad-table td.ad-thumb-cell {
-            border-bottom: 0;
-            padding-bottom: 0;
-        }
+    .ad-table td.ad-thumb-cell {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
 
-        .ad-table td.ad-name {
-            display: block;
-            text-align: left !important;
-            font-size: 16px;
-        }
+    .ad-table td.ad-name {
+        display: block;
+        text-align: left !important;
+        font-size: 16px;
+    }
 
-            .ad-table td.ad-name::before,
-            .ad-table td.ad-thumb-cell::before {
-                display: none;
-            }
+    .ad-table td.ad-name::before,
+    .ad-table td.ad-thumb-cell::before {
+        display: none;
+    }
 
-        .ad-table td.ad-actions-cell {
-            display: block;
-            border-bottom: 0;
-            padding: 10px 0 12px;
-        }
+    .ad-table td.ad-actions-cell {
+        display: block;
+        border-bottom: 0;
+        padding: 10px 0 12px;
+    }
 
-            .ad-table td.ad-actions-cell::before {
-                display: none;
-            }
+    .ad-table td.ad-actions-cell::before {
+        display: none;
+    }
 
     .ad-table tbody tr:hover {
         background: var(--ad-card);
@@ -703,5 +694,224 @@
 
     .ad-pager {
         flex-wrap: wrap;
+    }
+}
+
+/* =========================================================
+   ĐƠN HÀNG (thêm cuối file AdminStyle.css)
+   ========================================================= */
+.ad-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.ad-stat {
+    padding: 14px 16px;
+    background: var(--ad-card);
+    border: 1px solid var(--ad-border);
+    border-radius: 12px;
+}
+
+.ad-stat span {
+    display: block;
+    color: var(--ad-muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.ad-stat strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 22px;
+    line-height: 1.2;
+}
+
+.ad-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.ad-tabs a,
+.ad-body .ad-tabs a {
+    padding: 7px 16px;
+    border: 1px solid var(--ad-border);
+    border-radius: 999px;
+    background: var(--ad-card);
+    color: var(--ad-text);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.ad-body .ad-tabs a.is-active {
+    background: var(--ad-accent);
+    border-color: var(--ad-accent);
+    color: #fff;
+}
+
+.ad-filter--orders {
+    grid-template-columns: minmax(180px, 1fr) auto auto;
+    max-width: 560px;
+}
+
+.ad-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.ad-status--pending {
+    background: #fff4d6;
+    color: #8a5a00;
+}
+
+.ad-status--complete {
+    background: #def5e3;
+    color: var(--ad-ok);
+}
+
+/* chi tiết đơn */
+.ad-detail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 16px;
+    align-items: start;
+}
+
+.ad-detail__side {
+    display: grid;
+    gap: 12px;
+}
+
+.ad-h2 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.ad-detail__main {
+    padding-top: 16px;
+}
+
+.ad-detail__main .ad-h2 {
+    padding: 0 16px;
+}
+
+.ad-box {
+    padding: 16px;
+}
+
+.ad-btn--block {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.ad-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--ad-border);
+    font-size: 18px;
+}
+
+.ad-dl {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 8px 10px;
+    margin: 0;
+}
+
+.ad-dl dt {
+    color: var(--ad-muted);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding-top: 2px;
+}
+
+.ad-dl dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 980px) {
+    .ad-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ad-detail { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 480px) {
+    .ad-filter--orders { grid-template-columns: minmax(0, 1fr) auto; }
+    .ad-filter--orders input[type="search"] { grid-column: 1 / -1; }
+    .ad-stat strong { font-size: 18px; }
+}
+
+/* =========================================================
+   NHÃN HÀNG / BỘ MÔN / NHÂN VIÊN (thêm cuối file AdminStyle.css)
+   ========================================================= */
+.ad-note {
+    max-width: 760px;
+    margin: 0 0 16px;
+    color: var(--ad-muted);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.ad-inline-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0;
+}
+
+.ad-inline-form .ad-input {
+    min-width: 0;
+    flex: 1 1 180px;
+}
+
+.ad-rename-cell {
+    min-width: 260px;
+}
+
+.ad-grant {
+    margin-bottom: 16px;
+    max-width: 640px;
+}
+
+.ad-grant__row {
+    display: flex;
+    gap: 10px;
+}
+
+.ad-grant__row .ad-input {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+@media (max-width: 720px) {
+    .ad-table td.ad-rename-cell {
+        display: block;
+        min-width: 0;
+        border-bottom: 0;
+        padding: 10px 0 4px;
+    }
+
+    .ad-table td.ad-rename-cell::before {
+        display: none;
+    }
+
+    .ad-grant__row {
+        flex-direction: column;
     }
 }

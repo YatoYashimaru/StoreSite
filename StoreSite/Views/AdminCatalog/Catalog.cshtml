@@ -1,0 +1,72 @@
+@model StoreSite.Models.CatalogViewModel
+@{
+    bool sport = Model.Kind == "sport";
+    string action = sport ? "Sports" : "Brands";
+}
+
+<div class="ad-head">
+    <div>
+        <h1 class="ad-title">@Model.Title</h1>
+        <p class="ad-sub">@Model.Items.Count @(sport ? "bộ môn" : "nhãn hàng") đang có sản phẩm</p>
+    </div>
+    <a class="ad-btn ad-btn--primary" href="@Url.Action("ProductCreate", "Admin")">+ Thêm sản phẩm</a>
+</div>
+
+<p class="ad-note">
+    @(sport ? "Bộ môn" : "Nhãn hàng") được lưu trong từng sản phẩm. Muốn có mục mới, hãy gán nó cho một sản phẩm
+    (thêm hoặc sửa sản phẩm). Tại đây bạn có thể đổi tên; nếu tên mới trùng một mục đã có thì hai mục được gộp làm một.
+    @if (sport)
+    {
+        <text>Tên hiển thị của bộ môn lấy từ <code>SportNames.cs</code>; tên mới chưa khai báo ở đó sẽ hiển thị đúng như bạn gõ.</text>
+    }
+</p>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="ad-empty">Chưa có dữ liệu.</div>
+}
+else
+{
+    <div class="ad-card">
+        <table class="ad-table">
+            <thead>
+                <tr>
+                    <th>@(sport ? "Bộ môn" : "Nhãn hàng")</th>
+                    @if (sport) { <th>Giá trị lưu</th> }
+                    <th class="ad-num">Số sản phẩm</th>
+                    <th>Đổi tên</th>
+                    <th class="ad-actions-col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var it in Model.Items)
+                {
+                    <tr>
+                        <td data-label="@(sport ? "Bộ môn" : "Nhãn hàng")" class="ad-name">@it.Label</td>
+                        @if (sport)
+                        {
+                            <td data-label="Giá trị lưu"><code>@it.Name</code></td>
+                        }
+                        <td data-label="Số sản phẩm" class="ad-num">@it.Count</td>
+                        <td class="ad-actions-cell ad-rename-cell">
+                            <form method="post" action="@Url.Action("Rename", "AdminCatalog")" class="ad-inline-form"
+                                  data-confirm="Đổi tên “@it.Name” cho @it.Count sản phẩm?">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="kind" value="@Model.Kind" />
+                                <input type="hidden" name="oldName" value="@it.Name" />
+                                <input type="text" name="newName" value="@it.Name" maxlength="80" class="ad-input" aria-label="Tên mới" />
+                                <button type="submit" class="ad-btn ad-btn--small">Lưu</button>
+                            </form>
+                        </td>
+                        <td class="ad-actions-cell">
+                            <div class="ad-actions">
+                                <a class="ad-btn ad-btn--small ad-btn--ghost"
+                                   href="@(sport ? Url.Action("Products", "Admin", new { sport = it.Name }) : Url.Action("Products", "Admin", new { loai = it.Name }))">Xem sản phẩm</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
