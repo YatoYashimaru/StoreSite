@@ -376,3 +376,30 @@
     background-color: var(--hp-accent-dark);
     margin: 1.5rem 0;
 }
+
+.hp-grid--brands {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: var(--hp-gap); /* Dùng chung biến khoảng cách của bạn */
+    padding-bottom: 1rem;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+    .hp-grid--brands::-webkit-scrollbar {
+        display: none; /* Ẩn thanh cuộn cho mượt mắt */
+    }
+
+    .hp-grid--brands .hp-category {
+        /* Hiển thị 4 item trên 1 hàng, item thứ 5 bị đẩy tràn sang phải */
+        flex: 0 0 calc(25% - 1.5rem);
+        min-width: 220px;
+    }
+
+@media (max-width: 768px) {
+    .hp-grid--brands .hp-category {
+        flex: 0 0 calc(50% - 1rem); /* 2 item trên mobile */
+    }
+}

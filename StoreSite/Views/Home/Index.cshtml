@@ -43,30 +43,38 @@
             <span class="hp-eyebrow">Danh mục</span>
             <h2>Các nhãn hàng giày đồng hành cùng chúng tôi</h2>
         </div>
-        <div class="hp-grid hp-grid--categories">
-            <a href="@Url.Action("Index", "Store")" class="hp-category">
-                <img src="~/ImageAssets/HomePage/Adidas.jpg" alt="" />
-                <span>Adidas</span>
-            </a>
-            <a href="@Url.Action("Index", "Store")" class="hp-category">
-                <img src="~/ImageAssets/HomePage/Nike.jpg" alt="" />
-                <span>Nike</span>
-            </a>
-            <a href="@Url.Action("Index", "Store")" class="hp-category">
-                <img src="~/ImageAssets/HomePage/Puma.jpg" alt="" />
-                <span>Puma</span>
-            </a>
-            <a href="@Url.Action("Index", "Store")" class="hp-category">
-                <img src="~/ImageAssets/HomePage/New Balance.jpg" alt="" />
-                <span>New Balance</span>
-            </a>
-            <a href="@Url.Action("Index", "Store")" class="hp-category">
-                <img src="~/ImageAssets/HomePage/Converse.jpg" alt="" />
-                <span>Converse</span>
-            </a>
+
+        <!-- Dùng class hp-slider có sẵn của bạn làm khung chứa -->
+        <div class="hp-slider">
+            <button class="hp-arrow hp-arrow--prev" id="brandPrev">&#10094;</button>
+
+            <div class="hp-grid hp-grid--brands" id="brandSlider">
+                <a href="@Url.Action("Index", "Store")" class="hp-category">
+                    <img src="~/ImageAssets/HomePage/Adidas.jpg" alt="Adidas" />
+                    <span>Adidas</span>
+                </a>
+                <a href="@Url.Action("Index", "Store")" class="hp-category">
+                    <img src="~/ImageAssets/HomePage/Nike.jpg" alt="Nike" />
+                    <span>Nike</span>
+                </a>
+                <a href="@Url.Action("Index", "Store")" class="hp-category">
+                    <img src="~/ImageAssets/HomePage/Puma.jpg" alt="Puma" />
+                    <span>Puma</span>
+                </a>
+                <a href="@Url.Action("Index", "Store")" class="hp-category">
+                    <img src="~/ImageAssets/HomePage/New Balance.jpg" alt="New Balance" />
+                    <span>New Balance</span>
+                </a>
+                <a href="@Url.Action("Index", "Store")" class="hp-category">
+                    <img src="~/ImageAssets/HomePage/Converse.jpg" alt="Converse" />
+                    <span>Converse</span>
+                </a>
+            </div>
+
+            <button class="hp-arrow hp-arrow--next" id="brandNext">&#10095;</button>
         </div>
     </section>
-
+    
     <!-- 3.2 DANH MỤC -->
     <section class="hp-section">
         <div class="hp-heading">
@@ -256,4 +264,30 @@ document.addEventListener("click", function (e) {
     initBanner();
 
     setInterval(fnChangeBanner, 3000);
+</script>
+<script>
+    // Logic cuộn ngang cho danh mục Nhãn hàng
+    document.addEventListener("DOMContentLoaded", function () {
+        const brandSlider = document.getElementById("brandSlider");
+        const brandPrev = document.getElementById("brandPrev");
+        const brandNext = document.getElementById("brandNext");
+
+        if (brandNext && brandPrev && brandSlider) {
+            brandNext.addEventListener("click", function (e) {
+                // Ngăn chặn sự kiện click lan ra document, tránh xung đột với script load sản phẩm nổi bật
+                e.stopPropagation();
+
+                // Lấy chiều rộng thực tế của 1 item và cộng thêm khoảng cách gap (khoảng 20px)
+                const itemWidth = brandSlider.firstElementChild.offsetWidth;
+                brandSlider.scrollLeft += (itemWidth + 20);
+            });
+
+            brandPrev.addEventListener("click", function (e) {
+                e.stopPropagation();
+
+                const itemWidth = brandSlider.firstElementChild.offsetWidth;
+                brandSlider.scrollLeft -= (itemWidth + 20);
+            });
+        }
+    });
 </script>

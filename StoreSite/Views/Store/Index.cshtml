@@ -5,101 +5,108 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section styles {<link rel="stylesheet" href="@Url.Content("~/Content/StorePageStyle.css")?v=@DateTime.Now.Ticks" />}
+@section styles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/StorePageStyle.css")?v=@DateTime.Now.Ticks" />
+}
 
 <!--GIAO DIỆN CHÍNH-->
 <div class="container my-4">
-    <div class="row">
 
-        <!--BỘ LỌC (CỘT BÊN TRÁI)-->
-        <div class="col-md-3">
-            <div class="box-filter">
-                <h5 class="font-weight-bold mb-3">Bộ Lọc Tìm Kiếm</h5>
+    <!--1. BỘ LỌC TÌM KIẾM (ĐẶT Ở TRÊN CÙNG - NẰM NGANG)-->
+    <div class="box-filter mb-4 p-3 bg-light rounded border">
+        <h5 class="font-weight-bold mb-3">Bộ Lọc Tìm Kiếm</h5>
 
-                <!-- Form gửi dữ liệu lọc về Action Store -->
-                @using (Html.BeginForm("Index", "Store", FormMethod.Get))
-                {
-                    <!--nhập tên giày-->
-                    <div class="form-group mb-3">
-                        <label><b>Tìm tên giày:</b></label>
-                        <input type="text" name="TimKiem" class="form-control" placeholder="Nhập tên giày..." value="@ViewBag.TimKiem" />
-                    </div>
-
-                    <!--Chọn loại giày-->
-                    <div class="form-group mb-3">
-                        <label><b>Loại giày:</b></label>
-                        <select name="Loai" class="form-control">
-                            <option value="All" @(ViewBag.Loai == "All" ? "selected" : "")>All</option>
-                            <option value="Nike" @(ViewBag.Loai == "Nike" ? "selected" : "")>Nike</option>
-                            <option value="Adidas" @(ViewBag.Loai == "Adidas" ? "selected" : "")>Adidas</option>
-                            <option value="Puma" @(ViewBag.Loai == "Puma" ? "selected" : "")>Puma</option>
-                            <option value="Converse" @(ViewBag.Loai == "Converse" ? "selected" : "")>Converse</option>
-                            <option value="Vans" @(ViewBag.Loai == "Vans" ? "selected" : "")>Vans</option>
-                            <option value="New Balance" @(ViewBag.Loai == "New Balance" ? "selected" : "")>New Balance</option>
-                        </select>
-
-                        <label for="Sport">Môn thể thao</label>
-                        <select id="Sport" name="Sport">
-                            <option value="All">Tất cả môn</option>
-                            @foreach (var s in (List<string>)ViewBag.Sports)
-                            {
-                                <option value="@s" @((string)ViewBag.Sport == s ? "selected" : "")>@StoreSite.Models.SportNames.Label(s)</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label><b>Giới tính:</b></label>
-                        <select name="Gender" class="form-control">
-                            <option value="All" @(ViewBag.Gender == "All" ? "selected" : "")>All</option>
-                            <option value="Nam" @(ViewBag.Gender == "Nam" ? "selected" : "")>Nam</option>
-                            <option value="Nu" @(ViewBag.Gender == "Nữ" ? "selected" : "")>Nữ</option>
-
-                        </select>
-                    </div>
-                    <!--Chọn sắp xếp theo giá tiền-->
-                    <div class="form-group mb-3">
-                        <label><b>Sắp xếp giá:</b></label>
-                        <select name="sortOrder" class="form-control">
-                            <option value="" @(string.IsNullOrEmpty(ViewBag.Sort) ? "selected" : "")>Mặc định</option>
-                            <option value="Tang_Dan" @(ViewBag.Sort == "Tang_Dan" ? "selected" : "")>Giá từ thấp -> cao</option>
-                            <option value="Giam_Dan" @(ViewBag.Sort == "Giam_Dan" ? "selected" : "")>Giá từ cao -> thấp</option>
-                        </select>
-                    </div>
-
-                    <!--Nút bấm confirm-->
-                    <button type="submit" class="btn btn-primary btn-block w-100">Lọc sản phẩm</button>
-                    <a href="@Url.Action("Index", "Store")" class="btn btn-outline-secondary btn-block w-100 mt-2">Bỏ lọc</a>
-                }
-            </div>
-        </div>
-
-        <!--DANH SÁCH SẢN PHẨM (CỘT BÊN PHẢI)-->
-        <div class="col-md-9">
-            <!--Tiêu đề & Số lượng-->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="font-weight-bold">Danh Sách Giày</h4>
-                <span>Tìm thấy <b>@Model.Count()</b> sản phẩm</span>
-            </div>
-
-            <!--Vòng lặp hiển thị từng sản phẩm-->
+        <!-- Form gửi dữ liệu lọc về Action Store -->
+        @using (Html.BeginForm("Index", "Store", FormMethod.Get))
+        {
             <div class="row">
-                @if (!Model.Any())
-                {
-                    <div class="col-12 text-center py-5">
-                        <p class="text-danger">Không tìm thấy sản phẩm nào phù hợp!</p>
-                    </div>
-                }
-                else
-                {
-                    foreach (var item in Model)
-                    {
-                        <div class="col-md-3 col-sm-6">
-                            @Html.Partial("_ProductCard", item)
-                        </div>
-                    }
-                }
+                <!--nhập tên giày-->
+                <div class="col-md-4 col-lg-3 form-group mb-3">
+                    <label><b>Tìm tên giày:</b></label>
+                    <input type="text" name="TimKiem" class="form-control" placeholder="Nhập tên giày..." value="@ViewBag.TimKiem" />
+                </div>
+
+                <!--Chọn loại giày-->
+                <div class="col-md-4 col-lg-2 form-group mb-3">
+                    <label><b>Loại giày:</b></label>
+                    <select name="Loai" class="form-control">
+                        <option value="All" @(ViewBag.Loai == "All" ? "selected" : "")>All</option>
+                        <option value="Nike" @(ViewBag.Loai == "Nike" ? "selected" : "")>Nike</option>
+                        <option value="Adidas" @(ViewBag.Loai == "Adidas" ? "selected" : "")>Adidas</option>
+                        <option value="Puma" @(ViewBag.Loai == "Puma" ? "selected" : "")>Puma</option>
+                        <option value="Converse" @(ViewBag.Loai == "Converse" ? "selected" : "")>Converse</option>
+                        <option value="Vans" @(ViewBag.Loai == "Vans" ? "selected" : "")>Vans</option>
+                        <option value="New Balance" @(ViewBag.Loai == "New Balance" ? "selected" : "")>New Balance</option>
+                    </select>
+                </div>
+
+                <!--Môn thể thao-->
+                <div class="col-md-4 col-lg-2 form-group mb-3">
+                    <label><b>Môn thể thao:</b></label>
+                    <select id="Sport" name="Sport" class="form-control">
+                        <option value="All">Tất cả môn</option>
+                        @foreach (var s in (List<string>)ViewBag.Sports)
+                        {
+                            <option value="@s" @((string)ViewBag.Sport == s ? "selected" : "")>@StoreSite.Models.SportNames.Label(s)</option>
+                        }
+                    </select>
+                </div>
+
+                <!--Giới tính-->
+                <div class="col-md-4 col-lg-2 form-group mb-3">
+                    <label><b>Giới tính:</b></label>
+                    <select name="Gender" class="form-control">
+                        <option value="All" @(ViewBag.Gender == "All" ? "selected" : "")>All</option>
+                        <option value="Nam" @(ViewBag.Gender == "Nam" ? "selected" : "")>Nam</option>
+                        <option value="Nu" @(ViewBag.Gender == "Nu" ? "selected" : "")>Nữ</option>
+                    </select>
+                </div>
+
+                <!--Sắp xếp giá-->
+                <div class="col-md-4 col-lg-3 form-group mb-3">
+                    <label><b>Sắp xếp giá:</b></label>
+                    <select name="sortOrder" class="form-control">
+                        <option value="" @(string.IsNullOrEmpty(ViewBag.Sort) ? "selected" : "")>Mặc định</option>
+                        <option value="Tang_Dan" @(ViewBag.Sort == "Tang_Dan" ? "selected" : "")>Giá từ thấp -> cao</option>
+                        <option value="Giam_Dan" @(ViewBag.Sort == "Giam_Dan" ? "selected" : "")>Giá từ cao -> thấp</option>
+                    </select>
+                </div>
             </div>
+
+            <!--Nút bấm confirm & Bỏ lọc-->
+            <div class="d-flex justify-content-end align-items-center gap-2 mt-2">
+                <button type="submit" class="btn btn-primary px-4 me-2">Lọc sản phẩm</button>
+                <a href="@Url.Action("Index", "Store")" class="btn btn-outline-secondary px-4">Bỏ lọc</a>
+            </div>
+        }
+    </div>
+
+    <!--2. DANH SÁCH SẢN PHẨM (HIỂN THỊ FULL CHIỀU RỘNG BÊN DƯỚI)-->
+    <div class="w-100">
+        <!--Tiêu đề & Số lượng-->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="font-weight-bold">Danh Sách Giày</h4>
+            <span>Tìm thấy <b>@Model.Count()</b> sản phẩm</span>
         </div>
 
+        <!--Vòng lặp hiển thị từng sản phẩm-->
+        <div class="row">
+            @if (!Model.Any())
+            {
+                <div class="col-12 text-center py-5">
+                    <p class="text-danger">Không tìm thấy sản phẩm nào phù hợp!</p>
+                </div>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        @Html.Partial("_ProductCard", item)
+                    </div>
+                }
+            }
+        </div>
     </div>
+
 </div>
