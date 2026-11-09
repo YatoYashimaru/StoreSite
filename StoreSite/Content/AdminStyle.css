@@ -1,0 +1,707 @@
+﻿/* 
+   ADMIN: giao diện quản trị (class bắt đầu bằng "ad-")
+   Chạy độc lập, không dùng Bootstrap và không đụng CSS của web bán hàng.
+   Đã đồng bộ màu sắc và style với MainPageStyle.
+*/
+
+:root {
+    /* Đồng bộ với MainPageStyle */
+    --ad-accent: #00b8c4;
+    --ad-accent-dark: #008c96;
+    --ad-accent-soft: rgba(0, 184, 196, .12);
+    --ad-text: #1f2937;
+    --ad-muted: #6b7280;
+    --ad-border: #e5e7eb;
+    --ad-bg: #f4f7fa;
+    --ad-card: #fff;
+    --ad-danger: #ef4444; /* đỏ của badge/error trong main page */
+    --ad-ok: #1e7e34;
+    --ad-dark: #0b1220;
+    --ad-radius: 16px; /* 16px như main page */
+}
+
+.ad-body,
+.ad-body * {
+    box-sizing: border-box;
+}
+
+.ad-body {
+    margin: 0;
+    background: var(--ad-bg);
+    color: var(--ad-text);
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+    .ad-body a {
+        color: var(--ad-accent);
+        text-decoration: none;
+    }
+
+/* ---------- Thanh trên cùng + nav ---------- */
+.ad-top {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--ad-dark); /* Đồng bộ header tối với banner dark */
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+}
+
+.ad-top__inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 20px;
+    min-height: 56px;
+}
+
+.ad-brand,
+.ad-body a.ad-brand {
+    flex: 0 0 auto;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: .02em;
+}
+
+    .ad-brand span {
+        color: var(--ad-accent);
+        font-weight: 600;
+    }
+
+.ad-nav {
+    display: flex;
+    flex: 1 1 auto;
+    gap: 4px;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+    .ad-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .ad-nav a,
+    .ad-body .ad-nav a,
+    .ad-nav__soon {
+        flex: 0 0 auto;
+        padding: 17px 14px 15px;
+        border-bottom: 3px solid transparent;
+        color: #cbd5e1;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+        .ad-body .ad-nav a:hover {
+            color: #fff;
+        }
+
+        .ad-body .ad-nav a.is-active {
+            color: #fff;
+            border-bottom-color: var(--ad-accent);
+        }
+
+.ad-nav__soon {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.ad-top__right {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 14px;
+    font-size: 14px;
+}
+
+.ad-body .ad-top .ad-link {
+    color: #cbd5e1;
+}
+
+    .ad-body .ad-top .ad-link:hover {
+        color: #fff;
+        text-decoration: underline;
+    }
+
+.ad-who {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .12);
+    color: #fff;
+    font-weight: 600;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ---------- Nội dung ---------- */
+.ad-main {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 24px 20px 56px;
+}
+
+.ad-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.ad-title {
+    margin: 0;
+    font-size: clamp(1.5rem, 4vw, 2.25rem); /* Đồng bộ thẻ H2 của trang chủ */
+    font-weight: 800;
+}
+
+.ad-sub {
+    margin: 2px 0 0;
+    color: var(--ad-muted);
+    font-size: 14px;
+}
+
+.ad-card {
+    background: var(--ad-card);
+    border: 1px solid var(--ad-border);
+    border-radius: var(--ad-radius); /* Đồng bộ 16px */
+    overflow: hidden;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .03); /* Viền đổ bóng nhẹ giống sản phẩm */
+}
+
+/* ---------- Thông báo ---------- */
+.ad-alert,
+.ad-body .validation-summary-errors {
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    border: 1px solid;
+    border-radius: 8px; /* Giữ 8px cho alert để không quá to */
+    font-size: 14px;
+}
+
+.ad-alert--ok {
+    background: #eaf7ee;
+    border-color: #b7e0c2;
+    color: var(--ad-ok);
+}
+
+.ad-alert--err,
+.ad-body .validation-summary-errors {
+    background: #fdecea;
+    border-color: #f3b9b4;
+    color: var(--ad-danger);
+}
+
+    .ad-body .validation-summary-errors ul {
+        margin: 0;
+        padding-left: 18px;
+    }
+
+.ad-empty {
+    padding: 40px 20px;
+    text-align: center;
+    background: var(--ad-card);
+    border: 1px dashed var(--ad-border);
+    border-radius: var(--ad-radius);
+    color: var(--ad-muted);
+}
+
+/* ---------- Nút ---------- */
+.ad-btn,
+.ad-body a.ad-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: .8rem 1.6rem; /* Đồng bộ padding nút hp-btn */
+    border: 1px solid var(--ad-border);
+    border-radius: 999px; /* Tròn trịa như hp-btn */
+    background: #fff;
+    color: var(--ad-text);
+    font: inherit;
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .2s, transform .2s, border-color .2s, color .2s;
+}
+
+    .ad-btn:hover,
+    .ad-body a.ad-btn:hover {
+        background: var(--ad-accent-soft);
+        border-color: var(--ad-accent);
+        color: var(--ad-accent-dark);
+        transform: translateY(-2px);
+    }
+
+.ad-btn--primary,
+.ad-body a.ad-btn--primary {
+    background: var(--ad-accent);
+    border-color: var(--ad-accent);
+    color: #fff;
+}
+
+    .ad-btn--primary:hover,
+    .ad-body a.ad-btn--primary:hover {
+        background: var(--ad-accent-dark);
+        border-color: var(--ad-accent-dark);
+        color: #fff;
+    }
+
+.ad-btn--ghost {
+    background: transparent;
+}
+
+.ad-btn--danger {
+    color: var(--ad-danger);
+    border-color: #f0c4c0;
+}
+
+    .ad-btn--danger:hover {
+        background: var(--ad-danger);
+        border-color: var(--ad-danger);
+        color: #fff;
+    }
+
+.ad-btn--small,
+.ad-body a.ad-btn--small {
+    padding: .5rem 1.1rem;
+    font-size: .9rem;
+}
+
+.ad-btn.is-disabled {
+    opacity: .45;
+    pointer-events: none;
+    transform: none !important;
+}
+
+.ad-btn:focus-visible,
+.ad-input:focus-visible,
+.ad-nav a:focus-visible {
+    outline: 2px solid var(--ad-accent);
+    outline-offset: 2px;
+}
+
+/* ---------- Ô nhập ---------- */
+.ad-input {
+    display: block;
+    width: 100%;
+    max-width: none;
+    padding: 9px 12px;
+    border: 1px solid var(--ad-border);
+    border-radius: 8px; /* Input thường bo nhỏ hơn card */
+    background: #fff;
+    color: var(--ad-text);
+    font: inherit;
+}
+
+    .ad-input:focus {
+        border-color: var(--ad-accent);
+        box-shadow: 0 0 0 3px rgba(0, 184, 196, .18);
+        outline: none;
+    }
+
+.ad-textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.ad-body .input-validation-error {
+    border-color: var(--ad-danger);
+}
+
+.ad-error,
+.ad-body .field-validation-error {
+    display: block;
+    margin-top: 5px;
+    color: var(--ad-danger);
+    font-size: 13px;
+}
+
+/* ---------- Bộ lọc ---------- */
+.ad-filter {
+    display: grid;
+    grid-template-columns: minmax(180px, 2fr) repeat(3, minmax(130px, 1fr)) auto auto;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+/* ---------- Bảng ---------- */
+.ad-table {
+    width: 100%;
+    border: 0;
+    border-collapse: collapse;
+}
+
+    .ad-table th,
+    .ad-table td {
+        padding: 12px 14px;
+        text-align: left;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--ad-border);
+    }
+
+    .ad-table thead th {
+        background: var(--ad-bg); /* dùng màu nền soft */
+        color: var(--ad-accent-dark);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .ad-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .ad-table tbody tr:hover {
+        background: #fafcfd;
+    }
+
+.ad-num {
+    text-align: right !important;
+    white-space: nowrap;
+}
+
+.ad-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px; /* đồng bộ style bo viền ảnh 12px */
+    background: var(--ad-bg);
+    object-fit: cover;
+}
+
+.ad-thumb--none {
+    color: var(--ad-muted);
+    font-weight: 700;
+}
+
+.ad-name a,
+.ad-body .ad-name a {
+    color: var(--ad-text);
+    font-weight: 700;
+}
+
+    .ad-name a:hover {
+        color: var(--ad-accent-dark); /* Đồng bộ hiệu ứng hover link hp-link */
+    }
+
+.ad-name small,
+.ad-old {
+    display: block;
+    color: var(--ad-muted);
+    font-size: 12px;
+}
+
+.ad-old {
+    text-decoration: line-through;
+}
+
+.ad-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: var(--ad-danger); /* Đồng bộ hp-badge */
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.ad-muted {
+    color: var(--ad-muted);
+}
+
+.ad-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+    .ad-actions form {
+        margin: 0;
+    }
+
+.ad-actions-col {
+    width: 1%;
+}
+
+/* ---------- Phân trang ---------- */
+.ad-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.ad-pager__info {
+    color: var(--ad-muted);
+    font-size: 14px;
+}
+
+/* ---------- Form thêm / sửa ---------- */
+.ad-form {
+    padding: 24px;
+}
+
+.ad-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 20px;
+}
+
+.ad-field--full {
+    grid-column: 1 / -1;
+}
+
+.ad-field > label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ad-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+    .ad-check input {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--ad-accent);
+    }
+
+.ad-img-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 140px;
+    gap: 16px;
+    align-items: start;
+}
+
+.ad-hint {
+    margin: 6px 0 0;
+    color: var(--ad-muted);
+    font-size: 12.5px;
+}
+
+    .ad-hint code {
+        padding: 1px 5px;
+        border-radius: 4px;
+        background: #eef2f4;
+        font-size: 12px;
+    }
+
+.ad-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 140px;
+    aspect-ratio: 1 / 1;
+    border: 1px dashed var(--ad-border);
+    border-radius: 12px;
+    background: var(--ad-bg);
+    color: var(--ad-muted);
+    font-size: 12px;
+    text-align: center;
+    overflow: hidden;
+}
+
+    .ad-preview img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+.ad-form__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ad-border);
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 980px) {
+    .ad-filter {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+        .ad-filter input[type="search"] {
+            grid-column: 1 / -1;
+        }
+
+    .ad-who {
+        display: none;
+    }
+}
+
+/* ---------- Điện thoại: bảng chuyển thành từng thẻ ---------- */
+@media (max-width: 720px) {
+    .ad-top__inner {
+        flex-wrap: wrap;
+        gap: 0 12px;
+        padding: 0 14px;
+    }
+
+    .ad-top__right {
+        margin-left: auto;
+        min-height: 56px;
+    }
+
+    .ad-nav {
+        order: 3;
+        flex: 1 0 100%;
+        margin: 0 -14px;
+        padding: 0 8px;
+        border-top: 1px solid rgba(255, 255, 255, .1);
+    }
+
+        .ad-nav a,
+        .ad-nav__soon {
+            padding: 12px 12px 10px;
+        }
+
+    .ad-main {
+        padding: 18px 14px 48px;
+    }
+
+    .ad-title {
+        font-size: 22px;
+    }
+
+    .ad-head .ad-btn {
+        width: 100%;
+    }
+
+    .ad-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ad-form {
+        padding: 18px 16px;
+    }
+
+    .ad-img-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ad-form__actions .ad-btn {
+        flex: 1 1 140px;
+    }
+
+    .ad-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+    }
+
+    .ad-table,
+    .ad-table tbody,
+    .ad-table tr,
+    .ad-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .ad-card {
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        overflow: visible;
+        box-shadow: none;
+    }
+
+    .ad-table tr {
+        position: relative;
+        margin-bottom: 12px;
+        padding: 12px 14px 4px;
+        background: var(--ad-card);
+        border: 1px solid var(--ad-border);
+        border-radius: var(--ad-radius); /* Đồng bộ radius 16px */
+    }
+
+    .ad-table td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 7px 0;
+        border-bottom: 1px dashed var(--ad-border);
+        text-align: right !important;
+    }
+
+        .ad-table td::before {
+            content: attr(data-label);
+            flex: 0 0 auto;
+            color: var(--ad-muted);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        .ad-table td.ad-thumb-cell {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .ad-table td.ad-name {
+            display: block;
+            text-align: left !important;
+            font-size: 16px;
+        }
+
+            .ad-table td.ad-name::before,
+            .ad-table td.ad-thumb-cell::before {
+                display: none;
+            }
+
+        .ad-table td.ad-actions-cell {
+            display: block;
+            border-bottom: 0;
+            padding: 10px 0 12px;
+        }
+
+            .ad-table td.ad-actions-cell::before {
+                display: none;
+            }
+
+    .ad-table tbody tr:hover {
+        background: var(--ad-card);
+    }
+}
+
+@media (max-width: 480px) {
+    .ad-filter {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ad-pager {
+        flex-wrap: wrap;
+    }
+}

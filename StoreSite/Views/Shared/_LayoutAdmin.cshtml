@@ -1,0 +1,56 @@
+﻿@{
+    string act = ((ViewContext.RouteData.Values["action"] as string) ?? "").ToLowerInvariant();
+    bool dangSanPham = act == "products" || act.StartsWith("product");
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title - Quản trị Meisho Doshoes</title>
+    <link href="~/Content/AdminStyle.css?v=1" rel="stylesheet" />
+</head>
+<body class="ad-body">
+
+    <header class="ad-top">
+        <div class="ad-top__inner">
+            <a class="ad-brand" href="@Url.Action("Products", "Admin")">Meisho <span>Admin</span></a>
+
+            <nav class="ad-nav" aria-label="Chức năng quản trị">
+                <a href="@Url.Action("Products", "Admin")" class="@(dangSanPham ? "is-active" : "")"
+                   @(dangSanPham ? "aria-current=page" : "")>Sản phẩm</a>
+
+                @* Các mục sau làm tiếp ở bước sau: đổi <span> thành <a href="..."> là dùng được *@
+                <span class="ad-nav__soon" title="Sắp có">Đơn hàng</span>
+                <span class="ad-nav__soon" title="Sắp có">Người dùng</span>
+            </nav>
+
+            <div class="ad-top__right">
+                <a href="@Url.Action("Index", "Home")" class="ad-link">Xem website</a>
+                <span class="ad-who">@ViewBag.AdminName</span>
+                <a href="@Url.Action("Logout", "User")" class="ad-link">Đăng xuất</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="ad-main">
+        @if (TempData["ThongBao"] != null)
+        {
+            <div class="ad-alert ad-alert--ok" role="status">@TempData["ThongBao"]</div>
+        }
+        @if (TempData["Loi"] != null)
+        {
+            <div class="ad-alert ad-alert--err" role="alert">@TempData["Loi"]</div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <script>// Mọi form có data-confirm sẽ hỏi lại trước khi gửi (dùng cho nút Xóa)
+        document.addEventListener('submit', function (e) {
+            var msg = e.target.getAttribute('data-confirm');
+            if (msg && !window.confirm(msg)) e.preventDefault();
+        });</script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
