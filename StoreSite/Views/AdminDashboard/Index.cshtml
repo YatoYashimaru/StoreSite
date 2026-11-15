@@ -37,10 +37,20 @@
     </div>
 </div>
 
-<!-- Khung chứa Biểu đồ tròn Google Charts -->
+<!-- Khung chứa Biểu đồ cột & Biểu đồ tròn Google Charts -->
 <div class="ad-grid" style="margin-bottom: 18px;">
     <section class="ad-card ad-box">
-        <h2 class="ad-h2">Doanh thu theo ngày</h2>
+        <div class="rev-header">
+            <h2 class="ad-h2" id="revenue-title">Doanh thu theo ngày</h2>
+            @if (coDoanhThu)
+            {
+                <div class="rev-tabs" role="group" aria-label="Chọn kỳ thống kê doanh thu">
+                    <button type="button" class="rev-tab ad-btn--primary is-active" data-period="day">Theo ngày</button>
+                    <button type="button" class="rev-tab ad-btn--primary" data-period="month">Theo tháng</button>
+                    <button type="button" class="rev-tab ad-btn--primary" data-period="year">Theo năm</button>
+                </div>
+            }
+        </div>
         @if (!coDoanhThu)
         {
             <div class="ad-empty">Chưa có đơn hàng nào hoàn thành thanh toán.</div>
@@ -172,40 +182,70 @@
             google.charts.load('current', { 'packages': ['corechart'] });
             google.charts.setOnLoadCallback(drawAllCharts);
 
-            function drawAllCharts() {
-                @if (coDoanhThu)
-                {
-                    <text>drawRevenueChart();</text>
-                }
-                @if (coHangGiay)
-                {
-                    <text>drawBrandChart();</text>
-                }
-            }
+            var currentPeriod = 'day';
 
             @if (coDoanhThu)
             {
                 <text>
-                function drawRevenueChart() {
-                    var data = google.visualization.arrayToDataTable([
-                        ['Ngày', 'Doanh thu (VNĐ)'],
-                        @foreach (var item in Model.BieuDoDoanhThu)
-                        {
-                            @:['@Html.Raw(HttpUtility.JavaScriptStringEncode(item.Label))', @item.Revenue.ToString(CultureInfo.InvariantCulture)],
-                        }
-                    ]);
+                var revenueDatasets = {
+                    day: {
+                        title: 'Doanh thu theo ngày',
+                        rows: [
+                            ['Ngày', 'Doanh thu (VNĐ)'],
+                            @foreach (var item in Model.BieuDoDoanhThu)
+                            {
+                                @:['@Html.Raw(HttpUtility.JavaScriptStringEncode(item.Label))', @item.Revenue.ToString(CultureInfo.InvariantCulture)],
+                            }
+                        ]
+                    },
+                    month: {
+                        title: 'Doanh thu theo tháng',
+                        rows: [
+                            ['Tháng', 'Doanh thu (VNĐ)'],
+                            @foreach (var item in (Model.BieuDoDoanhThuThang ?? new List<StoreSite.Models.RevenueChartItem>()))
+                            {
+                                @:['@Html.Raw(HttpUtility.JavaScriptStringEncode(item.Label))', @item.Revenue.ToString(CultureInfo.InvariantCulture)],
+                            }
+                        ]
+                    },
+                    year: {
+                        title: 'Doanh thu theo năm',
+                        rows: [
+                            ['Năm', 'Doanh thu (VNĐ)'],
+                            @foreach (var item in (Model.BieuDoDoanhThuNam ?? new List<StoreSite.Models.RevenueChartItem>()))
+                            {
+                                @:['@Html.Raw(HttpUtility.JavaScriptStringEncode(item.Label))', @item.Revenue.ToString(CultureInfo.InvariantCulture)],
+                            }
+                        ]
+                    }
+                };
 
+                function drawRevenueChart(period) {
+                    var info = revenueDatasets[period] || revenueDatasets.day;
+                    document.getElementById('revenue-title').textContent = info.title;
+
+                    var data = google.visualization.arrayToDataTable(info.rows);
+                    var barCount = info.rows.length - 1;
                     var options = {
                         legend: { position: 'none' },
                         colors: ['#1d7f9c'],
                         chartArea: { left: 75, top: 20, right: 20, bottom: 40 },
                         vAxis: { format: '#,### đ', minValue: 0 },
-                        bar: { groupWidth: '45%' }
+                        bar: { groupWidth: barCount <= 2 ? '25%' : '45%' }
                     };
 
                     var chart = new google.visualization.ColumnChart(document.getElementById('chart_revenue'));
                     chart.draw(data, options);
                 }
+
+                document.querySelectorAll('.rev-tab').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        document.querySelectorAll('.rev-tab').forEach(function (b) { b.classList.remove('is-active'); });
+                        btn.classList.add('is-active');
+                        currentPeriod = btn.getAttribute('data-period');
+                        drawRevenueChart(currentPeriod);
+                    });
+                });
                 </text>
             }
 
@@ -232,6 +272,17 @@
                     chart.draw(data, options);
                 }
                 </text>
+            }
+
+            function drawAllCharts() {
+                @if (coDoanhThu)
+                {
+                    <text>drawRevenueChart(currentPeriod);</text>
+                }
+                @if (coHangGiay)
+                {
+                    <text>drawBrandChart();</text>
+                }
             }
 
             window.addEventListener('resize', drawAllCharts);

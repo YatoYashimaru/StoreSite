@@ -1,9 +1,19 @@
 ﻿@model StoreSite.Models.SanPham
 @{
+    bool hetHang = Model.SoLuongTon <= 0;
+    bool isAdmin = (Session["IsAdmin"] as bool?) == true;
+    bool khoaClick = hetHang && !isAdmin; // Chỉ khóa thao tác bấm đối với khách hàng
     var detailsUrl = Url.Action("Details", "Store", new { id = Model.Id });
 }
 
-<div class="card-product" data-href="@detailsUrl">
+<div class="card-product @(hetHang ? "is-soldout" : "")" @if (!khoaClick) { <text> data-href="@detailsUrl" </text> }>
+
+    @if (hetHang)
+    {
+        <div class="soldout-overlay" title="Sản phẩm đang tạm hết hàng">
+            <span class="soldout-stamp">Đang tạm hết hàng</span>
+        </div>
+    }
 
     @if (Model.SanPhamMoi)
     {
@@ -17,7 +27,14 @@
     <small class="brand">@Model.LoaiGiay - @Model.Gender - @Model.Sport</small>
 
     <h6 class="product-name">
-        <a href="@detailsUrl">@Model.ItemName</a>
+        @if (khoaClick)
+        {
+            <span>@Model.ItemName</span>
+        }
+        else
+        {
+            <a href="@detailsUrl">@Model.ItemName</a>
+        }
     </h6>
 
     <div class="my-2">
@@ -30,5 +47,24 @@
 
     <div class="rating">★ @Model.rating / 5.0</div>
 
-    <a href="@detailsUrl" class="btn-cart">Thêm vào giỏ</a>
+    @if (hetHang)
+    {
+        <div class="stock-badge stock-badge--out">Kho còn: 0 đôi</div>
+        if (isAdmin)
+        {
+            <a href="@Url.Action("Index", "AdminInventory", new { search = Model.ItemName })"
+               class="btn-cart" style="background:#1e293b;">
+                Nhập thêm hàng
+            </a>
+        }
+        else
+        {
+            <span class="btn-cart btn-cart--disabled">Tạm hết hàng</span>
+        }
+    }
+    else
+    {
+        <div class="stock-badge">Kho còn: @Model.SoLuongTon đôi</div>
+        <a href="@detailsUrl" class="btn-cart">Thêm vào giỏ</a>
+    }
 </div>

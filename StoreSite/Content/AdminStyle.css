@@ -933,59 +933,6 @@
             text-decoration: underline;
         }
 
-.ad-pie-wrap {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    flex-wrap: wrap;
-    margin-top: 8px;
-}
-
-/* Biểu đồ tròn: nền là conic-gradient do view tính sẵn */
-.ad-pie {
-    flex: 0 0 auto;
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-}
-
-.ad-legend {
-    flex: 1 1 240px;
-    min-width: 0;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-    .ad-legend li {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 0;
-        border-bottom: 1px solid var(--ad-border);
-    }
-
-        .ad-legend li:last-child {
-            border-bottom: none;
-        }
-
-.ad-dot {
-    flex: 0 0 12px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-
-.ad-legend__name {
-    font-weight: 700;
-}
-
-.ad-legend__value {
-    margin-left: auto;
-    color: var(--ad-muted);
-    white-space: nowrap;
-}
-
 /* Thêm 2 mục menu (Tổng quan, Khách hàng) làm thanh menu dài hơn: thu khoảng đệm để mọi mục vẫn hiện đủ trên laptop */
 .ad-top__inner {
     gap: 18px;
@@ -997,8 +944,46 @@
     padding-right: 9px;
 }
 
-@media (max-width: 720px) {
-    .ad-pie {
-        margin: 0 auto;
-    }
+/* Nút chuyển kỳ thống kê doanh thu (Ngày / Tháng / Năm) */
+.rev-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
 }
+
+    .rev-header .ad-h2 {
+        margin: 0;
+    }
+
+.rev-tabs {
+    display: inline-flex;
+    background: var(--ad-bg);
+    padding: 3px;
+    border-radius: 8px;
+    gap: 2px;
+}
+
+.rev-tab {
+    border: none;
+    background: transparent;
+    padding: 5px 11px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ad-muted);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color .15s, color .15s;
+}
+
+    .rev-tab:hover {
+        color: var(--ad-text);
+    }
+
+    .rev-tab.is-active {
+        background: var(--ad-accent);
+        color: #fff;
+    }

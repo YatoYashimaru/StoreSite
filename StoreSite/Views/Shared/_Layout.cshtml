@@ -38,10 +38,21 @@
             </form>
 
             <ul class="site-menu">
-                @if (Session["NguoiDungId"] != null) { 
-                    <li><a href="@Url.Action("Index", "Cart")">Giỏ hàng @Html.Action("Badge", "Cart") </a></li>
-                    <li><a href="@Url.Action("UserPage", "User")">Xin chào, @Session["HoTen"]</a></li>
-                    <li><a href="@Url.Action("Logout", "User")">Đăng xuất</a></li>
+                @if (Session["NguoiDungId"] != null)
+                {
+                    bool isAdmin = (Session["IsAdmin"] as bool?) == true;
+                    if (isAdmin)
+                    {
+                        <li><a href="@Url.Action("Index", "AdminDashboard")">Trang quản trị</a></li>
+                        <li><a href="@Url.Action("Index", "AdminDashboard")">Xin chào, @Session["HoTen"] (Admin)</a></li>
+                        <li><a href="@Url.Action("Logout", "User")">Đăng xuất</a></li>
+                    }
+                    else
+                    {
+                        <li><a href="@Url.Action("Index", "Cart")">Giỏ hàng @Html.Action("Badge", "Cart") </a></li>
+                        <li><a href="@Url.Action("UserPage", "User")">Xin chào, @Session["HoTen"]</a></li>
+                        <li><a href="@Url.Action("Logout", "User")">Đăng xuất</a></li>
+                    }
                 }
                 else
                 {
@@ -53,7 +64,11 @@
         </nav>
     </header>
     <!--NỘI DUNG WEBSITE-->
-    <main>@RenderBody()</main>
+    <main>
+        @if (TempData["Loi"] != null)
+        {<div class="alert alert-danger text-center mb-0">@TempData["Loi"]</div>}
+        @RenderBody()
+    </main>
     <!--FOOTER-->
     <footer class="main-footer bg-dark text-white pt-5 pb-3 mt-5">
         <div class="container">

@@ -246,3 +246,68 @@
     .cart-badge.is-empty {
         display: none;
     }
+.card-product {
+    position: relative;
+    overflow: hidden;
+}
+
+    .card-product.is-soldout {
+        cursor: not-allowed;
+        user-select: none;
+    }
+
+        .card-product.is-soldout .img-product {
+            filter: grayscale(85%) opacity(0.5);
+        }
+
+        .card-product.is-soldout[data-href] {
+            cursor: pointer;
+        }
+
+/* Lớp phủ gạch chéo ngang toàn bộ thẻ sản phẩm */
+.soldout-overlay {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient( to top right, rgba(255, 255, 255, 0.25) calc(50% - 2px), #dc2626 calc(50% - 1px), #dc2626 calc(50% + 1px), rgba(255, 255, 255, 0.25) calc(50% + 2px) );
+}
+
+/* Con dấu "Đang tạm hết hàng" */
+.soldout-stamp {
+    background: rgba(255, 255, 255, 0.95);
+    color: #dc2626;
+    border: 2px solid #dc2626;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    transform: rotate(-18deg);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+}
+
+.stock-badge {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0f766e;
+    margin-top: 4px;
+}
+
+.stock-badge--out {
+    color: #dc2626;
+}
+
+.btn-cart--disabled {
+    background: #cbd5e1 !important;
+    color: #64748b !important;
+    pointer-events: none;
+    cursor: not-allowed;
+    text-align: center;
+    display: block;
+}

@@ -37,15 +37,25 @@ namespace StoreSite.Controllers
             var sp = db.SanPhams.Find(id);
             if (sp == null) return HttpNotFound();
 
+            // Chặn khách hàng, chỉ tài khoản Admin mới được vào trang chi tiết để mua nếu sản phẩm đang tạm hết hàng
+            if (sp.SoLuongTon <= 0 && !IsAdminUser())
+            {
+                TempData["Loi"] = "Mặt hàng “" + sp.ItemName + "” đang tạm hết hàng.";
+                return RedirectToAction("Index", "Store");
+            }
+
             return View(new ProductDetailsViewModel
             {
                 Product = sp,
                 Related = db.SanPhams
                             .Where(p => p.Id != id && (p.LoaiGiay == sp.LoaiGiay || p.Gender == sp.Gender))
-                            .OrderByDescending(p => p.rating).ThenBy(p => p.Id)
+                            .OrderByDescending(p => p.SoLuongTon > 0) // Ưu tiên sản phẩm còn hàng lên trước
+                            .ThenByDescending(p => p.rating)
+                            .ThenBy(p => p.Id)
                             .Take(4).ToList()
             });
         }
+
         // GET: Store
         [ChildActionOnly]
         public ActionResult MegaMenu()
@@ -66,7 +76,8 @@ namespace StoreSite.Controllers
                                 .Where(s => !string.IsNullOrEmpty(s))
                                 .Distinct().OrderBy(s => s).ToList();
 
-                vm.Featured = all.Where(p => p.SanPhamMoi)
+                // Chỉ đưa các sản phẩm mới còn hàng lên thẻ nổi bật của MegaMenu
+                vm.Featured = all.Where(p => p.SanPhamMoi && p.SoLuongTon > 0)
                                  .OrderByDescending(p => p.rating).ThenBy(p => p.Id)
                                  .Take(2).ToList();
             }

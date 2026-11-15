@@ -8,6 +8,7 @@
     bool dangMon = ctl == "admincatalog" && act == "sports";
     bool dangNhanVien = ctl == "adminstaff";
     bool dangSanPham = ctl == "admin";
+    bool dangKho = ctl == "admininventory";
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -42,6 +43,9 @@
 
                 <a href="@Url.Action("Index", "AdminUsers")" class="@(dangKhachHang ? "is-active" : "")"
                    @(dangKhachHang ? "aria-current=page" : "")>Khách hàng</a>
+
+                <a href="@Url.Action("Index", "AdminInventory")" class="@(dangKho ? "is-active" : "")"
+                   @(dangKhachHang ? "aria-current=page" : "")>Kho</a>
             </nav>
 
             <div class="ad-top__right">

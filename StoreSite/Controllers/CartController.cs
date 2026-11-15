@@ -47,6 +47,7 @@ namespace StoreSite.Controllers
         }
 
         private static string Money(decimal amount) => amount.ToString("N0") + " đ"; // Định dạng tiền kiểu VND
+
         // Trang giỏ hàng: GET /Cart
         private CartViewModel BuildViewModel(Cart cart)
         {
@@ -61,6 +62,7 @@ namespace StoreSite.Controllers
         {
             return PartialView("_CartBadge", TakeCart().SumQuantity());
         }
+
         public ActionResult Index()
         {
             var cart = Session["Cart"] as Cart ?? new Cart();
@@ -81,10 +83,19 @@ namespace StoreSite.Controllers
         [HttpPost]
         public ActionResult UpdateItem(int productId, int size, int quantity)
         {
+            var sp = db.SanPhams.Find(productId);
+            if (sp == null || sp.SoLuongTon <= 0)
+                return Json(new { ok = false, message = "Sản phẩm này hiện đã tạm hết hàng." });
             var cart = TakeCart();
+            int sizeKhacTrongGio = cart.TakeList()
+                                       .Where(i => i.ProductId == productId && i.Size != size)
+                                       .Sum(i => i.Quantity);
+
+            if (sizeKhacTrongGio + quantity > sp.SoLuongTon)
+                return Json(new {ok = false, message = "Kho chỉ còn tối đa " 
+                    + sp.SoLuongTon + " đôi (các size khác trong giỏ đã có " + sizeKhacTrongGio + " đôi)." });
             if (!cart.UpdateQuantity(productId, size, quantity))
                 return Json(new { ok = false, message = "Không cập nhật được sản phẩm này." });
-
             var vm = BuildViewModel(cart);
             var line = vm.FindLine(productId, size);
             return Json(new

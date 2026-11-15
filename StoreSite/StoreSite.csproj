@@ -131,6 +131,7 @@
     <Compile Include="Controllers\AdminCatalogController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdminDashboardController.cs" />
+    <Compile Include="Controllers\AdminInventoryController.cs" />
     <Compile Include="Controllers\AdminOrdersController.cs" />
     <Compile Include="Controllers\AdminStaffController.cs" />
     <Compile Include="Controllers\AdminUsersController.cs" />
@@ -393,6 +394,7 @@
     <Content Include="Views\AdminUsers\Index.cshtml" />
     <Content Include="Views\AdminDashboard\_ViewStart.cshtml" />
     <Content Include="Views\AdminDashboard\Index.cshtml" />
+    <Content Include="Views\AdminInventory\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

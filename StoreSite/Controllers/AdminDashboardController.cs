@@ -52,6 +52,29 @@ namespace StoreSite.Controllers
                                    .ToList();
             vm.BieuDoDoanhThu = doanhThuTheoNgay.Skip(Math.Max(0, doanhThuTheoNgay.Count - 10)).ToList();
 
+            // Theo tháng (12 tháng gần nhất có đơn hoàn thành)
+            var doanhThuTheoThang = donHoanThanh
+                                    .GroupBy(o => new { o.OrderDate.Year, o.OrderDate.Month })
+                                    .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+                                    .Select(g => new RevenueChartItem
+                                    {
+                                        Label = g.Key.Month.ToString("00") + "/" + g.Key.Year,
+                                        Revenue = g.Sum(x => (decimal?)x.TotalAmount ?? 0m)
+                                    })
+                                    .ToList();
+            vm.BieuDoDoanhThuThang = doanhThuTheoThang.Skip(Math.Max(0, doanhThuTheoThang.Count - 12)).ToList();
+
+            // Theo năm
+            vm.BieuDoDoanhThuNam = donHoanThanh
+                                   .GroupBy(o => o.OrderDate.Year)
+                                   .OrderBy(g => g.Key)
+                                   .Select(g => new RevenueChartItem
+                                   {
+                                       Label = "Năm " + g.Key,
+                                       Revenue = g.Sum(x => (decimal?)x.TotalAmount ?? 0m)
+                                   })
+                                   .ToList();
+
             // 4. Thống kê Sản phẩm bán chạy & bán ế (chỉ tính trên đơn đã thanh toán)
             var chiTietDaBan = (from d in db.OrderDetails
                                 join o in db.Orders on d.OrderID equals o.OrderID

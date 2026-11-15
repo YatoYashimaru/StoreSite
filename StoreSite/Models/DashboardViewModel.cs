@@ -49,6 +49,8 @@ namespace StoreSite.Models
         // Danh sách để vẽ biểu đồ tròn (Pie Chart)
         public List<ChartItem> BieuDoHangGiay { get; set; }
         public List<RevenueChartItem> BieuDoDoanhThu { get; set; }
+        public List<RevenueChartItem> BieuDoDoanhThuThang { get; set; }
+        public List<RevenueChartItem> BieuDoDoanhThuNam { get; set; }
         public List<ProductSalesItem> SanPhamBanChay { get; set; }
         public List<ProductSalesItem> SanPhamBanE { get; set; }
 
@@ -56,38 +58,6 @@ namespace StoreSite.Models
         public int TongBieuDo()
         {
             return BieuDoHangGiay == null ? 0 : BieuDoHangGiay.Sum(x => x.Value);
-        }
-
-        // Màu của phần thứ index
-        public string MauCua(int index)
-        {
-            return colors[index % colors.Length];
-        }
-
-        // Phần trăm (làm tròn) của một phần, để ghi trong chú thích
-        public int PhanTram(ChartItem item)
-        {
-            int total = TongBieuDo();
-            return total == 0 ? 0 : (int)Math.Round(100.0 * item.Value / total);
-        }
-
-        // Chuỗi CSS cho conic-gradient, ví dụ: "#1b7f9e 0% 40%, #f0a030 40% 100%"
-        // Dùng tỉ lệ chính xác (không làm tròn) để các phần khít nhau, không hở.
-        public string ChuoiMauBieuDo()
-        {
-            int total = TongBieuDo();
-            if (total == 0) return "#e5e7eb 0% 100%";
-
-            var inv = CultureInfo.InvariantCulture;
-            var parts = new List<string>();
-            double from = 0;
-            for (int i = 0; i < BieuDoHangGiay.Count; i++)
-            {
-                double to = (i == BieuDoHangGiay.Count - 1) ? 100.0 : from + 100.0 * BieuDoHangGiay[i].Value / total;
-                parts.Add(MauCua(i) + " " + from.ToString("0.##", inv) + "% " + to.ToString("0.##", inv) + "%");
-                from = to;
-            }
-            return string.Join(", ", parts);
         }
     }
 }

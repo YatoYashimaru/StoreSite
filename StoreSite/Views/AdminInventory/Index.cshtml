@@ -1,0 +1,119 @@
+﻿@model System.Collections.Generic.List<StoreSite.Models.SanPham>
+@{
+    ViewBag.Title = "Quản lý Kho hàng";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="ad-head">
+    <div>
+        <h1 class="ad-title">Kho hàng</h1>
+        <p class="ad-sub">Tổng tồn kho: <strong>@ViewBag.TotalStock đôi</strong> · Hết hàng: <strong>@ViewBag.TotalOut mặt hàng</strong></p>
+    </div>
+</div>
+
+<!-- Bộ lọc tìm kiếm -->
+<form class="ad-filter" method="get" action="@Url.Action("Index", "AdminInventory")">
+    <input type="search" name="search" value="@ViewBag.Search" placeholder="Tìm tên giày hoặc hãng..." class="ad-input" />
+    <select name="status" class="ad-input" style="max-width: 210px;">
+        <option value="" @(string.IsNullOrEmpty(ViewBag.Status) ? "selected" : "")>Tất cả trạng thái</option>
+        <option value="in" @(ViewBag.Status == "in" ? "selected" : "")>Còn hàng</option>
+        <option value="low" @(ViewBag.Status == "low" ? "selected" : "")>Sắp hết (≤ 5)</option>
+        <option value="out" @(ViewBag.Status == "out" ? "selected" : "")>Đang tạm hết hàng (0)</option>
+    </select>
+    <button type="submit" class="ad-btn">Lọc</button>
+    @if (!string.IsNullOrEmpty(ViewBag.Search) || !string.IsNullOrEmpty(ViewBag.Status))
+    {
+        <a class="ad-btn ad-btn--ghost" href="@Url.Action("Index", "AdminInventory")">Xóa lọc</a>
+    }
+</form>
+
+@if (Model.Count == 0)
+{
+    <div class="ad-empty">Không có mặt hàng nào phù hợp.</div>
+}
+else
+{
+    <div class="ad-card">
+        <table class="ad-table">
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Hãng</th>
+                    <th>Giá bán</th>
+                    <th>Trạng thái kho</th>
+                    <th>Tồn kho</th>
+                    <th class="ad-actions-col">Cập nhật số lượng</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sp in Model)
+                {
+                    string imgSrc = string.IsNullOrWhiteSpace(sp.ImgURL)
+                        ? ""
+                        : (sp.ImgURL.StartsWith("http") || sp.ImgURL.StartsWith("/") || sp.ImgURL.StartsWith("~")
+                            ? Url.Content(sp.ImgURL)
+                            : Url.Content("~/" + sp.ImgURL));
+
+                    <tr>
+                        <td data-label="Sản phẩm" class="ad-name">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                @if (!string.IsNullOrEmpty(imgSrc))
+                                {
+                                    <img src="@imgSrc" alt="@sp.ItemName"
+                                         style="width:44px; height:44px; object-fit:cover; border-radius:6px; border:1px solid #e2e8f0;" />
+                                }
+                                <strong>@sp.ItemName</strong>
+                            </div>
+                        </td>
+                        <td data-label="Hãng">@sp.LoaiGiay</td>
+                        <td data-label="Giá bán">@sp.GiaTien.ToString("N0") đ</td>
+                        <td data-label="Trạng thái kho">
+                            @if (sp.SoLuongTon <= 0)
+                            {
+                                <span class="ad-status ad-status--pending" style="background:#fee2e2; color:#b91c1c;">Đang tạm hết hàng</span>
+                            }
+                            else if (sp.SoLuongTon <= 5)
+                            {
+                                <span class="ad-status ad-status--pending">Sắp hết hàng</span>
+                            }
+                            else
+                            {
+                                <span class="ad-status ad-status--complete">Còn hàng</span>
+                            }
+                        </td>
+                        <td data-label="Tồn kho">
+                            <strong style="font-size:15px; color:@(sp.SoLuongTon <= 0 ? "#dc2626" : "#0f172a");">
+                                @sp.SoLuongTon đôi
+                            </strong>
+                        </td>
+                        <td class="ad-actions-cell">
+                            <div class="ad-actions" style="justify-content:flex-end; align-items:center; gap:6px;">
+                                <form method="post" action="@Url.Action("AdjustStock", "AdminInventory")" style="margin:0;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@sp.Id" />
+                                    <input type="hidden" name="delta" value="-1" />
+                                    <button type="submit" class="ad-btn ad-btn--small" @(sp.SoLuongTon <= 0 ? "disabled" : "") title="Giảm 1">-1</button>
+                                </form>
+
+                                <form method="post" action="@Url.Action("SetStock", "AdminInventory")" style="display:flex; gap:4px; margin:0;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@sp.Id" />
+                                    <input type="number" name="quantity" value="@sp.SoLuongTon" min="0"
+                                           class="ad-input" style="width:72px; padding:4px 8px; text-align:center;" />
+                                    <button type="submit" class="ad-btn ad-btn--small">Lưu</button>
+                                </form>
+
+                                <form method="post" action="@Url.Action("AdjustStock", "AdminInventory")" style="margin:0;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@sp.Id" />
+                                    <input type="hidden" name="delta" value="1" />
+                                    <button type="submit" class="ad-btn ad-btn--small" title="Thêm 1">+1</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -9,6 +9,10 @@
     ViewBag.Title = p.ItemName;
     bool coGiam = p.GiaTienGoc.HasValue && p.GiaTienGoc.Value > p.GiaTien;
     int phanTram = coGiam ? (int)Math.Round((1 - p.GiaTien / p.GiaTienGoc.Value) * 100) : 0;
+
+    bool hetHang = p.SoLuongTon <= 0;
+    bool isAdmin = (Session["IsAdmin"] as bool?) == true;
+    int maxMua = Math.Max(0, Math.Min(StoreSite.Models.CartItem.MaxQuantity, p.SoLuongTon));
 }
 
 @section Styles {
@@ -86,26 +90,60 @@
                 }
             </div>
 
-            <hr class="pd-divider" />
-
-            <div class="pd-label">Chọn size</div>
-            <div id="pd-sizes" class="pd-sizes">
-                @foreach (var size in new[] { 36, 37, 38, 39, 40, 41, 42, 43, 44, 45 })
+            <!-- Hiển thị số lượng tồn kho -->
+            <div class="mt-2">
+                @if (!hetHang)
                 {
-                    <button type="button" class="pd-size" data-size="@size">@size</button>
+                    <span style="display:inline-block; padding:4px 10px; border-radius:999px; font-size:13px; font-weight:600; background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4;">
+                        Kho còn: <strong>@p.SoLuongTon</strong> đôi
+                    </span>
+                }
+                else
+                {
+                    <span style="display:inline-block; padding:4px 10px; border-radius:999px; font-size:13px; font-weight:700; background:#fef2f2; color:#dc2626; border:1px solid #fecaca;">
+                        Đang tạm hết hàng
+                    </span>
                 }
             </div>
-            <div id="pd-size-error" class="text-danger small mt-1" style="display:none;">Vui lòng chọn size.</div>
 
-            <div class="pd-label">Số lượng</div>
-            <div class="pd-qty">
-                <button type="button" id="qty-minus">−</button>
-                <input type="number" id="qty" value="1" min="1" max="@StoreSite.Models.CartItem.MaxQuantity" />
-                <button type="button" id="qty-plus">+</button>
-            </div>
+            <hr class="pd-divider" />
 
-            <button type="button" id="btn-add-cart" class="btn-cart pd-add" data-id="@p.Id">Thêm vào giỏ hàng</button>
-            <div id="pd-cart-msg" class="small mt-2" aria-live="polite"></div>
+            @if (isAdmin)
+            {
+                <div style="padding:14px 16px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; margin-bottom:16px;">
+                    <p class="mb-2 text-muted small">
+                        Bạn đang xem trang với quyền <strong>Quản trị viên</strong> (không thể đặt mua hàng).
+                    </p>
+                    <a href="@Url.Action("Index", "AdminInventory", new { search = p.ItemName })" class="btn-cart" style="display:inline-block; text-align:center;">
+                        Điều chỉnh tồn kho sản phẩm này
+                    </a>
+                </div>
+            }
+            else if (hetHang)
+            {
+                <button type="button" class="btn-cart btn-cart--disabled" disabled>Đang tạm hết hàng</button>
+            }
+            else
+            {
+                <div class="pd-label">Chọn size</div>
+                <div id="pd-sizes" class="pd-sizes">
+                    @foreach (var size in new[] { 36, 37, 38, 39, 40, 41, 42, 43, 44, 45 })
+                    {
+                        <button type="button" class="pd-size" data-size="@size">@size</button>
+                    }
+                </div>
+                <div id="pd-size-error" class="text-danger small mt-1" style="display:none;">Vui lòng chọn size.</div>
+
+                <div class="pd-label">Số lượng</div>
+                <div class="pd-qty">
+                    <button type="button" id="qty-minus">−</button>
+                    <input type="number" id="qty" value="1" min="1" max="@maxMua" />
+                    <button type="button" id="qty-plus">+</button>
+                </div>
+
+                <button type="button" id="btn-add-cart" class="btn-cart pd-add" data-id="@p.Id">Thêm vào giỏ hàng</button>
+                <div id="pd-cart-msg" class="small mt-2" aria-live="polite"></div>
+            }
 
             <ul class="pd-policy">
                 <li>Cam kết 100% hàng chính hãng</li>
@@ -141,59 +179,71 @@
 @section Scripts {
     <script>
         (function () {
-            "use strict"; // Gõ sai tên biến sẽ báo lỗi ngay thay vì âm thầm tạo biến mới
-            var maxQty = @StoreSite.Models.CartItem.MaxQuantity; // lấy từ CartItem.MaxQuantity trên server
-            var selected = null; // Lưu size được chọn
-            var sizes = document.getElementById("pd-sizes"); // Lấy container chứa các nút size
-            var err = document.getElementById("pd-size-error"); // Lấy thông báo lỗi
-            var qty = document.getElementById("qty"); // Lấy input số lượng
-            var msg = document.getElementById("pd-cart-msg"); // Lấy thông báo giỏ hàng
-            sizes.addEventListener("click", function (e) { // Lắng nghe sự kiện click trên container
-                var b = e.target.closest(".pd-size"); // Lấy nút size được click
-                if (!b) return; // Nếu không phải nút size thì thoát
-                Array.prototype.forEach.call(sizes.children, function (c) {
-                    c.classList.remove("active"); // Xóa class active của tất cả nút
+            "use strict";
+            var maxQty = @maxMua; // Giới hạn theo số lượng tồn kho thực tế (tối đa CartItem.MaxQuantity)
+            var selected = null;
+            var sizes = document.getElementById("pd-sizes");
+            var err = document.getElementById("pd-size-error");
+            var qty = document.getElementById("qty");
+            var msg = document.getElementById("pd-cart-msg");
+            var btnMinus = document.getElementById("qty-minus");
+            var btnPlus = document.getElementById("qty-plus");
+
+            if (sizes) {
+                sizes.addEventListener("click", function (e) {
+                    var b = e.target.closest(".pd-size");
+                    if (!b) return;
+                    Array.prototype.forEach.call(sizes.children, function (c) {
+                        c.classList.remove("active");
+                    });
+                    b.classList.add("active");
+                    selected = b.dataset.size;
+                    err.style.display = "none";
                 });
-                b.classList.add("active"); // Thêm class active cho nút được click
-                selected = b.dataset.size; // Lưu size được chọn
-                err.style.display = "none"; // Ẩn thông báo lỗi
-            });
-            document.getElementById("qty-minus").onclick = function () {
-                qty.value = Math.max(1, +qty.value - 1); // Giảm số lượng nhưng không nhỏ hơn 1
-            };
-            document.getElementById("qty-plus").onclick = function () {
-                qty.value = Math.min(maxQty, +qty.value + 1); // Tăng số lượng nhưng không lớn hơn 10
-            };
+            }
+
+            if (btnMinus && qty) {
+                btnMinus.onclick = function () {
+                    qty.value = Math.max(1, +qty.value - 1);
+                };
+            }
+
+            if (btnPlus && qty) {
+                btnPlus.onclick = function () {
+                    qty.value = Math.min(maxQty, +qty.value + 1);
+                };
+            }
+
             $("#btn-add-cart").on("click", function () {
-                if (!selected) { err.style.display = "block"; return; } // Nếu chưa chọn size thì hiện thông báo lỗi
-                var quantity = Math.min(maxQty, Math.max(1, parseInt(qty.value, 10) || 1)); // Lấy số lượng và giới hạn từ 1 đến 10
-                qty.value = quantity; // Cập nhật lại giá trị input
-                var btn = $(this); // Lấy nút thêm vào giỏ hàng
-                btn.prop("disabled", true); // Tránh click nhiều lần
+                if (!selected) { err.style.display = "block"; return; }
+                var quantity = Math.min(maxQty, Math.max(1, parseInt(qty.value, 10) || 1));
+                qty.value = quantity;
+                var btn = $(this);
+                btn.prop("disabled", true);
                 $.post('@Url.Action("AddItem", "Cart")', {
                     productId: btn.data("id"),
                     size: selected,
                     quantity: quantity
                 })
-                .done(function (kq) { // Xử lý kết quả trả về
+                .done(function (kq) {
                     if (kq.ok) {
-                        msg.className = "small mt-2 text-success"; // Thành công thì hiện chữ xanh
+                        msg.className = "small mt-2 text-success";
                         msg.textContent = "Đã thêm vào giỏ hàng. Giỏ hiện tại đang có " + kq.sumQuantity + " đôi.";
-                        updateCartBadge(kq.sumQuantity); // Cập nhật số đôi giày trên header
+                        updateCartBadge(kq.sumQuantity);
                     }
                     else {
-                        msg.className = "small mt-2 text-danger"; // Có lỗi thì hiện chữ đỏ
+                        msg.className = "small mt-2 text-danger";
                         msg.textContent = kq.message || "Xảy ra lỗi. Vui lòng thử lại.";
                     }
                 })
-                .fail(function () { // Nếu request thất bại
+                .fail(function () {
                     msg.className = "small mt-2 text-danger";
                     msg.textContent = "Xảy ra lỗi. Vui lòng thử lại.";
                 })
-                .always(function () { // Luôn luôn thực hiện
-                    btn.prop("disabled", false); // Bỏ disable nút
+                .always(function () {
+                    btn.prop("disabled", false);
                 });
-            }); // đóng hàm click của nút thêm vào giỏ
+            });
         })();
     </script>
     <script src="~/Scripts/ProductGallery.js"></script>

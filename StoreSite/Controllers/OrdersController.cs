@@ -11,7 +11,7 @@ namespace StoreSite.Controllers
 {
     public class OrdersController : BaseController
     {
-        // PHẢI cùng khóa Session với CartController (tìm chữ Session[" trong CartController.cs)
+        // phải cùng khóa Session với CartController (tìm chữ Session[" trong CartController.cs)
         private Cart GetCart()
         {
             var cart = Session["Cart"] as Cart;
@@ -68,7 +68,7 @@ namespace StoreSite.Controllers
             return View(vm);
         }
 
-        // ---------------- Đặt hàng: lưu vào Order + OrderDetail ----------------
+        // ---------------- Đặt hàng: lưu vào Order + OrderDetail + Trừ tồn kho ----------------
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult PlaceOrder(string ReceiverName, string Phone, string Address, string Note, string PaymentMethod)
         {
@@ -103,6 +103,27 @@ namespace StoreSite.Controllers
                 ViewBag.Loi = loi;
                 SetPaymentForm(ReceiverName, Phone, Address, Note, PaymentMethod);
                 return View("PaymentPage", vm);
+            }
+
+            // Kiểm tra tồn kho và trừ số lượng của từng sản phẩm trong đơn
+            var tongTheoSanPham = lines.GroupBy(l => l.Product.Id)
+                                       .Select(g => new { ProductId = g.Key, SoLuongMua = g.Sum(x => x.Quantity) })
+                                       .ToList();
+
+            foreach (var item in tongTheoSanPham)
+            {
+                var spDb = db.SanPhams.Find(item.ProductId);
+                if (spDb == null || spDb.SoLuongTon < item.SoLuongMua)
+                {
+                    ViewBag.Loi = "Sản phẩm “" + (spDb != null ? spDb.ItemName : "") 
+                        + "” không đủ số lượng trong kho (còn " + (spDb != null ? spDb.SoLuongTon : 0) + " đôi).";
+                    SetPaymentForm(ReceiverName, Phone, Address, Note, PaymentMethod);
+                    return View("PaymentPage", vm);
+                }
+
+                // Trừ số lượng tồn kho; nếu về 0 thì giữ nguyên bản ghi ở mức 0, không xóa
+                spDb.SoLuongTon -= item.SoLuongMua;
+                if (spDb.SoLuongTon < 0) spDb.SoLuongTon = 0;
             }
 
             // Giá lấy từ database tại thời điểm đặt, không tin dữ liệu từ trình duyệt
