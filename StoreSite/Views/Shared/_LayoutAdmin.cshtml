@@ -1,6 +1,8 @@
 @{
     string act = ((ViewContext.RouteData.Values["action"] as string) ?? "").ToLowerInvariant();
     string ctl = ((ViewContext.RouteData.Values["controller"] as string) ?? "").ToLowerInvariant();
+    bool dangTongQuan = ctl == "admindashboard";
+    bool dangKhachHang = ctl == "adminusers";
     bool dangDonHang = ctl == "adminorders";
     bool dangNhan = ctl == "admincatalog" && act == "brands";
     bool dangMon = ctl == "admincatalog" && act == "sports";
@@ -20,9 +22,11 @@
 
     <header class="ad-top">
         <div class="ad-top__inner">
-            <a class="ad-brand" href="@Url.Action("Products", "Admin")">Meisho <span>Admin</span></a>
-
+            <a class="ad-brand" href="@Url.Action("Index", "AdminDashboard")">Meisho <span>Admin</span></a>
             <nav class="ad-nav" aria-label="Chức năng quản trị">
+                <a href="@Url.Action("Index", "AdminDashboard")" class="@(dangTongQuan ? "is-active" : "")"
+                   @(dangTongQuan ? "aria-current=page" : "")>Tổng quan</a>
+
                 <a href="@Url.Action("Products", "Admin")" class="@(dangSanPham ? "is-active" : "")"
                    @(dangSanPham ? "aria-current=page" : "")>Sản phẩm</a>
 
@@ -36,8 +40,8 @@
                 <a href="@Url.Action("Index", "AdminStaff")" class="@(dangNhanVien ? "is-active" : "")"
                    @(dangNhanVien ? "aria-current=page" : "")>Nhân viên</a>
 
-                @* Mục sau làm ở bước sau: đổi <span> thành <a href="..."> là dùng được *@
-                <span class="ad-nav__soon" title="Sắp có">Người dùng</span>
+                <a href="@Url.Action("Index", "AdminUsers")" class="@(dangKhachHang ? "is-active" : "")"
+                   @(dangKhachHang ? "aria-current=page" : "")>Khách hàng</a>
             </nav>
 
             <div class="ad-top__right">

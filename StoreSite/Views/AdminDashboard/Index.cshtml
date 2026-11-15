@@ -1,0 +1,240 @@
+﻿@model StoreSite.Models.DashboardViewModel
+@using System.Globalization
+@{
+    ViewBag.Title = "Thống kê tổng quan";
+    var vn = new CultureInfo("vi-VN");
+    bool coDoanhThu = Model.BieuDoDoanhThu != null && Model.BieuDoDoanhThu.Count > 0;
+    bool coHangGiay = Model.TongBieuDo() > 0;
+}
+
+<div class="ad-head">
+    <div>
+        <h1 class="ad-title">Tổng quan</h1>
+        <p class="ad-sub">Số liệu của cửa hàng, cập nhật lúc @DateTime.Now.ToString("HH:mm dd/MM/yyyy")</p>
+    </div>
+</div>
+
+<!-- 4 thẻ thống kê số liệu -->
+<div class="ad-stats">
+    <div class="ad-stat">
+        <span>Doanh thu (đã thanh toán)</span>
+        <strong>@Model.DoanhThu.ToString("#,##0", vn)đ</strong>
+    </div>
+    <div class="ad-stat">
+        <span>Đơn hàng</span>
+        <strong>@Model.TongDonHang</strong>
+        <small><a href="@Url.Action("Index", "AdminOrders")">Xem đơn hàng</a></small>
+    </div>
+    <div class="ad-stat">
+        <span>Khách hàng</span>
+        <strong>@Model.TongKhachHang</strong>
+        <small><a href="@Url.Action("Index", "AdminUsers")">Xem khách hàng</a></small>
+    </div>
+    <div class="ad-stat">
+        <span>Sản phẩm</span>
+        <strong>@Model.TongSanPham</strong>
+        <small><a href="@Url.Action("Products", "Admin")">Quản lý sản phẩm</a></small>
+    </div>
+</div>
+
+<!-- Khung chứa Biểu đồ tròn Google Charts -->
+<div class="ad-grid" style="margin-bottom: 18px;">
+    <section class="ad-card ad-box">
+        <h2 class="ad-h2">Doanh thu theo ngày</h2>
+        @if (!coDoanhThu)
+        {
+            <div class="ad-empty">Chưa có đơn hàng nào hoàn thành thanh toán.</div>
+        }
+        else
+        {
+            <div id="chart_revenue" style="width: 100%; height: 340px;"></div>
+        }
+    </section>
+
+    <section class="ad-card ad-box">
+        <h2 class="ad-h2">Tỷ lệ sản phẩm theo hãng</h2>
+        @if (!coHangGiay)
+        {
+            <div class="ad-empty">Chưa có sản phẩm nào để thống kê.</div>
+        }
+        else
+        {
+            <div id="chart_brands" style="width: 100%; height: 340px;"></div>
+        }
+    </section>
+</div>
+
+<!-- 3. Bảng Top 5 sản phẩm bán chạy & bán ế -->
+<div class="ad-grid">
+    <!-- Bảng bán chạy -->
+    <section class="ad-card ad-box">
+        <h2 class="ad-h2">Top 5 sản phẩm bán chạy</h2>
+        @if (Model.SanPhamBanChay == null || Model.SanPhamBanChay.Count == 0)
+        {
+            <div class="ad-empty">Chưa có sản phẩm nào được bán.</div>
+        }
+        else
+        {
+            <table class="ad-table">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th class="ad-num">Đã bán</th>
+                        <th class="ad-num">Doanh thu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sp in Model.SanPhamBanChay)
+                    {
+                        <tr>
+                            <td data-label="Sản phẩm" class="ad-name">
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    @if (!string.IsNullOrEmpty(sp.ImgURL))
+                                    {
+                                        <img class="ad-thumb" src="@Url.Content("~" + sp.ImgURL)" alt="" loading="lazy" />
+                                    }
+                                    <div>
+                                        <a href="@Url.Action("ProductEdit", "Admin", new { id = sp.Id })">@sp.ItemName</a>
+                                        <small>@sp.LoaiGiay</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-label="Đã bán" class="ad-num">
+                                <span class="ad-badge">@sp.SoLuongBan đôi</span>
+                            </td>
+                            <td data-label="Doanh thu" class="ad-num">
+                                <strong>@sp.DoanhThu.ToString("#,##0", vn)đ</strong>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </section>
+
+    <!-- Bảng bán ế -->
+    <section class="ad-card ad-box">
+        <h2 class="ad-h2">Top 5 sản phẩm bán chậm / chưa bán được</h2>
+        @if (Model.SanPhamBanE == null || Model.SanPhamBanE.Count == 0)
+        {
+            <div class="ad-empty">Chưa có dữ liệu sản phẩm.</div>
+        }
+        else
+        {
+            <table class="ad-table">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th class="ad-num">Giá bán</th>
+                        <th class="ad-num">Đã bán</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sp in Model.SanPhamBanE)
+                    {
+                        <tr>
+                            <td data-label="Sản phẩm" class="ad-name">
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    @if (!string.IsNullOrEmpty(sp.ImgURL))
+                                    {
+                                        <img class="ad-thumb" src="@Url.Content("~" + sp.ImgURL)" alt="" loading="lazy" />
+                                    }
+                                    <div>
+                                        <a href="@Url.Action("ProductEdit", "Admin", new { id = sp.Id })">@sp.ItemName</a>
+                                        <small>@sp.LoaiGiay</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-label="Giá bán" class="ad-num">@sp.GiaTien.ToString("#,##0", vn)đ</td>
+                            <td data-label="Đã bán" class="ad-num">
+                                @if (sp.SoLuongBan == 0)
+                                {
+                                    <span class="ad-status ad-status--pending">0 đôi</span>
+                                }
+                                else
+                                {
+                                    <span class="ad-muted">@sp.SoLuongBan đôi</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </section>
+</div>
+
+@section Scripts {
+    @if (coDoanhThu || coHangGiay)
+    {
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+            google.charts.load('current', { 'packages': ['corechart'] });
+            google.charts.setOnLoadCallback(drawAllCharts);
+
+            function drawAllCharts() {
+                @if (coDoanhThu)
+                {
+                    <text>drawRevenueChart();</text>
+                }
+                @if (coHangGiay)
+                {
+                    <text>drawBrandChart();</text>
+                }
+            }
+
+            @if (coDoanhThu)
+            {
+                <text>
+                function drawRevenueChart() {
+                    var data = google.visualization.arrayToDataTable([
+                        ['Ngày', 'Doanh thu (VNĐ)'],
+                        @foreach (var item in Model.BieuDoDoanhThu)
+                        {
+                            @:['@Html.Raw(HttpUtility.JavaScriptStringEncode(item.Label))', @item.Revenue.ToString(CultureInfo.InvariantCulture)],
+                        }
+                    ]);
+
+                    var options = {
+                        legend: { position: 'none' },
+                        colors: ['#1d7f9c'],
+                        chartArea: { left: 75, top: 20, right: 20, bottom: 40 },
+                        vAxis: { format: '#,### đ', minValue: 0 },
+                        bar: { groupWidth: '45%' }
+                    };
+
+                    var chart = new google.visualization.ColumnChart(document.getElementById('chart_revenue'));
+                    chart.draw(data, options);
+                }
+                </text>
+            }
+
+            @if (coHangGiay)
+            {
+                <text>
+                function drawBrandChart() {
+                    var data = google.visualization.arrayToDataTable([
+                        ['Hãng giày', 'Số lượng'],
+                        @foreach (var item in Model.BieuDoHangGiay)
+                        {
+                            @:['@Html.Raw(HttpUtility.JavaScriptStringEncode(item.Label))', @item.Value],
+                        }
+                    ]);
+
+                    var options = {
+                        colors: ['#1b7f9e', '#f0a030', '#5cb85c', '#d9534f', '#7e57c2', '#26a69a', '#ec407a', '#8d6e63'],
+                        chartArea: { left: 15, top: 20, right: 15, bottom: 20, width: '92%', height: '85%' },
+                        legend: { position: 'right', alignment: 'center' },
+                        pieSliceText: 'percentage'
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('chart_brands'));
+                    chart.draw(data, options);
+                }
+                </text>
+            }
+
+            window.addEventListener('resize', drawAllCharts);
+        </script>
+    }
+}

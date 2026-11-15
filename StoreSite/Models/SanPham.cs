@@ -31,6 +31,7 @@ namespace StoreSite.Models
         public string DescriptionTxt { get; set; }
         public double rating { get; set; }
         public bool SanPhamMoi { get; set; }
+        public int SoLuongTon { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }

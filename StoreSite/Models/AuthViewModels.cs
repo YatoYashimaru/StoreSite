@@ -32,7 +32,7 @@ namespace StoreSite.Models
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
-        [RegularExpression(@"^0\d{9}$", ErrorMessage = "Số điện thoại gồm 10 số, bắt đầu bằng 0")]
+        [RegularExpression(@"^0\d{9,14}$", ErrorMessage = "Số điện thoại bắt đầu bằng 0 và dài từ 10 đến 15 số")]
         [Display(Name = "Số điện thoại")]
         public string SoDienThoai { get; set; }
 

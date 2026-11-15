@@ -26,9 +26,20 @@ namespace StoreSite.Controllers
             return new CartViewModel(cart, products);
         }
 
+        // Gán lại dữ liệu form khi đặt hàng bị lỗi nhập liệu hoặc lỗi lưu DB
+        private void SetPaymentForm(string receiverName, string phone, string address, string note, string paymentMethod)
+        {
+            ViewBag.ReceiverName = receiverName;
+            ViewBag.Phone = phone;
+            ViewBag.Address = address;
+            ViewBag.Note = note;
+            ViewBag.PaymentMethod = paymentMethod;
+        }
+
         // /Orders/OdersPage -> danh sách đơn nằm ở tab "Đơn hàng của tôi" trong trang cá nhân
         public ActionResult OdersPage()
         {
+            if (IsAdminUser()) return RedirectToAction("Index", "AdminOrders");
             return RedirectToAction("UserPage", "User", new { tab = "orders" });
         }
 
@@ -43,13 +54,17 @@ namespace StoreSite.Controllers
                 return RedirectToAction("Login", "User");
             }
 
+            // Chặn tài khoản Admin vào trang thanh toán
+            if (user.UserRole)
+            {
+                TempData["Loi"] = "Tài khoản quản trị chỉ được xem website, không thể mua hàng.";
+                return RedirectToAction("Index", "Home");
+            }
+
             var vm = BuildViewModel(GetCart());
             if (vm.TakeLines().Count == 0) return RedirectToAction("Index", "Cart");
 
-            ViewBag.ReceiverName = user.UserName;      // điền sẵn từ tài khoản
-            ViewBag.Phone = user.UserPhone;
-            ViewBag.Address = user.UserAddress;
-            ViewBag.PaymentMethod = "cod";
+            SetPaymentForm(user.UserName, (user.UserPhone ?? "").Trim(), user.UserAddress, null, "cod");
             return View(vm);
         }
 
@@ -59,6 +74,13 @@ namespace StoreSite.Controllers
         {
             var user = CurrentUser();
             if (user == null) return RedirectToAction("Login", "User");
+
+            // Chặn tài khoản Admin gửi request đặt hàng
+            if (user.UserRole)
+            {
+                TempData["Loi"] = "Tài khoản quản trị chỉ được xem website, không thể đặt hàng.";
+                return RedirectToAction("Index", "Home");
+            }
 
             var cart = GetCart();
             var vm = BuildViewModel(cart);
@@ -73,14 +95,13 @@ namespace StoreSite.Controllers
 
             string loi = null;
             if (ReceiverName.Length == 0) loi = "Vui lòng nhập họ tên người nhận";
-            else if (!Regex.IsMatch(Phone, @"^0\d{9}$")) loi = "Số điện thoại gồm 10 số, bắt đầu bằng 0";
+            else if (!Regex.IsMatch(Phone, @"^0\d{9,14}$")) loi = "Số điện thoại gồm 10 - 15 chữ số, bắt đầu bằng 0";
             else if (Address.Length < 10) loi = "Vui lòng nhập địa chỉ giao hàng đầy đủ";
 
             if (loi != null)
             {
                 ViewBag.Loi = loi;
-                ViewBag.ReceiverName = ReceiverName; ViewBag.Phone = Phone;
-                ViewBag.Address = Address; ViewBag.Note = Note; ViewBag.PaymentMethod = PaymentMethod;
+                SetPaymentForm(ReceiverName, Phone, Address, Note, PaymentMethod);
                 return View("PaymentPage", vm);
             }
 
@@ -127,8 +148,7 @@ namespace StoreSite.Controllers
 
             if (ViewBag.Loi != null)
             {
-                ViewBag.ReceiverName = ReceiverName; ViewBag.Phone = Phone;
-                ViewBag.Address = Address; ViewBag.Note = Note; ViewBag.PaymentMethod = PaymentMethod;
+                SetPaymentForm(ReceiverName, Phone, Address, Note, PaymentMethod);
                 return View("PaymentPage", vm);
             }
 

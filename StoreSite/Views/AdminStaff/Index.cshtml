@@ -35,6 +35,7 @@
                 <th>Tên</th>
                 <th>Email</th>
                 <th>Điện thoại</th>
+                <th>Trạng thái</th>
                 <th class="ad-actions-col"></th>
             </tr>
         </thead>
@@ -51,6 +52,16 @@
                     </td>
                     <td data-label="Email">@u.UserEmail</td>
                     <td data-label="Điện thoại">@(string.IsNullOrWhiteSpace(u.UserPhone) ? "-" : u.UserPhone)</td>
+                    <td data-label="Trạng thái">
+                        @if (u.IsLocked)
+                        {
+                            <span class="ad-status ad-status--pending">Đã khóa</span>
+                        }
+                        else
+                        {
+                            <span class="ad-status ad-status--complete">Hoạt động</span>
+                        }
+                    </td>
                     <td class="ad-actions-cell">
                         <div class="ad-actions">
                             @if (u.UserID == me)
@@ -59,6 +70,15 @@
                             }
                             else
                             {
+                                <form method="post" action="@Url.Action("ToggleLock", "AdminStaff")"
+                                      data-confirm="@(u.IsLocked ? "Mở khóa" : "Khóa") tài khoản Admin của “@u.UserName”?">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@u.UserID" />
+                                    <button type="submit" class="ad-btn ad-btn--small">
+                                        @(u.IsLocked ? "Mở khóa" : "Khóa")
+                                    </button>
+                                </form>
+
                                 <form method="post" action="@Url.Action("Revoke", "AdminStaff")"
                                       data-confirm="Thu hồi quyền admin của “@u.UserName”?">
                                     @Html.AntiForgeryToken()

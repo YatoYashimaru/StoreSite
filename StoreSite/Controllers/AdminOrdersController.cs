@@ -1,8 +1,9 @@
+using StoreSite.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
-using StoreSite.Models;
 
 namespace StoreSite.Controllers
 {
@@ -30,6 +31,8 @@ namespace StoreSite.Controllers
                 int id;
                 if (int.TryParse(s.TrimStart('#'), out id))
                     q = q.Where(x => x.o.OrderID == id);
+                else if (Regex.IsMatch(s, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                    q = q.Where(x => x.u.UserEmail == s);   // email đầy đủ (vd bấm "Xem đơn hàng" ở trang Khách hàng): khớp
                 else
                     q = q.Where(x => x.u.UserName.Contains(s) || x.u.UserEmail.Contains(s));
             }

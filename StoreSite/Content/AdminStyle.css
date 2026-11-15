@@ -915,3 +915,90 @@
         flex-direction: column;
     }
 }
+
+/* ---------- Trang Tổng quan (AdminDashboard) ---------- */
+.ad-stat small {
+    display: block;
+    margin-top: 4px;
+    color: var(--ad-muted);
+    font-size: 12px;
+}
+
+    .ad-stat small a {
+        color: var(--ad-accent);
+        text-decoration: none;
+    }
+
+        .ad-stat small a:hover {
+            text-decoration: underline;
+        }
+
+.ad-pie-wrap {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+/* Biểu đồ tròn: nền là conic-gradient do view tính sẵn */
+.ad-pie {
+    flex: 0 0 auto;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+}
+
+.ad-legend {
+    flex: 1 1 240px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+    .ad-legend li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--ad-border);
+    }
+
+        .ad-legend li:last-child {
+            border-bottom: none;
+        }
+
+.ad-dot {
+    flex: 0 0 12px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.ad-legend__name {
+    font-weight: 700;
+}
+
+.ad-legend__value {
+    margin-left: auto;
+    color: var(--ad-muted);
+    white-space: nowrap;
+}
+
+/* Thêm 2 mục menu (Tổng quan, Khách hàng) làm thanh menu dài hơn: thu khoảng đệm để mọi mục vẫn hiện đủ trên laptop */
+.ad-top__inner {
+    gap: 18px;
+}
+
+.ad-nav a,
+.ad-body .ad-nav a {
+    padding-left: 9px;
+    padding-right: 9px;
+}
+
+@media (max-width: 720px) {
+    .ad-pie {
+        margin: 0 auto;
+    }
+}

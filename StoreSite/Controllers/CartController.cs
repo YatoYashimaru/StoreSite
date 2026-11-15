@@ -9,7 +9,32 @@ namespace StoreSite.Controllers
 {
     public class CartController : BaseController
     {
-        
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            if (IsAdminUser())
+            {
+                string actionName = filterContext.ActionDescriptor.ActionName;
+                // 1. Nếu là Badge đếm số lượng trên header thì trả về rỗng để ẩn đi
+                if (actionName == "Badge")
+                {
+                    filterContext.Result = new EmptyResult();
+                    return;
+                }
+                string msg = "Tài khoản quản trị chỉ được xem website, không thể mua hàng.";
+                // 2. Nếu bấm nút Thêm/Sửa/Xóa giỏ hàng (POST / AJAX) thì trả về JSON đúng chuẩn { ok, message } của bạn
+                if (filterContext.HttpContext.Request.HttpMethod == "POST" || filterContext.HttpContext.Request.IsAjaxRequest())
+                {
+                    filterContext.Result = Json(new { ok = false, message = msg });
+                    return;
+                }
+                // 3. Nếu cố tình gõ URL /Cart để vào trang giỏ hàng thì đẩy về trang chủ
+                TempData["Loi"] = msg;
+                filterContext.Result = RedirectToAction("Index", "Home");
+                return;
+            }
+            base.OnActionExecuting(filterContext);
+        }
+
         private Cart TakeCart()
         {
             var cart = Session["Cart"] as Cart;

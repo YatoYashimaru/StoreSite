@@ -14,7 +14,15 @@ namespace StoreSite.Controllers
         private StoreSite.Models.User LayNguoiDungHienTai()
         {
             var id = Session["NguoiDungId"] as int?;
-            return id == null ? null : db.Users.Find(id.Value);
+            if (id == null) return null;
+
+            var user = db.Users.Find(id.Value);
+            if (user == null || user.IsLocked)
+            {
+                Session.Clear();
+                return null;
+            }
+            return user;
         }
 
         [HttpGet] public ActionResult Login() { return View(); }
@@ -33,11 +41,20 @@ namespace StoreSite.Controllers
                 return View(model);
             }
 
-            Session["NguoiDungId"] = user.UserID;
+            if (user.IsLocked)
+            {
+                ViewBag.Loi = "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.";
+                return View(model);
+            }
+            
             Session["HoTen"] = user.UserName;
             Session["NguoiDungId"] = user.UserID;
-            Session["HoTen"] = user.UserName;
             Session["IsAdmin"] = user.UserRole;
+            if (user.UserRole) // Nếu là Admin
+            {
+                return RedirectToAction("Index", "AdminDashboard");
+            }
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -58,7 +75,8 @@ namespace StoreSite.Controllers
                 UserEmail = email,
                 UserPhone = model.SoDienThoai.Trim(),
                 PasswordHash = model.MatKhau,
-                UserRole = StoreSite.Models.AdminEmails.IsAdmin(email)
+                UserRole = StoreSite.Models.AdminEmails.IsAdmin(email),
+                IsLocked = false
             });
             db.SaveChanges();
 
@@ -76,6 +94,9 @@ namespace StoreSite.Controllers
         {
             var user = LayNguoiDungHienTai();
             if (user == null) return RedirectToAction("Login");
+
+            // Tách biệt vai trò: Tài khoản Admin tự chuyển về trang quản trị
+            if (user.UserRole) return RedirectToAction("Index", "AdminDashboard");
 
             ViewBag.Tab = (tab == "password" || tab == "orders") ? tab : "profile";
             return View(new UserPageViewModel

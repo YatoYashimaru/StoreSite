@@ -1,0 +1,117 @@
+﻿@model System.Collections.Generic.List<StoreSite.Models.User>
+@{
+    ViewBag.Title = "Quản lý Khách hàng";
+}
+
+<div class="ad-head">
+    <div>
+        <h1 class="ad-title">Khách hàng</h1>
+        <p class="ad-sub">Có tổng cộng @ViewBag.Total tài khoản khách hàng</p>
+    </div>
+</div>
+
+<!-- Thanh tìm kiếm -->
+<form class="ad-filter" method="get" action="@Url.Action("Index", "AdminUsers")">
+    <input type="search" name="search" value="@ViewBag.Search" placeholder="Tìm theo tên, email, SĐT..." class="ad-input" />
+    <button type="submit" class="ad-btn">Tìm kiếm</button>
+    @if (!string.IsNullOrEmpty(ViewBag.Search))
+    {
+        <a class="ad-btn ad-btn--ghost" href="@Url.Action("Index", "AdminUsers")">Xóa lọc</a>
+    }
+</form>
+
+<!-- Bảng danh sách -->
+@if (Model.Count == 0)
+{
+    <div class="ad-empty">Không tìm thấy khách hàng nào.</div>
+}
+else
+{
+    <div class="ad-card">
+        <table class="ad-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Họ và tên</th>
+                    <th>Email</th>
+                    <th>Số điện thoại</th>
+                    <th>Trạng thái</th>
+                    <th class="ad-actions-col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td data-label="ID">#@u.UserID</td>
+                        <td data-label="Họ và tên" class="ad-name">
+                            <strong>@u.UserName</strong>
+                        </td>
+                        <td data-label="Email">@u.UserEmail</td>
+                        <td data-label="Số điện thoại">@(string.IsNullOrWhiteSpace(u.UserPhone) ? "-" : u.UserPhone)</td>
+                        <td data-label="Trạng thái">
+                            @if (u.IsLocked)
+                            {
+                                <span class="ad-status ad-status--pending">Đã khóa</span>
+                            }
+                            else
+                            {
+                                <span class="ad-status ad-status--complete">Hoạt động</span>
+                            }
+                        </td>
+                        <td class="ad-actions-cell">
+                            <div class="ad-actions">
+                                <a class="ad-btn ad-btn--small ad-btn--ghost"
+                                   href="@Url.Action("Index", "AdminOrders", new { search = u.UserEmail })">
+                                    Xem đơn hàng
+                                </a>
+
+                                <form method="post" action="@Url.Action("ToggleLock", "AdminUsers")"
+                                      data-confirm="@(u.IsLocked ? "Mở khóa" : "Khóa") tài khoản khách hàng “@u.UserName”?">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@u.UserID" />
+                                    <button type="submit" class="ad-btn ad-btn--small">
+                                        @(u.IsLocked ? "Mở khóa" : "Khóa")
+                                    </button>
+                                </form>
+
+                                <form method="post" action="@Url.Action("Delete", "AdminUsers")"
+                                      data-confirm="Xóa vĩnh viễn tài khoản khách hàng “@u.UserName”?">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@u.UserID" />
+                                    <button type="submit" class="ad-btn ad-btn--small ad-btn--danger">Xóa</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Phân trang -->
+    if (ViewBag.TotalPages > 1)
+    {
+        <nav class="ad-pager" aria-label="Phân trang">
+            @if (ViewBag.Page > 1)
+            {
+                <a class="ad-btn ad-btn--small" href="@Url.Action("Index", "AdminUsers", new { search = ViewBag.Search, page = ViewBag.Page - 1 })">‹ Trước</a>
+            }
+            else
+            {
+                <span class="ad-btn ad-btn--small is-disabled">‹ Trước</span>
+            }
+
+            <span class="ad-pager__info">Trang @ViewBag.Page / @ViewBag.TotalPages</span>
+
+            @if (ViewBag.Page < ViewBag.TotalPages)
+            {
+                <a class="ad-btn ad-btn--small" href="@Url.Action("Index", "AdminUsers", new { search = ViewBag.Search, page = ViewBag.Page + 1 })">Sau ›</a>
+            }
+            else
+            {
+                <span class="ad-btn ad-btn--small is-disabled">Sau ›</span>
+            }
+        </nav>
+    }
+}

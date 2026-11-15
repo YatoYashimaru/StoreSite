@@ -12,10 +12,10 @@ namespace StoreSite.Controllers
     {
         private const int PageSize = 10;
 
-        // /Admin  ->  chuyển thẳng sang danh sách sản phẩm (sau này có thể làm trang tổng quan)
+        // /Admin  ->  chuyển sang trang Tổng quan
         public ActionResult Index()
         {
-            return RedirectToAction("Products");
+            return RedirectToAction("Index", "AdminDashboard");
         }
 
         // =====================================================================

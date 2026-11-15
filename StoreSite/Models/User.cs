@@ -27,6 +27,7 @@ namespace StoreSite.Models
         public string UserPhone { get; set; }
         public string UserEmail { get; set; }
         public string UserAddress { get; set; }
+        public bool IsLocked { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Order> Orders { get; set; }

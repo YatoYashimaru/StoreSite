@@ -46,6 +46,7 @@
           <Property Name="DescriptionTxt" Type="nvarchar(max)" />
           <Property Name="rating" Type="float" Nullable="false" />
           <Property Name="SanPhamMoi" Type="bit" Nullable="false" />
+          <Property Name="SoLuongTon" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -58,6 +59,7 @@
           <Property Name="UserPhone" Type="nvarchar" MaxLength="15" Nullable="false" />
           <Property Name="UserEmail" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="UserAddress" Type="nvarchar" MaxLength="500" />
+          <Property Name="IsLocked" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="FK_Order_UserData">
           <End Role="Users" Type="Self.Users" Multiplicity="1" />
@@ -163,6 +165,7 @@
           <Property Name="rating" Type="Double" Nullable="false" />
           <Property Name="SanPhamMoi" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="OrderDetails" Relationship="Self.FK_OrderDetail_Product" FromRole="SanPhams" ToRole="OrderDetail" />
+          <Property Name="SoLuongTon" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -176,6 +179,7 @@
           <Property Name="UserEmail" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="UserAddress" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Orders" Relationship="Self.FK_Order_UserData" FromRole="Users" ToRole="Order" />
+          <Property Name="IsLocked" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_Order_UserData">
           <End Role="Users" Type="Self.User" Multiplicity="1" />
@@ -268,6 +272,7 @@
           <EntitySetMapping Name="SanPhams">
             <EntityTypeMapping TypeName="StoreDbModel.SanPham">
               <MappingFragment StoreEntitySet="SanPhams">
+                <ScalarProperty Name="SoLuongTon" ColumnName="SoLuongTon" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ItemName" ColumnName="ItemName" />
                 <ScalarProperty Name="LoaiGiay" ColumnName="LoaiGiay" />
@@ -285,6 +290,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="StoreDbModel.User">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="IsLocked" ColumnName="IsLocked" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />

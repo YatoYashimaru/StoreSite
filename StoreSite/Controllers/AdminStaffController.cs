@@ -3,7 +3,7 @@ using System.Web.Mvc;
 
 namespace StoreSite.Controllers
 {
-    /// <summary>Nhân viên = tài khoản có Users.UserRole = 1. Cấp / thu hồi quyền admin tại đây.</summary>
+    /// Nhân viên = tài khoản có Users.UserRole = 1. Cấp / thu hồi quyền admin tại đây.
     public class AdminStaffController : AdminBaseController
     {
         public ActionResult Index()
@@ -60,6 +60,32 @@ namespace StoreSite.Controllers
             u.UserRole = false;
             db.SaveChanges();
             TempData["ThongBao"] = "Đã thu hồi quyền admin của " + u.UserName + ".";
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult ToggleLock(int id)
+        {
+            int me = (Session["NguoiDungId"] as int?).GetValueOrDefault();
+            if (id == me)
+            {
+                TempData["Loi"] = "Bạn không thể tự khóa tài khoản của chính mình.";
+                return RedirectToAction("Index");
+            }
+            var u = db.Users.Find(id);
+            if (u == null || !u.UserRole) return HttpNotFound();
+            // Nếu chuẩn bị khóa, phải đảm bảo còn ít nhất 1 admin khác đang hoạt động
+            if (!u.IsLocked && db.Users.Count(x => x.UserRole && !x.IsLocked) <= 1)
+            {
+                TempData["Loi"] = "Phải còn ít nhất một tài khoản admin đang hoạt động.";
+                return RedirectToAction("Index");
+            }
+            u.IsLocked = !u.IsLocked;
+            db.SaveChanges();
+
+            TempData["ThongBao"] = u.IsLocked
+                ? "Đã khóa tài khoản admin của " + u.UserName + "."
+                : "Đã mở khóa tài khoản admin cho " + u.UserName + ".";
             return RedirectToAction("Index");
         }
     }
