@@ -2,11 +2,10 @@
 @{
     bool hetHang = Model.SoLuongTon <= 0;
     bool isAdmin = (Session["IsAdmin"] as bool?) == true;
-    bool khoaClick = hetHang && !isAdmin; // Chỉ khóa thao tác bấm đối với khách hàng
     var detailsUrl = Url.Action("Details", "Store", new { id = Model.Id });
 }
 
-<div class="card-product @(hetHang ? "is-soldout" : "")" @if (!khoaClick) { <text> data-href="@detailsUrl" </text> }>
+<div class="card-product @(hetHang ? "is-soldout" : "")" data-href="@detailsUrl">
 
     @if (hetHang)
     {
@@ -27,14 +26,7 @@
     <small class="brand">@Model.LoaiGiay - @Model.Gender - @Model.Sport</small>
 
     <h6 class="product-name">
-        @if (khoaClick)
-        {
-            <span>@Model.ItemName</span>
-        }
-        else
-        {
-            <a href="@detailsUrl">@Model.ItemName</a>
-        }
+        <a href="@detailsUrl">@Model.ItemName</a>
     </h6>
 
     <div class="my-2">

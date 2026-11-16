@@ -37,13 +37,6 @@ namespace StoreSite.Controllers
             var sp = db.SanPhams.Find(id);
             if (sp == null) return HttpNotFound();
 
-            // Chặn khách hàng, chỉ tài khoản Admin mới được vào trang chi tiết để mua nếu sản phẩm đang tạm hết hàng
-            if (sp.SoLuongTon <= 0 && !IsAdminUser())
-            {
-                TempData["Loi"] = "Mặt hàng “" + sp.ItemName + "” đang tạm hết hàng.";
-                return RedirectToAction("Index", "Store");
-            }
-
             return View(new ProductDetailsViewModel
             {
                 Product = sp,
