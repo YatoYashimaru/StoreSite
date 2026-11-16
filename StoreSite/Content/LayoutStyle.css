@@ -252,8 +252,7 @@
 }
 
     .card-product.is-soldout {
-        cursor: not-allowed;
-        user-select: none;
+        cursor: pointer;
     }
 
         .card-product.is-soldout .img-product {
