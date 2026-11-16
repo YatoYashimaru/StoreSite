@@ -148,7 +148,7 @@ button.cart-btn {
 
 .pay-qr__body {
     display: grid;
-    grid-template-columns: 415px minmax(0, 1fr);
+    grid-template-columns: 415px minmax(0, 3fr);
     gap: 24px;
     align-items: center;
 }
@@ -156,6 +156,7 @@ button.cart-btn {
 .pay-qr__img {
     display: block;
     width: 100%;
+    max-width: 315px;
     max-width: 415px;
     height: auto;
     padding: 8px;
@@ -179,7 +180,7 @@ button.cart-btn {
     line-height: 1.5;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 600px) {
     .pay-qr__body {
         grid-template-columns: minmax(0, 1fr);
         justify-items: center;
