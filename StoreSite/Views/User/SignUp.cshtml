@@ -39,6 +39,7 @@
             }
 
         <form class="auth-form" action="@Url.Action("SignUp", "User")" method="post">
+            <!-- Form input từ đây -->
             @Html.AntiForgeryToken() <!-- token để bảo mật gì đó -->
             <div class="auth-field">
                 <label for="HoTen">Họ và tên</label>

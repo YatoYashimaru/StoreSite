@@ -146,23 +146,30 @@ button.cart-btn {
     display: none;
 }
 
+/* flex + wrap: cột chứa QR hẹp thì chữ tự xuống dưới ảnh, không bị bóp thành từng chữ một */
 .pay-qr__body {
-    display: grid;
-    grid-template-columns: 415px minmax(0, 3fr);
-    gap: 24px;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
+    gap: 20px 28px;
 }
 
 .pay-qr__img {
     display: block;
+    flex: 0 1 340px;
     width: 100%;
-    max-width: 315px;
-    max-width: 415px;
+    max-width: 340px;
     height: auto;
     padding: 8px;
     background: #fff;
     border: 1px solid #e5e5e5;
     border-radius: 12px;
+}
+
+.pay-qr__info {
+    flex: 1 1 240px;
+    min-width: 0;
 }
 
 .pay-qr__info p {
@@ -172,6 +179,7 @@ button.cart-btn {
 .pay-qr__amount {
     font-size: 1.5rem;
     font-weight: 800;
+    white-space: nowrap;
 }
 
 .pay-qr__hint {
@@ -182,8 +190,12 @@ button.cart-btn {
 
 @media (max-width: 600px) {
     .pay-qr__body {
-        grid-template-columns: minmax(0, 1fr);
-        justify-items: center;
+        flex-direction: column;
         text-align: center;
+    }
+
+    .pay-qr__img,
+    .pay-qr__info {
+        flex-basis: auto;
     }
 }

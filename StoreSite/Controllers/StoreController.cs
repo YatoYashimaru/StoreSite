@@ -37,6 +37,23 @@ namespace StoreSite.Controllers
             var sp = db.SanPhams.Find(id);
             if (sp == null) return HttpNotFound();
 
+            var me = CurrentUser();   // null nếu chưa đăng nhập
+            var rows = (from r in db.Reviews
+                        join u in db.Users on r.UserID equals u.UserID
+                        where r.ProductID == sp.Id
+                        orderby r.CreatedAt descending
+                        select new { r.ReviewID, r.UserID, u.UserName, r.Stars, r.Comment, r.CreatedAt }).ToList();
+
+            var items = rows.Select(r => new ReviewItem
+            {
+                ReviewID = r.ReviewID,
+                UserName = r.UserName,
+                Stars = r.Stars,
+                Comment = r.Comment,
+                CreatedAt = r.CreatedAt,
+                IsMine = me != null && r.UserID == me.UserID
+            }).ToList();
+
             return View(new ProductDetailsViewModel
             {
                 Product = sp,
@@ -45,7 +62,12 @@ namespace StoreSite.Controllers
                             .OrderByDescending(p => p.SoLuongTon > 0) // Ưu tiên sản phẩm còn hàng lên trước
                             .ThenByDescending(p => p.rating)
                             .ThenBy(p => p.Id)
-                            .Take(4).ToList()
+                            .Take(4).ToList(),
+                Reviews = items,
+                ReviewCount = items.Count,
+                MyReview = items.FirstOrDefault(x => x.IsMine),
+                LoggedIn = me != null,
+                IsAdmin = me != null && me.UserRole
             });
         }
 

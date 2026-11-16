@@ -79,7 +79,16 @@
         <div class="pd-info">
             <small class="text-muted">@p.LoaiGiay - @p.Gender - @p.Sport</small>
             <h1 class="pd-name">@p.ItemName</h1>
-            <div class="pd-rating">★ @p.rating / 5.0</div>
+            <div class="pd-rating">
+                ★ @p.rating.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) / 5.0
+                <a class="rv-count" href="#reviews">(@Model.ReviewCount đánh giá)</a>
+            </div>
+            @if (!Model.IsAdmin)
+            {
+                <a class="rv-cta" href="@(Model.LoggedIn ? "#review-form" : Url.Action("Login", "User"))">
+                    @(Model.MyReview != null ? "Sửa đánh giá của bạn" : "Đánh giá sản phẩm")
+                </a>
+            }
 
             <div class="pd-price">
                 <span class="price-sale">@p.GiaTien.ToString("N0") đ</span>
@@ -162,6 +171,98 @@
             }
         </div>
     </div>
+
+    <!-- Đánh giá sản phẩm -->
+    <section class="rv" id="reviews">
+        <h4 class="pd-related-title">Đánh giá sản phẩm</h4>
+
+        @if (TempData["ReviewOk"] != null)
+        {
+            <div class="rv-alert rv-alert--ok" role="status">@TempData["ReviewOk"]</div>
+        }
+        @if (TempData["ReviewError"] != null)
+        {
+            <div class="rv-alert rv-alert--err" role="alert">@TempData["ReviewError"]</div>
+        }
+
+        <div class="rv-layout">
+            <div class="rv-form-col" id="review-form">
+                @if (Model.IsAdmin)
+                {
+                    <p class="rv-note">Tài khoản quản trị không thể đánh giá sản phẩm.</p>
+                }
+                else if (!Model.LoggedIn)
+                {
+                    <p class="rv-note">
+                        <a href="@Url.Action("Login", "User")">Đăng nhập</a> để đánh giá sản phẩm này.
+                    </p>
+                }
+                else
+                {
+                    var mine = Model.MyReview;
+                    int myStars = mine == null ? 0 : mine.Stars;
+                    using (Html.BeginForm("Submit", "Reviews", FormMethod.Post, new { @class = "rv-form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@p.Id" />
+
+                        <div class="rv-form__title">@(mine == null ? "Viết đánh giá của bạn" : "Đánh giá của bạn")</div>
+
+                        <div class="rv-stars" role="radiogroup" aria-label="Số sao">
+                            @for (int s = 5; s >= 1; s--)
+                            {
+                                <input type="radio" name="stars" id="rv-s@(s)" value="@s" @(myStars == s ? "checked" : "") @(s == 5 ? "required" : "") />
+                                <label for="rv-s@(s)" title="@s sao" aria-label="@s sao">★</label>
+                            }
+                        </div>
+
+                        <textarea name="comment" rows="4" maxlength="1000" class="rv-text"
+                                  placeholder="Chia sẻ cảm nhận của bạn về sản phẩm (không bắt buộc)">@(mine == null ? "" : mine.Comment)</textarea>
+
+                        <div class="rv-actions">
+                            <button type="submit" class="btn-cart rv-submit">@(mine == null ? "Gửi đánh giá" : "Lưu đánh giá")</button>
+                        </div>
+                    }
+
+                    if (mine != null)
+                    {
+                        using (Html.BeginForm("Delete", "Reviews", FormMethod.Post, new { @class = "rv-delete", onsubmit = "return confirm('Xóa đánh giá của bạn?');" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@p.Id" />
+                            <button type="submit" class="rv-link-danger">Xóa đánh giá</button>
+                        }
+                    }
+                }
+            </div>
+
+            <div class="rv-list-col">
+                @if (Model.Reviews.Count == 0)
+                {
+                    <p class="rv-note">Chưa có đánh giá nào. Hãy là người đầu tiên!</p>
+                }
+                else
+                {
+                    <ul class="rv-list">
+                        @foreach (var r in Model.Reviews)
+                        {
+                            <li class="rv-item @(r.IsMine ? "is-mine" : "")">
+                                <div class="rv-item__head">
+                                    <span class="rv-item__name">@r.UserName@(r.IsMine ? " (bạn)" : "")</span>
+                                    <span class="rv-item__stars" aria-label="@r.Stars sao">@(new string('★', r.Stars))<span class="rv-off">@(new string('★', 5 - r.Stars))</span></span>
+                                    <time class="rv-item__date">@r.CreatedAt.ToString("dd/MM/yyyy")</time>
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(r.Comment))
+                                {
+                                    <p class="rv-item__text">@r.Comment</p>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </section>
 
     <!-- Sản phẩm liên quan -->
     @if (Model.Related.Any())

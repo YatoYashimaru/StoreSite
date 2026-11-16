@@ -33,6 +33,7 @@
             </form>
 
             <ul class="site-menu">
+                <!-- giỏ hàng, lấy session để check log và chuyển chức năng theo user-->
                 <li><a href="@Url.Action("Index", "Cart")">Giỏ hàng @Html.Action("Badge", "Cart")</a></li>
                 @if (Session["NguoiDungId"] != null)
                 {

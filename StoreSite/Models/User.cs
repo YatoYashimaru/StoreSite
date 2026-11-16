@@ -18,6 +18,7 @@ namespace StoreSite.Models
         public User()
         {
             this.Orders = new HashSet<Order>();
+            this.Reviews = new HashSet<Review>();
         }
     
         public int UserID { get; set; }
@@ -31,5 +32,7 @@ namespace StoreSite.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Order> Orders { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Review> Reviews { get; set; }
     }
 }

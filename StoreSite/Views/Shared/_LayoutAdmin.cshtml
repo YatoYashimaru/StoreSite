@@ -16,7 +16,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewBag.Title - Quản trị Meisho Doshoes</title>
-    <link href="~/Content/AdminStyle.css?v=3" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/AdminStyle.css")?v=@DateTime.Now.Ticks" rel="stylesheet" />
     <link rel="icon" href="~/ImageAssets/HomePage/MeishoLogo.jpg" type="image/png">
 </head>
 <body class="ad-body">
@@ -25,6 +25,7 @@
         <div class="ad-top__inner">
             <a class="ad-brand" href="@Url.Action("Index", "AdminDashboard")">Meisho <span>Admin</span></a>
             <nav class="ad-nav" aria-label="Chức năng quản trị">
+                <!-- cái đống nav bar -->
                 <a href="@Url.Action("Index", "AdminDashboard")" class="@(dangTongQuan ? "is-active" : "")"
                    @(dangTongQuan ? "aria-current=page" : "")>Tổng quan</a>
 

@@ -73,10 +73,6 @@ namespace StoreSite.Models
         [Display(Name = "Mô tả")]
         public string DescriptionTxt { get; set; }
 
-        // Kiểu chữ để không bị lệch dấu thập phân theo ngôn ngữ của máy (xem AdminController.ValidateProduct)
-        [Display(Name = "Đánh giá (0 - 5)")]
-        public string RatingText { get; set; }
-
         [Display(Name = "Đánh dấu là sản phẩm mới")]
         public bool SanPhamMoi { get; set; }
     }

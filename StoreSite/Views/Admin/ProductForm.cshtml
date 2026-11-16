@@ -65,12 +65,6 @@
         </div>
 
         <div class="ad-field">
-            @Html.LabelFor(m => m.RatingText)
-            @Html.TextBoxFor(m => m.RatingText, new { @class = "ad-input", inputmode = "decimal", autocomplete = "off", placeholder = "4.5" })
-            @Html.ValidationMessageFor(m => m.RatingText, "", new { @class = "ad-error" })
-        </div>
-
-        <div class="ad-field">
             @Html.LabelFor(m => m.GiaTien)
             @Html.TextBoxFor(m => m.GiaTien, new { @class = "ad-input", type = "number", min = 0, step = 1000, inputmode = "numeric" })
             @Html.ValidationMessageFor(m => m.GiaTien, "", new { @class = "ad-error" })

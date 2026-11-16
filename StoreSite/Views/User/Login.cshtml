@@ -33,6 +33,7 @@
             <h1 class="auth-title">Đăng nhập</h1>
             <p class="auth-sub">Nhập email và mật khẩu để tiếp tục.</p>
 
+            <!-- thông báo, lỗi-->
             @if (TempData["ThongBao"] != null)
             {
                 <div class="auth-alert auth-alert--success" role="status">@TempData["ThongBao"]</div>
@@ -44,6 +45,7 @@
             }
 
         <form class="auth-form" action="@Url.Action("Login", "User")" method="post">
+            <!-- Form log input từ đây -->
             @Html.AntiForgeryToken() <!-- token để bảo mật gì đó -->
             <div class="auth-field">
                 <label for="Email">Email</label>

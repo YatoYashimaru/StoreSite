@@ -65,19 +65,18 @@ namespace StoreSite.Controllers
         {
             LoadLookups();
             ViewBag.Title = "Thêm sản phẩm";
-            return View("ProductForm", new ProductFormViewModel { Gender = "Nam", RatingText = "0" });
+            return View("ProductForm", new ProductFormViewModel { Gender = "Nam" });
         }
 
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult ProductCreate(ProductFormViewModel m)
         {
-            double rating;
-            ValidateProduct(m, out rating);
+            ValidateProduct(m);
 
             if (ModelState.IsValid)
             {
                 var sp = new SanPham();
-                Apply(m, sp, rating);
+                Apply(m, sp);
                 db.SanPhams.Add(sp);
 
                 string loi = TrySave();
@@ -116,7 +115,6 @@ namespace StoreSite.Controllers
                 GiaTienGoc = sp.GiaTienGoc,
                 ImgURL = sp.ImgURL,
                 DescriptionTxt = sp.DescriptionTxt,
-                RatingText = sp.rating.ToString("0.0#", CultureInfo.InvariantCulture),
                 SanPhamMoi = sp.SanPhamMoi
             });
         }
@@ -127,12 +125,11 @@ namespace StoreSite.Controllers
             var sp = db.SanPhams.Find(m.Id);
             if (sp == null) return HttpNotFound();
 
-            double rating;
-            ValidateProduct(m, out rating);
+            ValidateProduct(m);
 
             if (ModelState.IsValid)
             {
-                Apply(m, sp, rating);
+                Apply(m, sp);
 
                 string loi = TrySave();
                 if (loi == null)
@@ -198,17 +195,8 @@ namespace StoreSite.Controllers
         }
 
         // Các luật mà annotation không viết được
-        private void ValidateProduct(ProductFormViewModel m, out double rating)
+        private void ValidateProduct(ProductFormViewModel m)
         {
-            // Đánh giá nhận dạng chữ để tránh lệch dấu phẩy/chấm theo ngôn ngữ máy ("4,9" hay "4.9" đều được)
-            string raw = string.IsNullOrWhiteSpace(m.RatingText) ? "0" : m.RatingText.Trim().Replace(',', '.');
-            if (!double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out rating) ||
-                rating < 0 || rating > 5)
-            {
-                rating = 0;
-                ModelState.AddModelError("RatingText", "Đánh giá phải là số từ 0 đến 5");
-            }
-
             if (m.Gender != "Nam" && m.Gender != "Nu")
                 ModelState.AddModelError("Gender", "Vui lòng chọn giới tính");
 
@@ -216,7 +204,7 @@ namespace StoreSite.Controllers
                 ModelState.AddModelError("GiaTienGoc", "Giá gốc phải lớn hơn giá bán (hoặc để trống nếu không giảm giá)");
         }
 
-        private static void Apply(ProductFormViewModel m, SanPham sp, double rating)
+        private static void Apply(ProductFormViewModel m, SanPham sp)
         {
             sp.ItemName = m.ItemName.Trim();
             sp.LoaiGiay = m.LoaiGiay.Trim();
@@ -226,7 +214,6 @@ namespace StoreSite.Controllers
             sp.GiaTienGoc = m.GiaTienGoc.HasValue ? (decimal?)Math.Round(m.GiaTienGoc.Value, 0) : null;
             sp.ImgURL = NormalizeImgUrl(m.ImgURL);
             sp.DescriptionTxt = string.IsNullOrWhiteSpace(m.DescriptionTxt) ? null : m.DescriptionTxt.Trim();
-            sp.rating = rating;
             sp.SanPhamMoi = m.SanPhamMoi;
         }
 

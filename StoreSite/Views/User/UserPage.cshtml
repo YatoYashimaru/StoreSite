@@ -14,7 +14,7 @@
 }
 
 <div class="account">
-
+    <!-- display tên, gmail, avt ở đầu -->
     <div class="account-hero">
         <div class="account-avatar" aria-hidden="true">@chuCai</div>
         <div class="account-who">
@@ -24,13 +24,14 @@
     </div>
 
     <div class="account-body">
-
+        <!-- thanh nav chức năng -->
         <nav class="account-nav" aria-label="Tài khoản">
             <a href="@Url.Action("UserPage", "User", new { tab = "profile" })" class="@(tab == "profile" ? "is-active" : "")">Thông tin cá nhân</a>
             <a href="@Url.Action("UserPage", "User", new { tab = "password" })" class="@(tab == "password" ? "is-active" : "")">Đổi mật khẩu</a>
             <a href="@Url.Action("UserPage", "User", new { tab = "orders" })" class="@(tab == "orders" ? "is-active" : "")">Đơn hàng của tôi</a>
-            @if (Session["IsAdmin"] as bool? == true)
+            @if (Session["IsAdmin"] as bool? == true) 
             {
+                // cái này là cái thanh chức năng riêng cho admin ( bỏ rồi lười xóa quá )
                 <a class="account-nav-link" href="@Url.Action("Index", "Admin")">Bảng admin</a>
             }
             <a href="@Url.Action("Logout", "User")" class="account-nav__logout">Đăng xuất</a>
@@ -38,6 +39,7 @@
 
         <section class="account-panel">
 
+            <!-- thông báo, lỗi -->
             @if (TempData["ThongBao"] != null)
             {
                 <div class="auth-alert auth-alert--success" role="status">@TempData["ThongBao"]</div>
@@ -47,6 +49,7 @@
                 <div class="auth-alert auth-alert--error" role="alert">@TempData["Loi"]</div>
             }
 
+            <!-- các tab trên thanh nav -->
             @if (tab == "profile")
             {
                 <h2 class="account-title">Thông tin cá nhân</h2>
@@ -105,6 +108,7 @@
                 <h2 class="account-title">Đơn hàng của tôi</h2>
                 <p class="account-sub">Theo dõi các đơn bạn đã đặt.</p>
 
+                <!-- check order để thông báo trống hoặc dùng foreach list all order user-->
                 if (Model.Orders == null || Model.Orders.Count == 0)
                 {
                     <p>Bạn chưa có đơn hàng nào.</p>

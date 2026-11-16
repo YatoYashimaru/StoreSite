@@ -12,6 +12,9 @@
         <AssociationConnector Association="StoreDbModel.FK_Order_UserData" ManuallyRouted="false" />
         <AssociationConnector Association="StoreDbModel.FK_OrderDetail_Order" ManuallyRouted="false" />
         <AssociationConnector Association="StoreDbModel.FK_OrderDetail_Product" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="StoreDbModel.Review" Width="1.5" PointX="10" PointY="1.625" />
+        <AssociationConnector Association="StoreDbModel.FK_Reviews_Product" />
+        <AssociationConnector Association="StoreDbModel.FK_Reviews_User" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

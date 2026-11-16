@@ -213,6 +213,7 @@
 </div>
 
 <script>
+    // nút chuyển trang sản phẩm trên home page
 document.addEventListener("click", function (e) {
     var btn = e.target.closest(".hp-arrow");
     if (!btn) return;
@@ -229,6 +230,7 @@ document.addEventListener("click", function (e) {
 });
 </script>
 <script>
+    // chuyển banner bằng setinterval và function
     let currentimg = 1;
     const totalImages = 3;
     const bannerUrls = [
@@ -266,7 +268,7 @@ document.addEventListener("click", function (e) {
     setInterval(fnChangeBanner, 3000);
 </script>
 <script>
-    // Logic cuộn ngang cho danh mục Nhãn hàng
+    // Logic cuộn ngang cho danh mục Nhãn hàng ( cũng dựa trên chuyển trang nổi bật )
     document.addEventListener("DOMContentLoaded", function () {
         const brandSlider = document.getElementById("brandSlider");
         const brandPrev = document.getElementById("brandPrev");

@@ -29,5 +29,6 @@ namespace StoreSite.Models
         public virtual DbSet<OrderDetail> OrderDetails { get; set; }
         public virtual DbSet<SanPham> SanPhams { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Review> Reviews { get; set; }
     }
 }
