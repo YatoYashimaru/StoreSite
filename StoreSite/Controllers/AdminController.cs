@@ -190,8 +190,11 @@ namespace StoreSite.Controllers
         // Gợi ý hãng / môn có sẵn cho ô nhập (vẫn gõ được giá trị mới)
         private void LoadLookups()
         {
-            ViewBag.Brands = db.SanPhams.Select(p => p.LoaiGiay).Distinct().OrderBy(x => x).ToList();
-            ViewBag.Sports = db.SanPhams.Select(p => p.Sport).Distinct().OrderBy(x => x).ToList();
+            // Gồm cả nhãn hàng / bộ môn mới thêm ở trang Danh mục mà chưa có sản phẩm nào
+            ViewBag.Brands = CatalogStore.Merge(db.SanPhams.Select(p => p.LoaiGiay).Distinct().ToList(),
+                                                CatalogStore.BrandFolders());
+            ViewBag.Sports = CatalogStore.Merge(db.SanPhams.Select(p => p.Sport).Distinct().ToList(),
+                                                CatalogStore.ExtraSports());
         }
 
         // Các luật mà annotation không viết được

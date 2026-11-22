@@ -2,23 +2,37 @@
 @{
     bool sport = Model.Kind == "sport";
     string action = sport ? "Sports" : "Brands";
+    string what = sport ? "bộ môn" : "nhãn hàng";
 }
 
 <div class="ad-head">
     <div>
         <h1 class="ad-title">@Model.Title</h1>
-        <p class="ad-sub">@Model.Items.Count @(sport ? "bộ môn" : "nhãn hàng") đang có sản phẩm</p>
+        <p class="ad-sub">@Model.Items.Count @what</p>
     </div>
-    <a class="ad-btn ad-btn--primary" href="@Url.Action("ProductCreate", "Admin")">+ Thêm sản phẩm</a>
+    <button type="button" class="ad-btn ad-btn--primary" id="catalogAddToggle">+ Thêm @what</button>
 </div>
 
+<form method="post" action="@Url.Action("Add", "AdminCatalog")" class="ad-inline-form" id="catalogAddForm" style="display:none;margin-bottom:16px">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="kind" value="@Model.Kind" />
+    <input type="text" name="name" maxlength="80" class="ad-input" required placeholder="Tên @what mới" aria-label="Tên @what mới" />
+    <button type="submit" class="ad-btn ad-btn--primary ad-btn--small">Thêm</button>
+</form>
+
 <p class="ad-note">
-    @(sport ? "Bộ môn" : "Nhãn hàng") được lưu trong từng sản phẩm. Muốn có mục mới, hãy gán nó cho một sản phẩm
-    (thêm hoặc sửa sản phẩm). Tại đây bạn có thể đổi tên; nếu tên mới trùng một mục đã có thì hai mục được gộp làm một.
     @if (sport)
     {
-        <text>Tên hiển thị của bộ môn lấy từ <code>SportNames.cs</code>; tên mới chưa khai báo ở đó sẽ hiển thị đúng như bạn gõ.</text>
+        <text>Thêm bộ môn mới bằng nút phía trên; bộ môn chưa có sản phẩm vẫn hiện ở đây và gợi ý trong form sản phẩm.
+        Tên hiển thị lấy từ <code>SportNames.cs</code>; tên chưa khai báo ở đó sẽ hiển thị đúng như bạn gõ.</text>
     }
+    else
+    {
+        <text>Thêm nhãn hàng sẽ tạo folder <code>ImageAssets/Men/&lt;Tên&gt;</code> và <code>ImageAssets/Women/&lt;Tên&gt;</code>;
+        xóa nhãn hàng (chỉ khi không còn sản phẩm) sẽ xóa luôn hai folder đó.</text>
+    }
+    Tại đây bạn cũng có thể đổi tên; nếu tên mới trùng một mục đã có thì hai mục được gộp làm một
+    (đổi tên không đổi tên folder ảnh).
 </p>
 
 @if (Model.Items.Count == 0)
@@ -49,19 +63,39 @@ else
                         }
                         <td data-label="Số sản phẩm" class="ad-num">@it.Count</td>
                         <td class="ad-actions-cell ad-rename-cell">
-                            <form method="post" action="@Url.Action("Rename", "AdminCatalog")" class="ad-inline-form"
-                                  data-confirm="Đổi tên “@it.Name” cho @it.Count sản phẩm?">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="kind" value="@Model.Kind" />
-                                <input type="hidden" name="oldName" value="@it.Name" />
-                                <input type="text" name="newName" value="@it.Name" maxlength="80" class="ad-input" aria-label="Tên mới" />
-                                <button type="submit" class="ad-btn ad-btn--small">Lưu</button>
-                            </form>
+                            @if (it.Count > 0)
+                            {
+                                <form method="post" action="@Url.Action("Rename", "AdminCatalog")" class="ad-inline-form"
+                                      data-confirm="Đổi tên “@it.Name” cho @it.Count sản phẩm?">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="kind" value="@Model.Kind" />
+                                    <input type="hidden" name="oldName" value="@it.Name" />
+                                    <input type="text" name="newName" value="@it.Name" maxlength="80" class="ad-input" aria-label="Tên mới" />
+                                    <button type="submit" class="ad-btn ad-btn--small">Lưu</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="ad-sub">Chưa có sản phẩm nên chưa cần đổi tên</span>
+                            }
                         </td>
                         <td class="ad-actions-cell">
                             <div class="ad-actions">
-                                <a class="ad-btn ad-btn--small ad-btn--ghost"
-                                   href="@(sport ? Url.Action("Products", "Admin", new { sport = it.Name }) : Url.Action("Products", "Admin", new { loai = it.Name }))">Xem sản phẩm</a>
+                                @if (it.Count > 0)
+                                {
+                                    <a class="ad-btn ad-btn--small ad-btn--ghost"
+                                       href="@(sport ? Url.Action("Products", "Admin", new { sport = it.Name }) : Url.Action("Products", "Admin", new { loai = it.Name }))">Xem sản phẩm</a>
+                                }
+                                else
+                                {
+                                    <form method="post" action="@Url.Action("Delete", "AdminCatalog")" class="ad-inline-form"
+                                          data-confirm="@(sport ? "Xóa bộ môn “" + it.Name + "”?" : "Xóa nhãn hàng “" + it.Name + "” và toàn bộ folder ảnh của nó (ImageAssets/Men/" + it.Name + ", ImageAssets/Women/" + it.Name + ")?")">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="kind" value="@Model.Kind" />
+                                        <input type="hidden" name="name" value="@it.Name" />
+                                        <button type="submit" class="ad-btn ad-btn--small ad-btn--danger">Xóa</button>
+                                    </form>
+                                }
                             </div>
                         </td>
                     </tr>
@@ -69,4 +103,19 @@ else
             </tbody>
         </table>
     </div>
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            var btn = document.getElementById('catalogAddToggle');
+            var form = document.getElementById('catalogAddForm');
+            if (!btn || !form) return;
+            btn.addEventListener('click', function () {
+                var show = form.style.display === 'none';
+                form.style.display = show ? '' : 'none';
+                if (show) form.querySelector('input[name=name]').focus();
+            });
+        })();
+    </script>
 }
