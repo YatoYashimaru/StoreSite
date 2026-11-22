@@ -987,3 +987,125 @@
         background: var(--ad-accent);
         color: #fff;
     }
+
+/* =========================================================
+   ẢNH SẢN PHẨM trong form thêm / sửa (dán vào cuối AdminStyle.css)
+   ========================================================= */
+.ad-file {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px dashed var(--ad-border);
+    border-radius: 10px;
+    background: #f8fafb;
+    font: inherit;
+    cursor: pointer;
+}
+
+.ad-file::file-selector-button {
+    margin-right: 12px;
+    padding: 7px 14px;
+    border: 1px solid var(--ad-border);
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ad-hint--top {
+    margin: 0 0 10px;
+}
+
+.ad-imgs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin: 0 0 10px;
+}
+
+.ad-imgs:empty {
+    display: none;
+}
+
+.ad-imgs__item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px;
+    border: 1px solid var(--ad-border);
+    border-radius: 10px;
+    background: #fff;
+    font-weight: 400;
+    cursor: default;
+}
+
+.ad-imgs__item img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    border-radius: 6px;
+    background: #f1f4f5;
+}
+
+.ad-imgs__name {
+    font-size: 12.5px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ad-imgs__del {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ad-danger);
+    font-size: 12.5px;
+    cursor: pointer;
+}
+
+.ad-imgs__item:has(input:checked) {
+    border-color: var(--ad-danger);
+    background: #fff5f4;
+}
+
+.ad-imgs__item:has(input:checked) img {
+    opacity: .35;
+}
+
+.ad-imgs__tools {
+    display: flex;
+    gap: 4px;
+}
+
+.ad-imgs__tools button {
+    flex: 1 1 0;
+    padding: 4px 0;
+    border: 1px solid var(--ad-border);
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.ad-imgs__tools button:last-child {
+    color: var(--ad-danger);
+}
+
+.ad-imgs__tools button:hover {
+    background: var(--ad-accent-soft);
+}
+
+.ad-img-count {
+    margin: 0 0 6px;
+    color: var(--ad-muted);
+    font-size: 13px;
+}
+
+.ad-img-count.is-over {
+    color: var(--ad-danger);
+    font-weight: 700;
+}

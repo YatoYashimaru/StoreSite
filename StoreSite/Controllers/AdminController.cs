@@ -2,6 +2,7 @@ using System;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using StoreSite.Models;
@@ -72,23 +73,39 @@ namespace StoreSite.Controllers
         public ActionResult ProductCreate(ProductFormViewModel m)
         {
             ValidateProduct(m);
+            var plan = PlanImages(m, null);
 
             if (ModelState.IsValid)
             {
                 var sp = new SanPham();
                 Apply(m, sp);
-                db.SanPhams.Add(sp);
 
-                string loi = TrySave();
-                if (loi == null)
+                string loiAnh = RunImages(plan, sp);
+                if (loiAnh == null)
                 {
-                    TempData["ThongBao"] = "Đã thêm sản phẩm “" + sp.ItemName + "”";
-                    return RedirectToAction("Products");
+                    db.SanPhams.Add(sp);
+                    string loi = TrySave();
+                    if (loi == null)
+                    {
+                        TempData["ThongBao"] = "Đã thêm sản phẩm “" + sp.ItemName + "” và lưu ảnh vào " + ProductImageStore.RelativeText(plan.Folder);
+                        return RedirectToAction("Products");
+                    }
+
+                    // lưu database lỗi: bỏ thư mục vừa tạo để không để lại ảnh mồ côi
+                    if (plan.IsNewFolder)
+                    {
+                        try { Directory.Delete(plan.Folder, true); } catch (IOException) { } catch (UnauthorizedAccessException) { }
+                    }
+                    ModelState.AddModelError("", loi);
                 }
-                ModelState.AddModelError("", loi);
+                else
+                {
+                    ModelState.AddModelError("", loiAnh);
+                }
             }
 
             LoadLookups();
+            FillImageInfo(m, null);
             ViewBag.Title = "Thêm sản phẩm";
             return View("ProductForm", m);
         }
@@ -104,7 +121,7 @@ namespace StoreSite.Controllers
 
             LoadLookups();
             ViewBag.Title = "Sửa sản phẩm";
-            return View("ProductForm", new ProductFormViewModel
+            var form = new ProductFormViewModel
             {
                 Id = sp.Id,
                 ItemName = sp.ItemName,
@@ -116,7 +133,9 @@ namespace StoreSite.Controllers
                 ImgURL = sp.ImgURL,
                 DescriptionTxt = sp.DescriptionTxt,
                 SanPhamMoi = sp.SanPhamMoi
-            });
+            };
+            FillImageInfo(form, sp);
+            return View("ProductForm", form);
         }
 
         [HttpPost, ValidateAntiForgeryToken]
@@ -126,21 +145,31 @@ namespace StoreSite.Controllers
             if (sp == null) return HttpNotFound();
 
             ValidateProduct(m);
+            var plan = PlanImages(m, sp);
 
             if (ModelState.IsValid)
             {
                 Apply(m, sp);
 
-                string loi = TrySave();
-                if (loi == null)
+                string loiAnh = RunImages(plan, sp);
+                if (loiAnh == null)
                 {
-                    TempData["ThongBao"] = "Đã lưu thay đổi cho “" + sp.ItemName + "”";
-                    return RedirectToAction("Products");
+                    string loi = TrySave();
+                    if (loi == null)
+                    {
+                        TempData["ThongBao"] = "Đã lưu thay đổi cho “" + sp.ItemName + "”";
+                        return RedirectToAction("Products");
+                    }
+                    ModelState.AddModelError("", loi);
                 }
-                ModelState.AddModelError("", loi);
+                else
+                {
+                    ModelState.AddModelError("", loiAnh);
+                }
             }
 
             LoadLookups();
+            FillImageInfo(m, sp);
             ViewBag.Title = "Sửa sản phẩm";
             return View("ProductForm", m);
         }
@@ -207,6 +236,107 @@ namespace StoreSite.Controllers
                 ModelState.AddModelError("GiaTienGoc", "Giá gốc phải lớn hơn giá bán (hoặc để trống nếu không giảm giá)");
         }
 
+        // =====================================================================
+        //  ẢNH SẢN PHẨM
+        // =====================================================================
+
+        /// <summary>
+        /// Kiểm tra phần ảnh của form (chưa ghi gì xuống đĩa); lỗi được thêm vào ModelState.
+        /// sp = null khi thêm mới, là sản phẩm đang sửa khi chỉnh sửa.
+        /// </summary>
+        private ImagePlan PlanImages(ProductFormViewModel m, SanPham sp)
+        {
+            var plan = new ImagePlan { Uploads = ProductImageStore.ReadUploads(Request) };
+            string[] danhDauXoa = Request.Form.GetValues("removeImages") ?? new string[0];
+
+            string brand = (m.LoaiGiay ?? "").Trim();
+            string loiHang = CatalogStore.ValidateName(brand, "hãng");
+            if (loiHang != null)
+            {
+                if (ModelState.IsValid) ModelState.AddModelError("LoaiGiay", loiHang);
+                return plan;
+            }
+            if (!ModelState.IsValid) return plan;     // lỗi khác trước, sửa xong rồi mới kiểm tra ảnh
+
+            // Đang sửa: dùng thư mục ảnh hiện có của sản phẩm (không tự đổi tên thư mục khi sửa tên / hãng)
+            string folder = sp == null ? null : ProductImageStore.CurrentFolder(sp.ImgURL);
+
+            if (folder == null)
+            {
+                // Sản phẩm cũ có ảnh nằm ngoài cấu trúc thư mục và không tải ảnh mới: giữ nguyên
+                if (sp != null && plan.Uploads.Count == 0)
+                {
+                    plan.Skip = true;
+                    return plan;
+                }
+
+                folder = ProductImageStore.FolderPath(m.Gender, brand, m.ItemName);
+                if (ProductImageStore.InUseByOther(db, folder, sp == null ? 0 : sp.Id))
+                {
+                    ModelState.AddModelError("ItemName", "Thư mục ảnh “" + ProductImageStore.RelativeText(folder)
+                        + "” đang được sản phẩm khác dùng. Hãy đổi tên sản phẩm.");
+                    return plan;
+                }
+            }
+
+            plan.Folder = folder;
+            plan.IsNewFolder = !Directory.Exists(folder);
+
+            var coSan = ProductImageStore.ListFiles(folder);
+            plan.Remove = coSan.Where(f => danhDauXoa.Contains(f, StringComparer.OrdinalIgnoreCase)).ToList();
+            int giuLai = coSan.Count - plan.Remove.Count;
+
+            string loiTai = ProductImageStore.ValidateUploads(plan.Uploads, giuLai);
+            if (loiTai != null)
+                ModelState.AddModelError("images", loiTai);
+            else if (giuLai + plan.Uploads.Count == 0)
+                ModelState.AddModelError("images", sp == null
+                    ? "Vui lòng chọn ít nhất 1 ảnh cho sản phẩm."
+                    : "Sản phẩm phải còn ít nhất 1 ảnh.");
+
+            return plan;
+        }
+
+        /// <summary>Ghi ảnh xuống đĩa theo kế hoạch rồi gán sp.ImgURL = ảnh số 1. Trả về thông báo lỗi hoặc null.</summary>
+        private string RunImages(ImagePlan plan, SanPham sp)
+        {
+            if (plan.Skip) return null;
+
+            try
+            {
+                if (plan.IsNewFolder) CatalogStore.CreateBrandFolders(Path.GetFileName(Path.GetDirectoryName(plan.Folder)));
+                string first = ProductImageStore.Execute(plan);
+                if (first != null) sp.ImgURL = ProductImageStore.UrlOf(plan.Folder, first);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                if (!(ex is IOException || ex is UnauthorizedAccessException)) throw;
+                return "Không lưu được ảnh: " + ex.Message;
+            }
+        }
+
+        // Điền thông tin ảnh hiện có cho form (chỉ khi sửa)
+        private void FillImageInfo(ProductFormViewModel m, SanPham sp)
+        {
+            m.ExistingImages = new System.Collections.Generic.List<ExistingImage>();
+            if (sp == null) return;
+
+            m.ImgURL = sp.ImgURL;
+            string folder = ProductImageStore.CurrentFolder(sp.ImgURL);
+            if (folder == null) return;
+
+            m.ImageFolderText = ProductImageStore.RelativeText(folder);
+            foreach (var f in ProductImageStore.ListFiles(folder))
+            {
+                m.ExistingImages.Add(new ExistingImage
+                {
+                    FileName = f,
+                    Url = Url.Content("~" + ProductImageStore.UrlOf(folder, f))
+                });
+            }
+        }
+
         private static void Apply(ProductFormViewModel m, SanPham sp)
         {
             sp.ItemName = m.ItemName.Trim();
@@ -215,19 +345,8 @@ namespace StoreSite.Controllers
             sp.Gender = m.Gender;
             sp.GiaTien = Math.Round(m.GiaTien.Value, 0);
             sp.GiaTienGoc = m.GiaTienGoc.HasValue ? (decimal?)Math.Round(m.GiaTienGoc.Value, 0) : null;
-            sp.ImgURL = NormalizeImgUrl(m.ImgURL);
             sp.DescriptionTxt = string.IsNullOrWhiteSpace(m.DescriptionTxt) ? null : m.DescriptionTxt.Trim();
             sp.SanPhamMoi = m.SanPhamMoi;
-        }
-
-        // "~/ImageAssets/..", "ImageAssets\.." hay "/ImageAssets/.." đều thành "/ImageAssets/.."
-        private static string NormalizeImgUrl(string s)
-        {
-            if (string.IsNullOrWhiteSpace(s)) return null;
-            s = s.Trim().Replace('\\', '/');
-            if (s.StartsWith("~")) s = s.Substring(1);
-            if (!s.StartsWith("/")) s = "/" + s;
-            return s;
         }
 
         // Lưu và trả về thông báo lỗi dễ đọc (null = thành công)

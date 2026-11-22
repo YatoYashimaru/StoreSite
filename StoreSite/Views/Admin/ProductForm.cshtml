@@ -16,7 +16,7 @@
     <a class="ad-btn ad-btn--ghost" href="@Url.Action("Products", "Admin")">← Về danh sách</a>
 </div>
 
-@using (Html.BeginForm(action, "Admin", FormMethod.Post, new { @class = "ad-card ad-form" }))
+@using (Html.BeginForm(action, "Admin", FormMethod.Post, new { @class = "ad-card ad-form", enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.Id)
@@ -66,35 +66,53 @@
 
         <div class="ad-field">
             @Html.LabelFor(m => m.GiaTien)
-            @Html.TextBoxFor(m => m.GiaTien, new { @class = "ad-input", type = "number", min = 0, step = 1000, inputmode = "numeric" })
+            @Html.TextBoxFor(m => m.GiaTien, new { @class = "ad-input", type = "number", min = 1000, step = 1000, inputmode = "numeric", placeholder = "từ 1000" })
             @Html.ValidationMessageFor(m => m.GiaTien, "", new { @class = "ad-error" })
         </div>
 
         <div class="ad-field">
             @Html.LabelFor(m => m.GiaTienGoc)
-            @Html.TextBoxFor(m => m.GiaTienGoc, new { @class = "ad-input", type = "number", min = 0, step = 1000, inputmode = "numeric" })
+            @Html.TextBoxFor(m => m.GiaTienGoc, new { @class = "ad-input", type = "number", min = 1000, step = 1000, inputmode = "numeric" })
             @Html.ValidationMessageFor(m => m.GiaTienGoc, "", new { @class = "ad-error" })
         </div>
 
         <div class="ad-field ad-field--full">
-            @Html.LabelFor(m => m.ImgURL)
-            <div class="ad-img-row">
-                <div class="ad-img-col">
-                    @Html.TextBoxFor(m => m.ImgURL, new
+            <label for="ad-files">Ảnh sản phẩm</label>
+
+            @if (Model.ExistingImages.Count > 0)
+            {
+                <p class="ad-hint ad-hint--top">Ảnh hiện có trong <code>@Model.ImageFolderText</code>. Đánh dấu “Xóa” để bỏ ảnh nào đó.</p>
+                <div class="ad-imgs">
+                    @foreach (var img in Model.ExistingImages)
                     {
-                        @class = "ad-input",
-                        maxlength = 300,
-                        placeholder = "/ImageAssets/Men/Nike/Ten San Pham/1.jpg",
-                        autocomplete = "off"
-                    })
-                    <p class="ad-hint">
-                        Ảnh nằm trong <code>ImageAssets/Men|Women/Hãng/Tên sản phẩm/</code>, đặt tên 1, 2, 3...
-                        Trang chi tiết tự hiện cả bộ ảnh trong thư mục đó.
-                    </p>
-                    @Html.ValidationMessageFor(m => m.ImgURL, "", new { @class = "ad-error" })
+                        <label class="ad-imgs__item">
+                            <img src="@(img.Url + "?v=" + DateTime.Now.Ticks)" alt="" loading="lazy" />
+                            <span class="ad-imgs__name">@img.FileName</span>
+                            <span class="ad-imgs__del"><input type="checkbox" name="removeImages" value="@img.FileName" /> Xóa</span>
+                        </label>
+                    }
                 </div>
-                <div class="ad-preview" id="ad-preview" aria-label="Xem trước ảnh"><span>Xem trước</span></div>
-            </div>
+            }
+            else if (!them && !string.IsNullOrEmpty(Model.ImgURL))
+            {
+                <p class="ad-hint ad-hint--top">
+                    Ảnh hiện tại (<code>@Model.ImgURL</code>) nằm ngoài cấu trúc thư mục hãng. Chọn ảnh mới bên dưới để tạo thư mục
+                    riêng cho sản phẩm và thay thế; không chọn thì giữ nguyên.
+                </p>
+            }
+
+            <input type="file" id="ad-files" name="images" class="ad-file" multiple
+                   accept="image/jpeg,image/png,image/webp,image/avif,image/gif" />
+            <div class="ad-imgs" id="ad-newimgs" aria-live="polite"></div>
+            <div class="ad-img-count" id="ad-img-count"></div>
+
+            <p class="ad-hint">
+                Ảnh được lưu vào <code id="ad-folder">ImageAssets/Men|Women/Hãng/Tên sản phẩm/</code> và <b>tự đặt tên 1, 2, 3 … n</b>
+                theo thứ tự hiển thị ở trên (ảnh số 1 là ảnh đại diện, trang chi tiết hiện cả bộ ảnh theo thứ tự này).
+                Mẹo: đặt tên tệp 1, 2, 3 … trên máy rồi chọn một lượt, hệ thống tự xếp đúng thứ tự; bấm ◀ ▶ để đổi chỗ, ✕ để bỏ.
+                Tối đa @StoreSite.Models.ProductImageStore.MaxFiles ảnh, mỗi ảnh tối đa @(StoreSite.Models.ProductImageStore.MaxFileBytes / 1024 / 1024) MB (jpg, png, webp, avif, gif).
+            </p>
+            @Html.ValidationMessage("images", "", new { @class = "ad-error" })
         </div>
 
         <div class="ad-field ad-field--full">
@@ -119,29 +137,129 @@
 
 @section Scripts {
     <script>
-        // Xem trước ảnh đại diện khi gõ / đổi đường dẫn
         (function () {
-            var input = document.getElementById('ImgURL');
-            var box = document.getElementById('ad-preview');
-            if (!input || !box) return;
+            "use strict";
 
-            var root = '@Url.Content("~/")'.replace(/\/$/, '');
-            var timer;
+            var MAX = @(StoreSite.Models.ProductImageStore.MaxFiles);
+            var MAX_BYTES = @(StoreSite.Models.ProductImageStore.MaxFileBytes);
+            var OK_EXT = /\.(jpe?g|png|webp|avif|gif)$/i;
 
-            function render() {
-                var v = (input.value || '').trim().replace(/\\/g, '/');
-                if (v.charAt(0) === '~') v = v.substring(1);
-                if (!v) { box.innerHTML = '<span>Xem trước</span>'; return; }
-                if (v.charAt(0) !== '/') v = '/' + v;
+            var input = document.getElementById('ad-files');
+            var grid = document.getElementById('ad-newimgs');
+            var count = document.getElementById('ad-img-count');
+            var folderEl = document.getElementById('ad-folder');
+            if (!input || !grid) return;
 
-                var img = new Image();
-                img.alt = '';
-                img.onload = function () { box.innerHTML = ''; box.appendChild(img); };
-                img.onerror = function () { box.innerHTML = '<span>Không tìm thấy ảnh</span>'; };
-                img.src = encodeURI(root + v);
+            var files = [];                       // các ảnh đã chọn, theo đúng thứ tự sẽ được đặt tên
+            var kept = document.querySelectorAll('input[name="removeImages"]');   // ảnh cũ trong form sửa
+
+            function keptCount() {
+                var n = 0;
+                for (var i = 0; i < kept.length; i++) if (!kept[i].checked) n++;
+                return n;
             }
 
-            input.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(render, 300); });
+            function sync() {                     // đẩy danh sách đã sắp xếp lại vào ô chọn tệp để gửi đi
+                try {
+                    var dt = new DataTransfer();
+                    files.forEach(function (f) { dt.items.add(f); });
+                    input.files = dt.files;
+                } catch (e) { /* trình duyệt cũ: gửi theo lựa chọn gốc */ }
+            }
+
+            function render() {
+                grid.innerHTML = '';
+                var start = keptCount() + 1;
+                files.forEach(function (f, i) {
+                    var item = document.createElement('div');
+                    item.className = 'ad-imgs__item';
+
+                    var img = document.createElement('img');
+                    img.alt = '';
+                    img.src = URL.createObjectURL(f);
+                    img.onload = function () { URL.revokeObjectURL(img.src); };
+                    item.appendChild(img);
+
+                    var name = document.createElement('span');
+                    name.className = 'ad-imgs__name';
+                    name.textContent = '→ ' + (start + i);
+                    name.title = f.name;
+                    item.appendChild(name);
+
+                    var tools = document.createElement('span');
+                    tools.className = 'ad-imgs__tools';
+                    [['◀', -1, 'Đưa lên trước'], ['▶', 1, 'Đưa ra sau'], ['✕', 0, 'Bỏ ảnh này']].forEach(function (b) {
+                        var btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.textContent = b[0];
+                        btn.title = b[2];
+                        btn.setAttribute('aria-label', b[2]);
+                        btn.onclick = function () {
+                            if (b[1] === 0) files.splice(i, 1);
+                            else {
+                                var j = i + b[1];
+                                if (j < 0 || j >= files.length) return;
+                                var t = files[i]; files[i] = files[j]; files[j] = t;
+                            }
+                            sync(); render();
+                        };
+                        tools.appendChild(btn);
+                    });
+                    item.appendChild(tools);
+                    grid.appendChild(item);
+                });
+
+                var total = keptCount() + files.length;
+                count.textContent = files.length
+                    ? 'Đã chọn ' + files.length + ' ảnh mới, tổng cộng ' + total + '/' + MAX + ' ảnh.'
+                    : '';
+                count.className = 'ad-img-count' + (total > MAX ? ' is-over' : '');
+            }
+
+            input.addEventListener('change', function () {
+                var picked = Array.prototype.slice.call(input.files);
+                // xếp theo tên tệp có tính số (1, 2, 10 chứ không phải 1, 10, 2)
+                picked.sort(function (a, b) { return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }); });
+
+                var problems = [];
+                picked.forEach(function (f) {
+                    if (!OK_EXT.test(f.name)) { problems.push('“' + f.name + '” không phải ảnh được hỗ trợ.'); return; }
+                    if (f.size > MAX_BYTES) { problems.push('“' + f.name + '” lớn hơn ' + (MAX_BYTES / 1048576) + ' MB.'); return; }
+                    var dup = files.some(function (x) { return x.name === f.name && x.size === f.size && x.lastModified === f.lastModified; });
+                    if (!dup) files.push(f);
+                });
+                if (keptCount() + files.length > MAX) {
+                    problems.push('Tối đa ' + MAX + ' ảnh cho mỗi sản phẩm.');
+                    files = files.slice(0, Math.max(0, MAX - keptCount()));
+                }
+                if (problems.length) alert(problems.join('\n'));
+
+                sync(); render();
+            });
+
+            for (var k = 0; k < kept.length; k++) kept[k].addEventListener('change', render);
+
+            // Hiện thư mục sẽ lưu ảnh theo hãng / giới tính / tên sản phẩm đang nhập (cùng quy tắc đặt tên với server)
+            var brand = document.getElementById('LoaiGiay');
+            var gender = document.getElementById('Gender');
+            var pname = document.getElementById('ItemName');
+            var fixedFolder = @Html.Raw(Json.Encode(Model.ImageFolderText ?? ""));
+
+            function folderName(s) {
+                s = (s || '').replace(/[\\\/:*?"<>|#%&+]/g, ' ').replace(/[\x00-\x1f]/g, ' ').replace(/\s+/g, ' ').replace(/^[ .]+|[ .]+$/g, '');
+                return (s || 'San pham').substring(0, 100);
+            }
+            function showFolder() {
+                if (!folderEl) return;
+                if (fixedFolder) { folderEl.textContent = fixedFolder + '/'; return; }
+                var g = gender && gender.value === 'Nu' ? 'Women' : 'Men';
+                var b = brand && brand.value.trim() ? brand.value.trim() : 'Hãng';
+                folderEl.textContent = 'ImageAssets/' + g + '/' + b + '/' + folderName(pname && pname.value) + '/';
+            }
+            [brand, gender, pname].forEach(function (el) {
+                if (el) { el.addEventListener('input', showFolder); el.addEventListener('change', showFolder); }
+            });
+            showFolder();
             render();
         })();
     </script>
