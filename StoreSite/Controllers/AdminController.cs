@@ -19,9 +19,7 @@ namespace StoreSite.Controllers
             return RedirectToAction("Index", "AdminDashboard");
         }
 
-        // =====================================================================
         //  DANH SÁCH SẢN PHẨM
-        // =====================================================================
         public ActionResult Products(string search, string loai, string sport, string gender, int page = 1)
         {
             IQueryable<SanPham> query = db.SanPhams;
@@ -58,9 +56,7 @@ namespace StoreSite.Controllers
             return View(vm);
         }
 
-        // =====================================================================
         //  THÊM
-        // =====================================================================
         [HttpGet]
         public ActionResult ProductCreate()
         {
@@ -110,9 +106,7 @@ namespace StoreSite.Controllers
             return View("ProductForm", m);
         }
 
-        // =====================================================================
         //  SỬA
-        // =====================================================================
         [HttpGet]
         public ActionResult ProductEdit(int id)
         {
@@ -174,9 +168,7 @@ namespace StoreSite.Controllers
             return View("ProductForm", m);
         }
 
-        // =====================================================================
         //  XÓA (chỉ nhận POST, có kiểm tra token)
-        // =====================================================================
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult ProductDelete(int id)
         {
@@ -204,9 +196,7 @@ namespace StoreSite.Controllers
             return BackToList();
         }
 
-        // =====================================================================
         //  HÀM PHỤ
-        // =====================================================================
 
         // Sau khi xóa thì quay lại đúng trang danh sách (giữ nguyên bộ lọc, số trang) nếu có thể
         private ActionResult BackToList()
@@ -236,14 +226,10 @@ namespace StoreSite.Controllers
                 ModelState.AddModelError("GiaTienGoc", "Giá gốc phải lớn hơn giá bán (hoặc để trống nếu không giảm giá)");
         }
 
-        // =====================================================================
         //  ẢNH SẢN PHẨM
-        // =====================================================================
 
-        /// <summary>
         /// Kiểm tra phần ảnh của form (chưa ghi gì xuống đĩa); lỗi được thêm vào ModelState.
         /// sp = null khi thêm mới, là sản phẩm đang sửa khi chỉnh sửa.
-        /// </summary>
         private ImagePlan PlanImages(ProductFormViewModel m, SanPham sp)
         {
             var plan = new ImagePlan { Uploads = ProductImageStore.ReadUploads(Request) };
@@ -297,7 +283,7 @@ namespace StoreSite.Controllers
             return plan;
         }
 
-        /// <summary>Ghi ảnh xuống đĩa theo kế hoạch rồi gán sp.ImgURL = ảnh số 1. Trả về thông báo lỗi hoặc null.</summary>
+        /// Ghi ảnh xuống đĩa theo kế hoạch rồi gán sp.ImgURL = ảnh số 1. Trả về thông báo lỗi hoặc null.
         private string RunImages(ImagePlan plan, SanPham sp)
         {
             if (plan.Skip) return null;

@@ -6,12 +6,10 @@ using StoreSite.Models;
 
 namespace StoreSite.Controllers
 {
-    /// <summary>
     /// Quản lý nhãn hàng (SanPhams.LoaiGiay) và bộ môn (SanPhams.Sport).
     /// Hai thứ này lưu thẳng trong bảng SanPhams nên không cần tạo bảng mới:
     /// danh sách = các giá trị đang có, "đổi tên" = cập nhật mọi sản phẩm đang dùng giá trị đó.
     /// Mục mới chưa có sản phẩm được lưu bằng CatalogStore (nhãn hàng = folder ảnh, bộ môn = ExtraSports.txt).
-    /// </summary>
     public class AdminCatalogController : AdminBaseController
     {
         public ActionResult Brands()

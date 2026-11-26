@@ -37,10 +37,8 @@ namespace StoreSite.Models
         }
     }
 
-    /// <summary>
     /// Form thêm / sửa sản phẩm. Dùng ViewModel riêng thay vì sửa class SanPham do Entity Framework sinh ra
     /// (file đó bị ghi đè mỗi khi cập nhật model).
-    /// </summary>
     public class ProductFormViewModel
     {
         public int Id { get; set; }
